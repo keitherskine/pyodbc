@@ -911,7 +911,8 @@ static PyObject* Connection_exit(PyObject* self, PyObject* args)
     // If an error has occurred, `args` will be a tuple of 3 values.  Otherwise it will be a tuple of 3 `None`s.
     I(PyTuple_Check(args));
 
-    if (cnxn->nAutoCommit == SQL_AUTOCOMMIT_OFF && PyTuple_GetItem(args, 0) == Py_None)
+    // Commit if it's a normal exit and auto-commit is on, otherwise rollback.
+    if (cnxn->nAutoCommit == SQL_AUTOCOMMIT_ON && PyTuple_GetItem(args, 0) == Py_None)
     {
         SQLRETURN ret;
         Py_BEGIN_ALLOW_THREADS
@@ -921,7 +922,19 @@ static PyObject* Connection_exit(PyObject* self, PyObject* args)
         if (!SQL_SUCCEEDED(ret))
             return RaiseErrorFromHandle("SQLEndTran(SQL_COMMIT)", cnxn->hdbc, SQL_NULL_HANDLE);
     }
-    
+    else
+    {
+        SQLRETURN ret;
+        Py_BEGIN_ALLOW_THREADS
+        ret = SQLEndTran(SQL_HANDLE_DBC, cnxn->hdbc, SQL_ROLLBACK);
+        Py_END_ALLOW_THREADS
+
+        if (!SQL_SUCCEEDED(ret))
+            return RaiseErrorFromHandle("SQLEndTran(SQL_ROLLBACK)", cnxn->hdbc, SQL_NULL_HANDLE);
+    }
+
+    Connection_close(self, args);
+
     Py_RETURN_NONE;
 }
 

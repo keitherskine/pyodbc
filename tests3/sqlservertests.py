@@ -1219,6 +1219,44 @@ class SqlServerTestCase(unittest.TestCase):
         self.assertEquals(len(rows), 1)
         self.assertEquals(rows[0][0], 1)
 
+    def test_context_manager_nocommit(self):
+
+        self.cursor.execute("create table t1(n int)")
+        self.cnxn.commit()
+
+        try:
+            with pyodbc.connect(self.connection_string) as cnxn:
+                cursor = cnxn.cursor()
+                cursor.execute("insert into t1 values (1)")
+        except Exception:
+            pass
+
+        cnxn = None
+        cursor = None
+
+        count = self.cursor.execute("select count(*) from t1").fetchone()[0]
+        self.assertEquals(count, 0)
+
+    def test_context_manager_fail(self):
+        """
+        Ensure an exception in a with statement causes a rollback.
+        """
+        self.cursor.execute("create table t1(n int)")
+        self.cnxn.commit()
+
+        try:
+            with pyodbc.connect(self.connection_string) as cnxn:
+                cursor = cnxn.cursor()
+                cursor.execute("insert into t1 values (1)")
+                raise Exception("Testing failure")
+        except Exception:
+            pass
+
+        cnxn = None
+        cursor = None
+
+        count = self.cursor.execute("select count(*) from t1").fetchone()[0]
+        self.assertEquals(count, 0)
 
     def test_untyped_none(self):
         # From issue 129

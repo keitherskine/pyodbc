@@ -2101,24 +2101,7 @@ static PyObject* Cursor_enter(PyObject* self, PyObject* args)
 static char exit_doc[] = "__exit__(*excinfo) -> None.  Commits the connection if necessary..";
 static PyObject* Cursor_exit(PyObject* self, PyObject* args)
 {
-    Cursor* cursor = Cursor_Validate(self, CURSOR_REQUIRE_OPEN | CURSOR_RAISE_ERROR);
-    if (!cursor)
-        return 0;
-
-    // If an error has occurred, `args` will be a tuple of 3 values.  Otherwise it will be a tuple of 3 `None`s.
-    I(PyTuple_Check(args));
-
-    if (cursor->cnxn->nAutoCommit == SQL_AUTOCOMMIT_OFF && PyTuple_GetItem(args, 0) == Py_None)
-    {
-        SQLRETURN ret;
-        Py_BEGIN_ALLOW_THREADS
-        ret = SQLEndTran(SQL_HANDLE_DBC, cursor->cnxn->hdbc, SQL_COMMIT);
-        Py_END_ALLOW_THREADS
-
-        if (!SQL_SUCCEEDED(ret))
-            return RaiseErrorFromHandle("SQLEndTran(SQL_COMMIT)", cursor->cnxn->hdbc, cursor->hstmt);
-    }
-    
+    Cursor_close(self, args);
     Py_RETURN_NONE;
 }
 
