@@ -35,26 +35,30 @@ environment:
     # - PYTHON: "C:\\Python38"
     #   PYTHON_ARCH: "64"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2008
-      PYTHON: "C:\\Python27"
-      PYTHON_ARCH: "64"
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2010
-      PYTHON: "C:\\Python27"
-      PYTHON_ARCH: "64"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2008  # does not exist
+    #   PYTHON: "C:\\Python27"
+    #   PYTHON_ARCH: "64"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2010  # does not exist
+    #   PYTHON: "C:\\Python27"
+    #   PYTHON_ARCH: "64"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2010
-      PYTHON: "C:\\Python34"
-      PYTHON_ARCH: "64"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2010  # does not exist
+    #   PYTHON: "C:\\Python34"
+    #   PYTHON_ARCH: "64"
+    # this works:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python34"
       PYTHON_ARCH: "64"
 
+    # this works:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python35"
       PYTHON_ARCH: "64"
+    # this works:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       PYTHON: "C:\\Python35"
       PYTHON_ARCH: "64"
+    # this fails: "LINK : fatal error LNK1158: cannot run 'rc.exe'"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       PYTHON: "C:\\Python35"
       PYTHON_ARCH: "64"
@@ -76,4 +80,5 @@ test_script:
   - "echo KME APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%"
   - "echo KME PYTHON: %PYTHON%"
   - "echo KME PYTHON_ARCH: %PYTHON_ARCH%"
+  - '%PYTHON%\\python.exe -c "import platform; print(platform.python_build(), platform.python_compiler())"'
   - "%PYTHON%\\python.exe setup.py build"
