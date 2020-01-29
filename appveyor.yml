@@ -46,7 +46,7 @@ environment:
 build: off
 
 test_script:
-  - echo KME APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%
-  - echo KME PYTHON: %PYTHON%
-  - echo KME PYTHON_ARCH: %PYTHON_ARCH%
+  - "echo KME APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%"
+  - "echo KME PYTHON: %PYTHON%"
+  - "echo KME PYTHON_ARCH: %PYTHON_ARCH%"
   - "%PYTHON%\\python.exe setup.py build"
