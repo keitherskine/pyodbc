@@ -13,12 +13,40 @@ environment:
       PYTHON_ARCH: "32"
     - PYTHON: "C:\\Python27"
       PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python34"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python34"
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python35"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python35"
+      PYTHON_ARCH: "64"
     - PYTHON: "C:\\Python36"
       PYTHON_ARCH: "32"
     - PYTHON: "C:\\Python36"
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python37"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python37"
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python38"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python38"
+      PYTHON_ARCH: "64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      PYTHON: "C:\\Python36"
+      PYTHON_ARCH: "64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      PYTHON: "C:\\Python36"
+      PYTHON_ARCH: "64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON: "C:\\Python36"
       PYTHON_ARCH: "64"
 
 build: off
 
 test_script:
+  - echo KME APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%
+  - echo KME PYTHON: %PYTHON%
+  - echo KME PYTHON_ARCH: %PYTHON_ARCH%
   - "%PYTHON%\\python.exe setup.py build"
