@@ -1,39 +1,13 @@
+version: '{branch} - #{build}'
 
-# https://packaging.python.org/appveyor/
+image: Visual Studio 2015
 
-# This can't build 3.3 or 3.4 versions without a special build.cmd script,
-# defined in the article above. I don't feel like messing with it and am just
-# using this for build testing right now, so I'm not going to test every
-# version.
+platform:
+  - x64
 
 environment:
 
   matrix:
-
-    # - PYTHON: "C:\\Python27"
-    #   PYTHON_ARCH: "32"
-    # - PYTHON: "C:\\Python27"
-    #   PYTHON_ARCH: "64"
-    # - PYTHON: "C:\\Python34"
-    #   PYTHON_ARCH: "32"
-    # - PYTHON: "C:\\Python34"
-    #   PYTHON_ARCH: "64"
-    # - PYTHON: "C:\\Python35"
-    #   PYTHON_ARCH: "32"
-    # - PYTHON: "C:\\Python35"
-    #   PYTHON_ARCH: "64"
-    # - PYTHON: "C:\\Python36"
-    #   PYTHON_ARCH: "32"
-    # - PYTHON: "C:\\Python36"
-    #   PYTHON_ARCH: "64"
-    # - PYTHON: "C:\\Python37"
-    #   PYTHON_ARCH: "32"
-    # - PYTHON: "C:\\Python37"
-    #   PYTHON_ARCH: "64"
-    # - PYTHON: "C:\\Python38"
-    #   PYTHON_ARCH: "32"
-    # - PYTHON: "C:\\Python38"
-    #   PYTHON_ARCH: "64"
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2008  # does not exist
     #   PYTHON: "C:\\Python27"
@@ -45,23 +19,23 @@ environment:
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2010  # does not exist
     #   PYTHON: "C:\\Python34"
     #   PYTHON_ARCH: "64"
-    # this works:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      PYTHON: "C:\\Python34"
-      PYTHON_ARCH: "64"
+    # # this works:
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    #   PYTHON: "C:\\Python34"
+    #   PYTHON_ARCH: "64"
 
-    # this works:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      PYTHON: "C:\\Python35"
-      PYTHON_ARCH: "64"
-    # this works:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      PYTHON: "C:\\Python35"
-      PYTHON_ARCH: "64"
-    # this fails: "LINK : fatal error LNK1158: cannot run 'rc.exe'"
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON: "C:\\Python35"
-      PYTHON_ARCH: "64"
+    # # this works:
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    #   PYTHON: "C:\\Python35"
+    #   PYTHON_ARCH: "64"
+    # # this works:
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    #   PYTHON: "C:\\Python35"
+    #   PYTHON_ARCH: "64"
+    # # this fails: "LINK : fatal error LNK1158: cannot run 'rc.exe'"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON: "C:\\Python35"
+    #   PYTHON_ARCH: "64"
 
     # these all work:
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
@@ -70,15 +44,36 @@ environment:
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     #   PYTHON: "C:\\Python36"
     #   PYTHON_ARCH: "64"
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-    #   PYTHON: "C:\\Python36"
-    #   PYTHON_ARCH: "64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      PYTHON: "C:\\Python36"
+      PYTHON_ARCH: "64"
 
-build: off
-
-test_script:
-  - "echo KME APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%"
-  - "echo KME PYTHON: %PYTHON%"
+build_script:
+  - "echo KME APPVEYOR_BUILD_FOLDER                 : %APPVEYOR_BUILD_FOLDER%"
+  - "echo KME APPVEYOR_BUILD_WORKER_IMAGE           : %APPVEYOR_BUILD_WORKER_IMAGE%"
+  - "echo KME APPVEYOR_PULL_REQUEST_HEAD_REPO_NAME  : %APPVEYOR_PULL_REQUEST_HEAD_REPO_NAME%"
+  - "echo KME APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH: %APPVEYOR_PULL_REQUEST_HEAD_REPO_BRANCH%"
+  - "echo KME APPVEYOR_REPO_NAME                    : %APPVEYOR_REPO_NAME%"
+  - "echo KME APPVEYOR_REPO_BRANCH                  : %APPVEYOR_REPO_BRANCH%"
+  - "echo KME PYTHON     : %PYTHON%"
   - "echo KME PYTHON_ARCH: %PYTHON_ARCH%"
   - '%PYTHON%\\python.exe -c "import platform; print(platform.python_build(), platform.python_compiler())"'
   - "%PYTHON%\\python.exe setup.py build"
+  - '%PYTHON%\\python.exe -c "import pyodbc; print(pyodbc.version)"'
+  - dir build
+
+# test_script:
+#   - "echo KME APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%"
+#   - "echo KME PYTHON: %PYTHON%"
+#   - "echo KME PYTHON_ARCH: %PYTHON_ARCH%"
+#   - '%PYTHON%\\python.exe -c "import platform; print(platform.python_build(), platform.python_compiler())"'
+#   - "%PYTHON%\\python.exe setup.py build"
+
+deploy_script:
+  - "%PYTHON%\\python.exe -m pip install wheel"
+  - "%PYTHON%\\python.exe setup.py sdist bdist_wheel"
+  - dir /s dist
+
+artifacts:
+  - path: 'dist\*.whl'
+    name: wheels
