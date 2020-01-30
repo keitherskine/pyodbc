@@ -19,9 +19,9 @@
 :: Author: Olivier Grisel
 :: License: CC0 1.0 Universal: http://creativecommons.org/publicdomain/zero/1.0/
 ::
-:: The CALL lines at the end of this file look redundant, but if you move them
-:: outside of the IF clauses, they do not run properly in the SET_SDK_64==Y
-:: case, I don't know why.
+:: The repeated CALL commands at the end of this file look redundant, but
+:: if you move them outside the IF clauses, they do not run properly in
+:: the SET_SDK_64==Y case, I don't know why.
 @ECHO OFF
 
 SET COMMAND_TO_RUN=%*
