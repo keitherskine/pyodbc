@@ -37,6 +37,18 @@ IF "%PYTHON_VERSION:~3,1%" == "." (
     SET MINOR_PYTHON_VERSION=%PYTHON_VERSION:~2,2%
 )
 
+
+
+FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON%\python.exe -c "import sys; print(sys.version_info.major)"`) DO (
+SET MAJOR_PYTHON_VERSION=%%F
+)
+FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON%\python.exe -c "import sys; print(sys.version_info.minor)"`) DO (
+SET MINOR_PYTHON_VERSION=%%F
+)
+ECHO MAJOR_PYTHON_VERSION: %MAJOR_PYTHON_VERSION%
+ECHO MINOR_PYTHON_VERSION: %MINOR_PYTHON_VERSION%
+
+
 :: Based on the Python version, determine what SDK version to use, and whether
 :: to set the SDK for 64-bit.
 IF %MAJOR_PYTHON_VERSION% == 2 (
