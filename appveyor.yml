@@ -16,10 +16,11 @@ environment:
   matrix:
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2008  # does not exist
-    #   PYTHON: "C:\\Python27"
-    #   PYTHON_ARCH: "64"
-    #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2010  # does not exist
     - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7.13"
+      PYTHON_ARCH: "32"
+    #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2010  # does not exist
+    - PYTHON: "C:\\Python27-x64"
       PYTHON_VERSION: "2.7.13"
       PYTHON_ARCH: "64"
 
@@ -62,8 +63,9 @@ build_script:
   - "echo APPVEYOR_REPO_BRANCH       : %APPVEYOR_REPO_BRANCH%"
   - "echo APPVEYOR_BUILD_FOLDER      : %APPVEYOR_BUILD_FOLDER%"
   - "echo APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%"
-  - "echo PYTHON     : %PYTHON%"
-  - "echo PYTHON_ARCH: %PYTHON_ARCH%"
+  - "echo PYTHON        : %PYTHON%"
+  - "echo PYTHON_VERSION: %PYTHON_VERSION%"
+  - "echo PYTHON_ARCH   : %PYTHON_ARCH%"
   - dir
   - '%PYTHON%\\python.exe -c "import platform; print(platform.python_build(), platform.python_compiler())"'
   - "%WITH_COMPILER% %PYTHON%\\python.exe setup.py build"
