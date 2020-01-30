@@ -7,6 +7,12 @@ platform:
 
 environment:
 
+  global:
+    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
+    # /E:ON and /V:ON options are not enabled in the batch script intepreter
+    # See: http://stackoverflow.com/a/13751649/163740
+    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\utils\\build-python.cmd"
+
   matrix:
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2008  # does not exist
@@ -57,7 +63,7 @@ build_script:
   - "echo PYTHON_ARCH: %PYTHON_ARCH%"
   - dir
   - '%PYTHON%\\python.exe -c "import platform; print(platform.python_build(), platform.python_compiler())"'
-  - "%PYTHON%\\python.exe setup.py build"
+  - "%WITH_COMPILER% %PYTHON%\\python.exe setup.py build"
   - "%PYTHON%\\python.exe setup.py install"
   - '%PYTHON%\\python.exe -c "import pyodbc; print(pyodbc.version)"'
   - dir build
@@ -68,7 +74,7 @@ test_script:
 after_test:
   - "%PYTHON%\\python.exe -m pip install --upgrade pip --no-warn-script-location"
   - "%PYTHON%\\python.exe -m pip install wheel --no-warn-script-location"
-  - "%PYTHON%\\python.exe setup.py bdist_wheel"
+  - "%WITH_COMPILER% %PYTHON%\\python.exe setup.py bdist_wheel"
   - dir /s dist
 
 artifacts:
