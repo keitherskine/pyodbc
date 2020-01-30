@@ -19,17 +19,10 @@
 :: Author: Olivier Grisel
 :: License: CC0 1.0 Universal: http://creativecommons.org/publicdomain/zero/1.0/
 ::
-:: Notes about batch files for Python people:
-::
-:: Quotes in values are literally part of the values:
-::      SET FOO="bar"
-:: FOO is now five characters long: " b a r "
-:: If you don't want quotes, don't include them on the right-hand side.
-::
 :: The CALL lines at the end of this file look redundant, but if you move them
 :: outside of the IF clauses, they do not run properly in the SET_SDK_64==Y
 :: case, I don't know why.
-::@ECHO OFF
+@ECHO OFF
 
 SET COMMAND_TO_RUN=%*
 SET WIN_SDK_ROOT=C:\Program Files\Microsoft SDKs\Windows
@@ -75,14 +68,14 @@ IF %PYTHON_ARCH% == 64 (
         "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Setup\WindowsSdkVer.exe" -q -version:%WINDOWS_SDK_VERSION%
         "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Bin\SetEnv.cmd" /x64 /release
         ECHO Executing: %COMMAND_TO_RUN%
-        call %COMMAND_TO_RUN% || EXIT 1
+        CALL %COMMAND_TO_RUN% || EXIT 1
     ) ELSE (
         ECHO Using default MSVC build environment for 64 bit architecture
         ECHO Executing: %COMMAND_TO_RUN%
-        call %COMMAND_TO_RUN% || EXIT 1
+        CALL %COMMAND_TO_RUN% || EXIT 1
     )
 ) ELSE (
     ECHO Using default MSVC build environment for 32 bit architecture
     ECHO Executing: %COMMAND_TO_RUN%
-    call %COMMAND_TO_RUN% || EXIT 1
+    CALL %COMMAND_TO_RUN% || EXIT 1
 )
