@@ -29,13 +29,13 @@ SET WIN_SDK_ROOT=C:\Program Files\Microsoft SDKs\Windows
 SET WIN_WDK=C:\Program Files (x86)\Windows Kits\10\Include\wdf
 
 :: Extract the major and minor versions of the current Python interpreter, and bitness
-FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON%\python.exe -c "import sys; print(sys.version_info.major, end='')"`) DO (
+FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON%\python -c "import sys; sys.stdout.write(str(sys.version_info.major))"`) DO (
 SET MAJOR_PYTHON_VERSION=%%F
 )
-FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON%\python.exe -c "import sys; print(sys.version_info.minor, end='')"`) DO (
+FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON%\python -c "import sys; sys.stdout.write(str(sys.version_info.minor))"`) DO (
 SET MINOR_PYTHON_VERSION=%%F
 )
-FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON%\python.exe -c "import sys; print('64' if sys.maxsize > 2**32 else '32', end='')"`) DO (
+FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON%\python -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"`) DO (
 SET PYTHON_ARCH=%%F
 )
 ECHO MAJOR_PYTHON_VERSION: %MAJOR_PYTHON_VERSION%
