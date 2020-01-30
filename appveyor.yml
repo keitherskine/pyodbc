@@ -2,8 +2,8 @@
 
 image: Visual Studio 2015
 
-platform:
-  - x64
+# platform:
+#   - x64
 
 environment:
 
@@ -25,8 +25,12 @@ environment:
       PYTHON_ARCH: "64"
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2010  # does not exist
-    #   PYTHON: "C:\\Python34"
-    #   PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python34"
+      PYTHON_VERSION: "3.4.0"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python34-x64"
+      PYTHON_VERSION: "3.4.0"
+      PYTHON_ARCH: "64"
     # # this works:
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python34"
@@ -35,7 +39,10 @@ environment:
     # # this works:
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     - PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5.5"
+      PYTHON_VERSION: "3.5.0"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python35-x64"
+      PYTHON_VERSION: "3.5.0"
       PYTHON_ARCH: "64"
     # # this works:
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
@@ -55,7 +62,24 @@ environment:
     #   PYTHON_ARCH: "64"
     #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
     - PYTHON: "C:\\Python36"
-      PYTHON_VERSION: "3.6.8"
+      PYTHON_VERSION: "3.6.0"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python36-x64"
+      PYTHON_VERSION: "3.6.0"
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Python37"
+      PYTHON_VERSION: "3.7.0"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python37-x64"
+      PYTHON_VERSION: "3.7.0"
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Python38"
+      PYTHON_VERSION: "3.8.0"
+      PYTHON_ARCH: "32"
+    - PYTHON: "C:\\Python38-x64"
+      PYTHON_VERSION: "3.8.0"
       PYTHON_ARCH: "64"
 
 build_script:
