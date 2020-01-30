@@ -253,6 +253,7 @@ def get_version():
         _print('WARNING: Unable to determine version.  Using 4.0.0.0')
         name, numbers = '4.0.0-unsupported', [4,0,0,0]
 
+    print('KME get_version:', name, numbers)
     return name, numbers
 
 
@@ -266,6 +267,7 @@ def _get_version_pkginfo():
                 name    = line.split(':', 1)[1].strip()
                 numbers = [int(n or 0) for n in match.groups()[:3]]
                 numbers.append(int(match.group(4) or OFFICIAL_BUILD)) # don't use 0 as a default for build
+                print('KME _get_version_pkginfo:', name, numbers)
                 return name, numbers
 
     return None, None
@@ -273,15 +275,18 @@ def _get_version_pkginfo():
 
 def _get_version_git():
     n, result = getoutput("git describe --tags --match [0-9]*")
+    print('KME _get_version_git getoutput(1):', n, result)
     if n:
         _print('WARNING: git describe failed with: %s %s' % (n, result))
         return None, None
 
     match = re.match(r'(\d+).(\d+).(\d+) (?: -(\d+)-g[0-9a-z]+)?', result, re.VERBOSE)
+    print('KME _get_version_git match:', match)
     if not match:
         return None, None
 
     numbers = [int(n or OFFICIAL_BUILD) for n in match.groups()]
+    print('KME _get_version_git numbers:', numbers)
     if numbers[-1] == OFFICIAL_BUILD:
         name = '%s.%s.%s' % tuple(numbers[:3])
     if numbers[-1] != OFFICIAL_BUILD:
@@ -290,13 +295,14 @@ def _get_version_git():
         name = '%s.%s.%sb%d' % tuple(numbers)
 
     n, result = getoutput('git rev-parse --abbrev-ref HEAD')
+    print('KME _get_version_git getoutput(2):', n, result)
 
     if result == 'HEAD':
         # We are not on a branch, so use the last revision instead
         n, result = getoutput('git rev-parse --short HEAD')
         name = name + '+commit' + result
     else:
-        if result != 'master' and not re.match('^v\d+$', result):
+        if result != 'master' and not re.match(r'^v\d+$', result):
             name = name + '+' + result.replace('-', '')
 
     return name, numbers
