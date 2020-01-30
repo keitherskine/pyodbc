@@ -1,4 +1,4 @@
-version: '{branch} - #{build}'
+# version: '{branch} - #{build}'
 
 image: Visual Studio 2015
 
@@ -49,12 +49,12 @@ environment:
       PYTHON_ARCH: "64"
 
 build_script:
-  - "echo KME APPVEYOR_BUILD_FOLDER      : %APPVEYOR_BUILD_FOLDER%"
-  - "echo KME APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%"
-  - "echo KME APPVEYOR_REPO_NAME         : %APPVEYOR_REPO_NAME%"
-  - "echo KME APPVEYOR_REPO_BRANCH       : %APPVEYOR_REPO_BRANCH%"
-  - "echo KME PYTHON     : %PYTHON%"
-  - "echo KME PYTHON_ARCH: %PYTHON_ARCH%"
+  - "echo APPVEYOR_REPO_NAME         : %APPVEYOR_REPO_NAME%"
+  - "echo APPVEYOR_REPO_BRANCH       : %APPVEYOR_REPO_BRANCH%"
+  - "echo APPVEYOR_BUILD_FOLDER      : %APPVEYOR_BUILD_FOLDER%"
+  - "echo APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%"
+  - "echo PYTHON     : %PYTHON%"
+  - "echo PYTHON_ARCH: %PYTHON_ARCH%"
   - dir
   - '%PYTHON%\\python.exe -c "import platform; print(platform.python_build(), platform.python_compiler())"'
   - "%PYTHON%\\python.exe setup.py build"
@@ -66,7 +66,7 @@ test_script:
   - echo RUN TESTS HERE!
 
 after_test:
-  - "%PYTHON%\\python.exe -m pip install --upgrade pip"
+  - "%PYTHON%\\python.exe -m pip install --upgrade pip --no-warn-script-location"
   - "%PYTHON%\\python.exe -m pip install wheel --no-warn-script-location"
   - "%PYTHON%\\python.exe setup.py bdist_wheel"
   - dir /s dist
