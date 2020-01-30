@@ -52,6 +52,7 @@ environment:
     #   PYTHON_ARCH: "64"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6.8"
       PYTHON_ARCH: "64"
 
 build_script:
