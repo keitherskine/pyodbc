@@ -29,11 +29,11 @@
 :: The CALL lines at the end of this file look redundant, but if you move them
 :: outside of the IF clauses, they do not run properly in the SET_SDK_64==Y
 :: case, I don't know why.
-@ECHO OFF
+::@ECHO OFF
 
 SET COMMAND_TO_RUN=%*
 SET WIN_SDK_ROOT=C:\Program Files\Microsoft SDKs\Windows
-SET WIN_WDK=c:\Program Files (x86)\Windows Kits\10\Include\wdf
+SET WIN_WDK=C:\Program Files (x86)\Windows Kits\10\Include\wdf
 
 :: Extract the major and minor versions, and allow for the minor version to be
 :: more than 9.  This requires the version number to have two dots in it.
