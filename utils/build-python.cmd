@@ -28,26 +28,22 @@ SET COMMAND_TO_RUN=%*
 SET WIN_SDK_ROOT=C:\Program Files\Microsoft SDKs\Windows
 SET WIN_WDK=C:\Program Files (x86)\Windows Kits\10\Include\wdf
 
-:: Extract the major and minor versions, and allow for the minor version to be
-:: more than 9.  This requires the version number to have two dots in it.
-SET MAJOR_PYTHON_VERSION=%PYTHON_VERSION:~0,1%
-IF "%PYTHON_VERSION:~3,1%" == "." (
-    SET MINOR_PYTHON_VERSION=%PYTHON_VERSION:~2,1%
-) ELSE (
-    SET MINOR_PYTHON_VERSION=%PYTHON_VERSION:~2,2%
-)
-
-
-
-FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON%\python.exe -c "import sys; print(sys.version_info.major)"`) DO (
+:: Extract the major and minor versions of the current Python interpreter, and bitness
+FOR /F "tokens=* USEBACKQ" %%F IN^
+ (`%PYTHON%\python.exe -c "import sys; print(sys.version_info.major, end='')"`) DO (
 SET MAJOR_PYTHON_VERSION=%%F
 )
-FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON%\python.exe -c "import sys; print(sys.version_info.minor)"`) DO (
+FOR /F "tokens=* USEBACKQ" %%F IN^
+ (`%PYTHON%\python.exe -c "import sys; print(sys.version_info.minor, end='')"`) DO (
 SET MINOR_PYTHON_VERSION=%%F
+)
+FOR /F "tokens=* USEBACKQ" %%F IN^
+ (`%PYTHON%\python.exe -c "import sys; print('64' if sys.maxsize > 2**32 else '32', end='')"`) DO (
+SET PYTHON_ARCH=%%F
 )
 ECHO MAJOR_PYTHON_VERSION: %MAJOR_PYTHON_VERSION%
 ECHO MINOR_PYTHON_VERSION: %MINOR_PYTHON_VERSION%
-
+ECHO PYTHON_ARCH: %PYTHON_ARCH%
 
 :: Based on the Python version, determine what SDK version to use, and whether
 :: to set the SDK for 64-bit.

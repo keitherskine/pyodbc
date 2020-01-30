@@ -10,77 +10,52 @@ environment:
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
-    # See: http://stackoverflow.com/a/13751649/163740
+    # http://stackoverflow.com/a/13751649/163740
+    # http://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros#microsoft-specific-predefined-macros
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\utils\\build-python.cmd"
 
   matrix:
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       PYTHON: "C:\\Python27"
-      PYTHON_VERSION: "2.7.0"
-      PYTHON_ARCH: "32"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       PYTHON: "C:\\Python27-x64"
-      PYTHON_VERSION: "2.7.0"
-      PYTHON_ARCH: "64"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       PYTHON: "C:\\Python34"
-      PYTHON_VERSION: "3.4.0"
-      PYTHON_ARCH: "32"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       PYTHON: "C:\\Python34-x64"
-      PYTHON_VERSION: "3.4.0"
-      PYTHON_ARCH: "64"
 
     # Python 3.5 needs at least the VS2015 image
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python35"
-      PYTHON_VERSION: "3.5.0"
-      PYTHON_ARCH: "32"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python35-x64"
-      PYTHON_VERSION: "3.5.0"
-      PYTHON_ARCH: "64"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python36"
-      PYTHON_VERSION: "3.6.0"
-      PYTHON_ARCH: "32"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python36-x64"
-      PYTHON_VERSION: "3.6.0"
-      PYTHON_ARCH: "64"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python37"
-      PYTHON_VERSION: "3.7.0"
-      PYTHON_ARCH: "32"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python37-x64"
-      PYTHON_VERSION: "3.7.0"
-      PYTHON_ARCH: "64"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python38"
-      PYTHON_VERSION: "3.8.0"
-      PYTHON_ARCH: "32"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python38-x64"
-      PYTHON_VERSION: "3.8.0"
-      PYTHON_ARCH: "64"
 
 build_script:
   - "echo APPVEYOR_BUILD_FOLDER: %APPVEYOR_BUILD_FOLDER%"
   - "echo APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%"
   - "echo PYTHON: %PYTHON%"
-  - "echo PYTHON_VERSION: %PYTHON_VERSION%"
-  - "echo PYTHON_ARCH: %PYTHON_ARCH%"
   #- dir /B
-  - '%PYTHON%\\python.exe -c "import platform; print(platform.python_build(), platform.python_compiler())"'
+  - "%PYTHON%\\python.exe -c \"import platform; print(platform.python_build(), platform.python_compiler())\""
   - "%WITH_COMPILER% %PYTHON%\\python.exe setup.py build"
   - "%PYTHON%\\python.exe setup.py install"
-  - '%PYTHON%\\python.exe -c "import pyodbc; print(pyodbc.version)"'
+  - "%PYTHON%\\python.exe -c \"import pyodbc; print(pyodbc.version)\""
   #- dir /B build
 
 test_script:
@@ -94,4 +69,3 @@ after_test:
 
 artifacts:
   - path: 'dist\*.whl'
-    name: wheels
