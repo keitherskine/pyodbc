@@ -13,6 +13,7 @@ ECHO TESTS_DIR    : %TESTS_DIR%
 ECHO MSSQL_NAME   : %MSSQL_NAME%
 ECHO MSSQL_CONN   : %MSSQL_CONN%
 ECHO POSTGRES_CONN: %POSTGRES_CONN%
+ECHO MYSQL_CONN   : %MYSQL_CONN%
 
 ECHO Python compiler:
 "%PYTHON%\python" -c "import platform; print(platform.python_build(), platform.python_compiler())"

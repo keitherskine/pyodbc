@@ -35,11 +35,6 @@ image: Visual Studio 2015
 environment:
 
   global:
-    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
-    # /E:ON and /V:ON options are not enabled in the batch script intepreter
-    # http://stackoverflow.com/a/13751649/163740
-    # http://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros#microsoft-specific-predefined-macros
-    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\compile.cmd"
     # the following variables can be overridden as necessary through the Appveyor UI
     # (Settings tab -> Environment -> Environment variables)
     APVYR_RUN_TESTS: "true"
@@ -47,27 +42,34 @@ environment:
     APVYR_RUN_POSTGRES_TESTS: "true"
     APVYR_RUN_MYSQL_TESTS: "true"
     APVYR_GENERATE_WHEELS: "false"
+    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
+    # /E:ON and /V:ON options are not enabled in the batch script intepreter
+    # http://stackoverflow.com/a/13751649/163740
+    # http://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros#microsoft-specific-predefined-macros
+    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\compile.cmd"
+    # other global variables
+    POSTGRES_CONN: Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
+    MYSQL_CONN: Driver={MySQL ODBC 5.3 Unicode Driver};Server=localhost;Port=3306;Uid=root ;Pwd=Password12!;
 
   matrix:
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python27"
       TESTS_DIR: tests2
       MSSQL_NAME: SQL2008R2SP2
       MSSQL_CONN: Driver={SQL Server Native Client 10.0};Server=(local)\%MSSQL_NAME%;Database=test_db;UID=sa;PWD=Password12!
-      POSTGRES_CONN: Driver={PostgreSQL Unicode(x64)};Server=localhost;Uid=postgres;Pwd=Password12!;
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python27-x64"
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python33"
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python33-x64"
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python34"
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python34-x64"
 
     # Python 3.5 needs at least the VS2015 image
@@ -97,7 +99,6 @@ environment:
       TESTS_DIR: tests3
       MSSQL_NAME: SQL2008R2SP2
       MSSQL_CONN: Driver={SQL Server Native Client 10.0};Server=(local)\%MSSQL_NAME%;Database=test_db;UID=sa;PWD=Password12!
-      POSTGRES_CONN: Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
 
 services:
   - mssql2008r2sp2
