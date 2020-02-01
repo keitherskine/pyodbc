@@ -94,7 +94,7 @@ build_script:
 
 test_script:
   - echo RUN TESTS HERE!
-  - appveyor\run_tests.cmd
+  - call appveyor\run_tests.cmd
 
   # - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"SELECT @@VERSION\""
   # - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"CREATE DATABASE test_db\""
