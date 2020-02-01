@@ -30,6 +30,9 @@ environment:
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       PYTHON: "C:\\Python27"
+      TESTS_DIR: tests2
+      MSSQL_NAME: SQL2008R2SP2
+      MSSQL_CONN: Server=(local)\%MSSQL_NAME%;Database=test_db;UID=sa;PWD=Password12!
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
     #   PYTHON: "C:\\Python27-x64"
 
@@ -93,6 +96,7 @@ test_script:
   - echo RUN TESTS HERE!
   - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"SELECT @@VERSION\""
   - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"CREATE DATABASE test_db\""
+  - "\"%PYTHON%\\python\" \"%TESTS_DIR%\\sqlservertests.py\" \"%MSSQL_CONN%\""
   # - cmd: >-
   #   IF "%APVYR_RUN_TESTS%" == "true"
   #   (echo MS SQL Server tests
