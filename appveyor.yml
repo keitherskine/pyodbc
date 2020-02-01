@@ -49,7 +49,7 @@ environment:
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\compile.cmd"
     # other global variables
     POSTGRES_CONN: Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
-    MYSQL_CONN: Driver={MySQL ODBC 5.3 Unicode Driver};Server=localhost;Port=3306;Uid=root ;Pwd=Password12!;
+    MYSQL_CONN: Driver={MySQL ODBC 5.3 Unicode Driver};Server=localhost;Port=3306;Database=mysql;Uid=root;Pwd=Password12!;
 
   matrix:
 
