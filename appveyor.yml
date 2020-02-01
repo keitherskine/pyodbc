@@ -77,7 +77,7 @@ services:
   - mssql2008r2sp2
 
 build_script:
-  - call appveyor\build_script.cmd
+  - call .\appveyor\build_script.cmd
 
   # - "echo %APPVEYOR_BUILD_FOLDER% / %APPVEYOR_BUILD_WORKER_IMAGE%"
   # - "echo %APPVEYOR_JOB_NUMBER% / %APPVEYOR_JOB_ID% / %APPVEYOR_JOB_NAME%"
@@ -93,7 +93,7 @@ build_script:
   # #- dir /B build
 
 test_script:
-  - call appveyor\test_script.cmd
+  - call .\appveyor\test_script.cmd
 
   # - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"SELECT @@VERSION\""
   # - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"CREATE DATABASE test_db\""
@@ -107,7 +107,7 @@ test_script:
   #   && "%PYTHON%\\python" "%TESTS_DIR%\sqlservertests.py" "%MSSQL_CONN%")
 
 after_test:
-  - call appveyor\after_test.cmd
+  - call .\appveyor\after_test.cmd
 
   # - IF NOT "%APVYR_GENERATE_WHEELS%" == "true" echo Generation of wheels has been skipped
   # - IF "%APVYR_GENERATE_WHEELS%" == "true" "%PYTHON%\\python" -m pip install --upgrade pip --no-warn-script-location
