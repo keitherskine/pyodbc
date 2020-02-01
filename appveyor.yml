@@ -55,7 +55,7 @@ environment:
       TESTS_DIR: tests2
       MSSQL_NAME: SQL2008R2SP2
       MSSQL_CONN: Driver={SQL Server Native Client 10.0};Server=(local)\%MSSQL_NAME%;Database=test_db;UID=sa;PWD=Password12!
-      POSTGRES_CONN: Driver={PostgreSQL ODBC Driver(UNICODE)};Server=localhost;Uid=postgres;Pwd=Password12!;
+      POSTGRES_CONN: Driver={PostgreSQL};Server=localhost;Uid=postgres;Pwd=Password12!;
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
     #   PYTHON: "C:\\Python27-x64"
 
