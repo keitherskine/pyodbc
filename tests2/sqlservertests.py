@@ -1877,7 +1877,7 @@ def main():
     suite = load_tests(SqlServerTestCase, options.test, connection_string)
 
     testRunner = unittest.TextTestRunner(verbosity=options.verbose)
-    result = testRunner.run(suite)
+    return testRunner.run(suite)
 
 
 if __name__ == '__main__':
