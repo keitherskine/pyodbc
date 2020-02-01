@@ -97,7 +97,7 @@ environment:
       TESTS_DIR: tests3
       MSSQL_NAME: SQL2008R2SP2
       MSSQL_CONN: Driver={SQL Server Native Client 10.0};Server=(local)\%MSSQL_NAME%;Database=test_db;UID=sa;PWD=Password12!
-      POSTGRES_CONN: Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Uid=postgres;Pwd=Password12!;
+      POSTGRES_CONN: Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
 
 services:
   - mssql2008r2sp2
