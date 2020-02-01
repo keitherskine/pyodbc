@@ -23,8 +23,11 @@ environment:
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\utils\\build-python.cmd"
     # the following variables can be overridden as necessary through the Appveyor UI
     # (Settings tab -> Environment -> Environment variables)
-    APVYR_RUN_TESTS: true
-    APVYR_GENERATE_WHEELS: true
+    APVYR_RUN_TESTS: "true"
+    APVYR_RUN_MSSQL_TESTS: "true"
+    APVYR_RUN_POSTGRES_TESTS: "true"
+    APVYR_RUN_MYSQL_TESTS: "true"
+    APVYR_GENERATE_WHEELS: "true"
 
   matrix:
 
@@ -74,13 +77,10 @@ services:
   - mssql2008r2sp2
 
 build_script:
-  - "echo APPVEYOR_BUILD_FOLDER: %APPVEYOR_BUILD_FOLDER%"
-  - "echo APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%"
-  - "echo APPVEYOR_JOB_ID: %APPVEYOR_JOB_ID%"
-  - "echo APPVEYOR_JOB_NAME: %APPVEYOR_JOB_NAME%"
-  - "echo APPVEYOR_JOB_NUMBER: %APPVEYOR_JOB_NUMBER%"
-  - "echo APVYR_RUN_TESTS: %APVYR_RUN_TESTS%"
-  - "echo APVYR_GENERATE_WHEELS: %APVYR_GENERATE_WHEELS%"
+  - "echo %APPVEYOR_BUILD_FOLDER% | %APPVEYOR_BUILD_WORKER_IMAGE%"
+  - "echo %APPVEYOR_JOB_NUMBER% | %APPVEYOR_JOB_ID% | %APPVEYOR_JOB_NAME%"
+  - "echo %APVYR_RUN_TESTS% | %APVYR_RUN_MSSQL_TESTS% | %APVYR_RUN_POSTGRES_TESTS% | %APVYR_RUN_MYSQL_TESTS%"
+  - "echo %APVYR_GENERATE_WHEELS%"
   - "echo PYTHON: %PYTHON%"
   - "echo TESTS_DIR: %TESTS_DIR%"
   - "echo MSSQL_NAME: %MSSQL_NAME%"
@@ -94,9 +94,12 @@ build_script:
 
 test_script:
   - echo RUN TESTS HERE!
-  - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"SELECT @@VERSION\""
-  - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"CREATE DATABASE test_db\""
-  - "\"%PYTHON%\\python\" \"%TESTS_DIR%\\sqlservertests.py\" \"%MSSQL_CONN%\""
+  - appveyor\run_tests.cmd
+
+  # - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"SELECT @@VERSION\""
+  # - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"CREATE DATABASE test_db\""
+  # - "\"%PYTHON%\\python\" \"%TESTS_DIR%\\sqlservertests.py\" \"%MSSQL_CONN%\""
+
   # - cmd: >-
   #   IF "%APVYR_RUN_TESTS%" == "true"
   #   (echo MS SQL Server tests
