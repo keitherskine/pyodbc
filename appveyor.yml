@@ -7,9 +7,14 @@ image: Visual Studio 2015
 
 # cache:
 #   - dist -> appveyor.yml
+#   - apvyr_cache
 
 # services:
 #   - mssql2008r2sp2
+
+# install:
+#   - cmd: IF NOT EXIST apvyr_cache MKDIR apvyr_cache
+#   - cmd: IF %APPVEYOR_JOB_NUMBER% EQU 1 IF EXISTS apvyr_cache\wheels.zip DEL apvyr_cache\wheels.zip
 
 environment:
 
@@ -19,6 +24,10 @@ environment:
     # http://stackoverflow.com/a/13751649/163740
     # http://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros#microsoft-specific-predefined-macros
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\utils\\build-python.cmd"
+    # these variables should be overwritten as necessary from the Appveyor UI
+    # (Settings tab -> Environment -> Environment variables)
+    APVYR_RUN_TESTS: true
+    APVYR_GENERATE_WHEELS: true
 
   matrix:
 
@@ -64,6 +73,8 @@ build_script:
   - "echo APPVEYOR_JOB_NUMBER: %APPVEYOR_JOB_NUMBER%"
   - "echo PYTHON: %PYTHON%"
   - "echo TESTS_DIR: %TESTS_DIR%"
+  - "echo APVYR_RUN_TESTS: %APVYR_RUN_TESTS%"
+  - "echo APVYR_GENERATE_WHEELS: %APVYR_GENERATE_WHEELS%"
   - "echo MSSQL_NAME: %MSSQL_NAME%"
   - "echo MSSQL_CONN: %MSSQL_CONN%"
   #- dir /B
@@ -75,18 +86,24 @@ build_script:
 
 test_script:
   - echo RUN TESTS HERE!
-  # - echo MS SQL Server tests
-  # - "sqlcmd -S \"(local)\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"SELECT @@VERSION\""
-  # - "sqlcmd -S \"(local)\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"CREATE DATABASE test_db\""
-  # - "%PYTHON%\\python %TESTS_DIR%\sqlservertests.py %MSSQL_CONN%"
+  # - cmd:|
+  #   IF "%APVYR_RUN_TESTS%" == "true" (
+  #     echo MS SQL Server tests
+  #     "sqlcmd -S \"(local)\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"SELECT @@VERSION\""
+  #     "sqlcmd -S \"(local)\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"CREATE DATABASE test_db\""
+  #     "%PYTHON%\\python %TESTS_DIR%\sqlservertests.py %MSSQL_CONN%"
+  #   )
 
 after_test:
-  - "%PYTHON%\\python -m pip install --upgrade pip --no-warn-script-location"
-  - "%PYTHON%\\python -m pip install wheel --no-warn-script-location"
-  - "%WITH_COMPILER% %PYTHON%\\python setup.py bdist_wheel"
+  - cmd:|
+    IF "%APVYR_GENERATE_WHEELS%" == "true" (
+      "%PYTHON%\\python -m pip install --upgrade pip --no-warn-script-location"
+      "%PYTHON%\\python -m pip install wheel --no-warn-script-location"
+      "%WITH_COMPILER% %PYTHON%\\python setup.py bdist_wheel"
+    )
+  #    7z a apvyr_cache\wheels.zip %APPVEYOR_BUILD_FOLDER%\dist\*.whl -bsp0
   - dir /B dist
-  - "7z a %APPVEYOR_BUILD_FOLDER%\\dist\\wheels.zip dist\\*.whl"
 
 artifacts:
   - path: 'dist\*.whl'
-  - path: 'dist\wheels.zip'
+  # - path: 'dist\wheels.zip'
