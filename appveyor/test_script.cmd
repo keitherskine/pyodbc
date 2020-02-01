@@ -1,4 +1,4 @@
-REM If needed, to retrieve the names of ODBC drivers and DSNs
+REM Retrieve the names of the available ODBC drivers and DSNs
 "%PYTHON%\python" -c "import pyodbc; print(pyodbc.drivers()); print(pyodbc.dataSources())"
 
 
@@ -20,6 +20,7 @@ IF "%APVYR_RUN_MSSQL_TESTS%" == "true" (
   ECHO Skipping the MS SQL Server unit tests
 )
 
+REM TODO? Should I create a separate database for the tests?
 IF "%APVYR_RUN_POSTGRES_TESTS%" == "true" (
   ECHO Running the PostgreSQL unit tests
   "C:\Program Files\PostgreSQL\9.6\bin\postgres" --version^
@@ -29,6 +30,7 @@ IF "%APVYR_RUN_POSTGRES_TESTS%" == "true" (
   ECHO Skipping the PostgreSQL unit tests
 )
 
+REM TODO? Should I create a separate database for the tests?  (with the right collation)
 REM CREATE DATABASE test_db CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 IF "%APVYR_RUN_MYSQL_TESTS%" == "true" (
   ECHO Running the MySQL unit tests

@@ -47,9 +47,9 @@ environment:
     # http://stackoverflow.com/a/13751649/163740
     # http://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros#microsoft-specific-predefined-macros
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\compile.cmd"
-    # other global variables
+    # other variables
     MSSQL_INSTANCE: (local)\SQL2008R2SP2
-    MSSQL_CONN: Driver={SQL Server Native Client 10.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!
+    MSSQL_CONN: Driver={SQL Server Native Client 10.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
     POSTGRES_CONN: Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
     MYSQL_CONN: Driver={MySQL ODBC 5.3 ANSI Driver};Charset=utf8mb4;Server=localhost;Port=3306;Database=mysql;Uid=root;Pwd=Password12!;
 
@@ -58,6 +58,9 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       PYTHON: "C:\\Python27"
       TESTS_DIR: tests2
+      # the Appveyor images do not have 32-bit ODBC drivers installed for Postgres/MySQL
+      APVYR_RUN_POSTGRES_TESTS: "false"
+      APVYR_RUN_MYSQL_TESTS: "false"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       PYTHON: "C:\\Python27-x64"
@@ -98,6 +101,9 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python38"
       TESTS_DIR: tests3
+      # the Appveyor images do not have 32-bit ODBC drivers installed for Postgres/MySQL
+      APVYR_RUN_POSTGRES_TESTS: "false"
+      APVYR_RUN_MYSQL_TESTS: "false"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python38-x64"
