@@ -1,3 +1,22 @@
+# This appveyor configuration file:
+#   - builds pyodbc in multiple versions of Python
+#   - tests the generated pyodbc module against various databases
+#   - creates a distributable wheel file as an appveyor "artifact"
+#     (which can be downloaded from the Appveyor UI)
+#
+# Various aspects of this file can be controlled by setting environment
+# variables in the Appveyor UI (see the Settings tab -> Environment ->
+# Environment variables).  You will need an Appveyor account for this, and
+# to fork the pyodbc repo.  "*" indicates the default.
+#   - APVYR_RUN_TESTS - run the unit tests at all (true*/false)
+#   - APVYR_RUN_MSSQL_TESTS - run the MS SQL Server unit tests (true*/false)
+#   - APVYR_RUN_POSTGRES_TESTS - run the PostgrSQL unit tests (true*/false)
+#   - APVYR_RUN_MYSQL_TESTS - run the MySQL unit tests (true*/false)
+#   - APVYR_GENERATE_WHEELS - generate a distributable wheel file (true/false*)
+#
+# For documentation about the appveyor.yml file, see: https://www.appveyor.com/docs/appveyor-yml/
+
+
 # version: '{branch} - #{build}'
 
 image: Visual Studio 2015
@@ -27,7 +46,7 @@ environment:
     APVYR_RUN_MSSQL_TESTS: "true"
     APVYR_RUN_POSTGRES_TESTS: "true"
     APVYR_RUN_MYSQL_TESTS: "true"
-    APVYR_GENERATE_WHEELS: "true"
+    APVYR_GENERATE_WHEELS: "false"
 
   matrix:
 
@@ -36,6 +55,7 @@ environment:
       TESTS_DIR: tests2
       MSSQL_NAME: SQL2008R2SP2
       MSSQL_CONN: Driver={SQL Server Native Client 10.0};Server=(local)\%MSSQL_NAME%;Database=test_db;UID=sa;PWD=Password12!
+      POSTGRES_CONN: Driver={PostgreSQL UNICODE};Server=localhost;Uid=postgres;Pwd=Password12!;
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
     #   PYTHON: "C:\\Python27-x64"
 
@@ -46,22 +66,27 @@ environment:
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
     #   PYTHON: "C:\\Python34"
+
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
     #   PYTHON: "C:\\Python34-x64"
 
-    # # Python 3.5 needs at least the VS2015 image
+    # Python 3.5 needs at least the VS2015 image
+
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python35"
+
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python35-x64"
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python36"
+
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python36-x64"
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python37"
+
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python37-x64"
 
@@ -72,9 +97,11 @@ environment:
       TESTS_DIR: tests3
       MSSQL_NAME: SQL2008R2SP2
       MSSQL_CONN: Driver={SQL Server Native Client 10.0};Server=(local)\%MSSQL_NAME%;Database=test_db;UID=sa;PWD=Password12!
+      POSTGRES_CONN: Driver={PostgreSQL UNICODE};Server=localhost;Uid=postgres;Pwd=Password12!;
 
 services:
   - mssql2008r2sp2
+  - postgresql96
 
 build_script:
   - call .\appveyor\build_script.cmd
