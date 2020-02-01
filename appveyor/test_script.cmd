@@ -1,8 +1,6 @@
 REM 0 = success, 1 = failure
 SET OVERALL_RESULT=0
 
-set
-
 IF NOT "%APVYR_RUN_TESTS%" == "true" (
   ECHO Skipping all the unit tests
   EXIT /B %OVERALL_RESULT%
@@ -21,7 +19,7 @@ IF "%APVYR_RUN_MSSQL_TESTS%" == "true" (
 IF "%APVYR_RUN_POSTGRES_TESTS%" == "true" (
   ECHO Running the PostgreSQL unit tests
   "C:\Program Files\PostgreSQL\9.6\bin\postgres" --version^
-  && "%PYTHON%\python" "%TESTS_DIR%\pgests.py" "%POSTGRES_CONN%"
+  && "%PYTHON%\python" "%TESTS_DIR%\pgtests.py" "%POSTGRES_CONN%"
   IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 ) ELSE (
   ECHO Skipping the PostgreSQL unit tests
