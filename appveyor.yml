@@ -20,7 +20,7 @@ environment:
     # /E:ON and /V:ON options are not enabled in the batch script intepreter
     # http://stackoverflow.com/a/13751649/163740
     # http://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros#microsoft-specific-predefined-macros
-    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\utils\\build-python.cmd"
+    WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\compile.cmd"
     # the following variables can be overridden as necessary through the Appveyor UI
     # (Settings tab -> Environment -> Environment variables)
     APVYR_RUN_TESTS: "true"
@@ -77,9 +77,9 @@ services:
   - mssql2008r2sp2
 
 build_script:
-  - "echo %APPVEYOR_BUILD_FOLDER% ^| %APPVEYOR_BUILD_WORKER_IMAGE%"
-  - "echo %APPVEYOR_JOB_NUMBER% ^| %APPVEYOR_JOB_ID% ^| %APPVEYOR_JOB_NAME%"
-  - "echo %APVYR_RUN_TESTS% ^| %APVYR_RUN_MSSQL_TESTS% ^| %APVYR_RUN_POSTGRES_TESTS% ^| %APVYR_RUN_MYSQL_TESTS%"
+  - "echo %APPVEYOR_BUILD_FOLDER% / %APPVEYOR_BUILD_WORKER_IMAGE%"
+  - "echo %APPVEYOR_JOB_NUMBER% / %APPVEYOR_JOB_ID% / %APPVEYOR_JOB_NAME%"
+  - "echo %APVYR_RUN_TESTS% / %APVYR_RUN_MSSQL_TESTS% / %APVYR_RUN_POSTGRES_TESTS% / %APVYR_RUN_MYSQL_TESTS%"
   - "echo %APVYR_GENERATE_WHEELS%"
   - "echo PYTHON: %PYTHON%"
   - "echo TESTS_DIR: %TESTS_DIR%"
@@ -93,7 +93,6 @@ build_script:
   #- dir /B build
 
 test_script:
-  - echo RUN TESTS HERE!
   - call appveyor\run_tests.cmd
 
   # - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"SELECT @@VERSION\""
