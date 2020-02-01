@@ -103,6 +103,7 @@ environment:
 services:
   - mssql2008r2sp2
   - postgresql96
+  - mysql
 
 build_script:
   - call .\appveyor\build_script.cmd

@@ -1,5 +1,5 @@
 REM If needed, to retrieve the names of ODBC drivers and DSNs
-REM "%PYTHON%\python" -c "import pyodbc; print(pyodbc.drivers()); print(pyodbc.dataSources())"
+"%PYTHON%\python" -c "import pyodbc; print(pyodbc.drivers()); print(pyodbc.dataSources())"
 
 
 REM 0 = success, 1 = failure
@@ -31,8 +31,8 @@ IF "%APVYR_RUN_POSTGRES_TESTS%" == "true" (
 
 IF "%APVYR_RUN_MYSQL_TESTS%" == "true" (
   ECHO Running the MySQL unit tests
-  "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" -e "SHOW DATABASES;" --user=root --password=Password12!
   "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" --version^
+  "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" -e "SHOW DATABASES;" --user=root --password=Password12!^
   && "%PYTHON%\python" "%TESTS_DIR%\mysqltests.py" "%MYSQL_CONN%"
   IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 ) ELSE (
