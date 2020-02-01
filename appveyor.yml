@@ -49,20 +49,25 @@ environment:
     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\compile.cmd"
     # other global variables
     POSTGRES_CONN: Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
-    MYSQL_CONN: Driver={MySQL ODBC 5.3 Unicode Driver};Server=localhost;Port=3306;Database=mysql;Uid=root;Pwd=Password12!;
+    MYSQL_CONN: Driver={MySQL ODBC 5.3 Unicode Driver};Charset=utf8mb4;Server=localhost;Port=3306;Database=mysql;Uid=root;Pwd=Password12!;
 
   matrix:
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       PYTHON: "C:\\Python27"
       TESTS_DIR: tests2
       MSSQL_NAME: SQL2008R2SP2
       MSSQL_CONN: Driver={SQL Server Native Client 10.0};Server=(local)\%MSSQL_NAME%;Database=test_db;UID=sa;PWD=Password12!
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    #   PYTHON: "C:\\Python27-x64"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+      PYTHON: "C:\\Python27-x64"
+      TESTS_DIR: tests2
+      MSSQL_NAME: SQL2008R2SP2
+      MSSQL_CONN: Driver={SQL Server Native Client 10.0};Server=(local)\%MSSQL_NAME%;Database=test_db;UID=sa;PWD=Password12!
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python33"
+
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python33-x64"
 
@@ -94,6 +99,7 @@ environment:
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON: "C:\\Python38"
+
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON: "C:\\Python38-x64"
       TESTS_DIR: tests3
