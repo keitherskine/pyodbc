@@ -1816,4 +1816,7 @@ if __name__ == '__main__':
     add_to_path()
 
     import pyodbc
-    main()
+    if main().wasSuccessful():
+        sys.exit(0)
+    else:
+        sys.exit(1)
