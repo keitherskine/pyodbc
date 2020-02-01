@@ -571,6 +571,8 @@ def main():
     testRunner = unittest.TextTestRunner(verbosity=options.verbose)
     result = testRunner.run(s)
 
+    return result
+
 if __name__ == '__main__':
 
     # Add the build directory to the path so we're testing the latest build, not the installed version.
@@ -578,4 +580,4 @@ if __name__ == '__main__':
     add_to_path()
 
     import pyodbc
-    main()
+    sys.exit(0 if main().wasSuccessful() else 1)

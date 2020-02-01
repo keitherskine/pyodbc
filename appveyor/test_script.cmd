@@ -31,7 +31,8 @@ IF "%APVYR_RUN_POSTGRES_TESTS%" == "true" (
 )
 
 REM TODO? Should I create a separate database for the tests?  (with the right collation)
-REM CREATE DATABASE test_db CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+REM https://dev.mysql.com/doc/refman/5.7/en/charset-charsets.html
+REM e.g. CREATE DATABASE test_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 IF "%APVYR_RUN_MYSQL_TESTS%" == "true" (
   ECHO Running the MySQL unit tests
   "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" --version^

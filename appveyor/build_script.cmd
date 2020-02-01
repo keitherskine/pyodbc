@@ -15,11 +15,14 @@ ECHO MSSQL_CONN    : %MSSQL_CONN%
 ECHO POSTGRES_CONN : %POSTGRES_CONN%
 ECHO MYSQL_CONN    : %MYSQL_CONN%
 
-ECHO Python compiler:
+ECHO Python build and compiler:
 "%PYTHON%\python" -c "import platform; print(platform.python_build(), platform.python_compiler())"
+
 ECHO Building pyodbc...
 %WITH_COMPILER% "%PYTHON%\python" setup.py build
+
 ECHO Installing pyodbc...
 "%PYTHON%\python" setup.py install
+
 ECHO pyodbc version:
 "%PYTHON%\python" -c "import pyodbc; print(pyodbc.version)"

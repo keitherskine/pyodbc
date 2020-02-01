@@ -7,14 +7,15 @@
 # Various aspects of this file can be controlled by setting environment
 # variables in the Appveyor UI (see the Settings tab -> Environment ->
 # Environment variables).  You will need an Appveyor account for this, and
-# to fork the pyodbc repo.  "*" indicates the default.
+# to fork the pyodbc repo.  Here are the variables, "*" indicates the default
+# value:
 #   - APVYR_RUN_TESTS - run the unit tests at all (true*/false)
 #   - APVYR_RUN_MSSQL_TESTS - run the MS SQL Server unit tests (true*/false)
 #   - APVYR_RUN_POSTGRES_TESTS - run the PostgrSQL unit tests (true*/false)
 #   - APVYR_RUN_MYSQL_TESTS - run the MySQL unit tests (true*/false)
 #   - APVYR_GENERATE_WHEELS - generate a distributable wheel file (true/false*)
 #
-# For documentation about the appveyor.yml file, see: https://www.appveyor.com/docs/appveyor-yml/
+# For documentation about appveyor.yml files, see: https://www.appveyor.com/docs/appveyor-yml/
 
 
 # version: '{branch} - #{build}'
