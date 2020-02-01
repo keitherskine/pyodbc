@@ -1,6 +1,10 @@
 REM 0 = success, 1 = failure
 SET OVERALL_RESULT=0
 
+
+"%PYTHON%\python" -c "import pyodbc; print(pyodbc.drivers()); print(pyodbc.dataSources())"
+
+
 IF NOT "%APVYR_RUN_TESTS%" == "true" (
   ECHO Skipping all the unit tests
   EXIT /B %OVERALL_RESULT%
