@@ -32,7 +32,7 @@ IF "%APVYR_RUN_POSTGRES_TESTS%" == "true" (
 IF "%APVYR_RUN_MYSQL_TESTS%" == "true" (
   ECHO Running the MySQL unit tests
   "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" --version^
-  "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" -e "SHOW DATABASES;" --user=root --password=Password12!^
+  && "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" -u root -pPassword12! -e "SHOW DATABASES;"^
   && "%PYTHON%\python" "%TESTS_DIR%\mysqltests.py" "%MYSQL_CONN%"
   IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 ) ELSE (
