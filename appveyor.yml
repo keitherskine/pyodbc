@@ -86,19 +86,18 @@ build_script:
 
 test_script:
   - echo RUN TESTS HERE!
-  # - cmd:|
-  #   IF "%APVYR_RUN_TESTS%" == "true" (
-  #     echo MS SQL Server tests
-  #     "sqlcmd -S \"(local)\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"SELECT @@VERSION\""
-  #     "sqlcmd -S \"(local)\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"CREATE DATABASE test_db\""
-  #     "%PYTHON%\\python %TESTS_DIR%\sqlservertests.py %MSSQL_CONN%"
-  #   )
+  # - cmd: >-
+  #   IF "%APVYR_RUN_TESTS%" == "true"
+  #   (echo MS SQL Server tests
+  #   && sqlcmd -S "(local)\%MSSQL_NAME%" -U sa -P "Password12!" -Q "SELECT @@VERSION"
+  #   && sqlcmd -S "(local)\%MSSQL_NAME%" -U sa -P "Password12!" -Q "CREATE DATABASE test_db"
+  #   && "%PYTHON%\\python" "%TESTS_DIR%\sqlservertests.py" "%MSSQL_CONN%")
 
 after_test:
   - IF NOT "%APVYR_GENERATE_WHEELS%" == "true" echo Generation of wheels has been skipped
   - IF "%APVYR_GENERATE_WHEELS%" == "true" "%PYTHON%\\python" -m pip install --upgrade pip --no-warn-script-location
   - IF "%APVYR_GENERATE_WHEELS%" == "true" "%PYTHON%\\python" -m pip install wheel --no-warn-script-location
-  - IF "%APVYR_GENERATE_WHEELS%" == "true" "%WITH_COMPILER%" "%PYTHON%\\python" setup.py bdist_wheel
+  - IF "%APVYR_GENERATE_WHEELS%" == "true" %WITH_COMPILER% "%PYTHON%\\python" setup.py bdist_wheel
   - IF "%APVYR_GENERATE_WHEELS%" == "true" dir /B dist
 
   #    7z a apvyr_cache\wheels.zip %APPVEYOR_BUILD_FOLDER%\dist\*.whl -bsp0
