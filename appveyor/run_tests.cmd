@@ -9,7 +9,7 @@ IF "%APVYR_RUN_TESTS%" == "true" (
   echo ERRORLEVEL: %ERRORLEVEL%
   "%PYTHON%\python" "%TESTS_DIR%\sqlservertests.py" "%MSSQL_CONN%"
   echo ERRORLEVEL: %ERRORLEVEL%
-  IF %ERRORLEVEL% NEQ 0 SET OVERALL_RESULT=1
+  IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 ) ELSE (
   ECHO Skipping MS SQL Server tests
 )
