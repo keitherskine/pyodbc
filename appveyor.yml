@@ -77,23 +77,23 @@ services:
   - mssql2008r2sp2
 
 build_script:
-  - "echo %APPVEYOR_BUILD_FOLDER% / %APPVEYOR_BUILD_WORKER_IMAGE%"
-  - "echo %APPVEYOR_JOB_NUMBER% / %APPVEYOR_JOB_ID% / %APPVEYOR_JOB_NAME%"
-  - "echo %APVYR_RUN_TESTS% / %APVYR_RUN_MSSQL_TESTS% / %APVYR_RUN_POSTGRES_TESTS% / %APVYR_RUN_MYSQL_TESTS%"
-  - "echo %APVYR_GENERATE_WHEELS%"
-  - "echo PYTHON: %PYTHON%"
-  - "echo TESTS_DIR: %TESTS_DIR%"
-  - "echo MSSQL_NAME: %MSSQL_NAME%"
-  - "echo MSSQL_CONN: %MSSQL_CONN%"
-  #- dir /B
-  - "%PYTHON%\\python -c \"import platform; print(platform.python_build(), platform.python_compiler())\""
-  - "%WITH_COMPILER% %PYTHON%\\python setup.py build"
-  - "%PYTHON%\\python setup.py install"
-  - "%PYTHON%\\python -c \"import pyodbc; print(pyodbc.version)\""
-  #- dir /B build
+  - call appveyor\build_script.cmd
+
+  # - "echo %APPVEYOR_BUILD_FOLDER% / %APPVEYOR_BUILD_WORKER_IMAGE%"
+  # - "echo %APPVEYOR_JOB_NUMBER% / %APPVEYOR_JOB_ID% / %APPVEYOR_JOB_NAME%"
+  # - "echo %APVYR_RUN_TESTS% / %APVYR_RUN_MSSQL_TESTS% / %APVYR_RUN_POSTGRES_TESTS% / %APVYR_RUN_MYSQL_TESTS%"
+  # - "echo %APVYR_GENERATE_WHEELS%"
+  # - "echo %PYTHON% / %TESTS_DIR%"
+  # - "echo %MSSQL_NAME% / %MSSQL_CONN%"
+  # #- dir /B
+  # - "%PYTHON%\\python -c \"import platform; print(platform.python_build(), platform.python_compiler())\""
+  # - "%WITH_COMPILER% %PYTHON%\\python setup.py build"
+  # - "%PYTHON%\\python setup.py install"
+  # - "%PYTHON%\\python -c \"import pyodbc; print(pyodbc.version)\""
+  # #- dir /B build
 
 test_script:
-  - call appveyor\run_tests.cmd
+  - call appveyor\test_script.cmd
 
   # - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"SELECT @@VERSION\""
   # - "sqlcmd -S \"(local)\\%MSSQL_NAME%\" -U sa -P \"Password12!\" -Q \"CREATE DATABASE test_db\""
@@ -107,11 +107,13 @@ test_script:
   #   && "%PYTHON%\\python" "%TESTS_DIR%\sqlservertests.py" "%MSSQL_CONN%")
 
 after_test:
-  - IF NOT "%APVYR_GENERATE_WHEELS%" == "true" echo Generation of wheels has been skipped
-  - IF "%APVYR_GENERATE_WHEELS%" == "true" "%PYTHON%\\python" -m pip install --upgrade pip --no-warn-script-location
-  - IF "%APVYR_GENERATE_WHEELS%" == "true" "%PYTHON%\\python" -m pip install wheel --no-warn-script-location
-  - IF "%APVYR_GENERATE_WHEELS%" == "true" %WITH_COMPILER% "%PYTHON%\\python" setup.py bdist_wheel
-  - IF "%APVYR_GENERATE_WHEELS%" == "true" dir /B dist
+  - call appveyor\after_test.cmd
+
+  # - IF NOT "%APVYR_GENERATE_WHEELS%" == "true" echo Generation of wheels has been skipped
+  # - IF "%APVYR_GENERATE_WHEELS%" == "true" "%PYTHON%\\python" -m pip install --upgrade pip --no-warn-script-location
+  # - IF "%APVYR_GENERATE_WHEELS%" == "true" "%PYTHON%\\python" -m pip install wheel --no-warn-script-location
+  # - IF "%APVYR_GENERATE_WHEELS%" == "true" %WITH_COMPILER% "%PYTHON%\\python" setup.py bdist_wheel
+  # - IF "%APVYR_GENERATE_WHEELS%" == "true" dir /B dist
 
   #    7z a apvyr_cache\wheels.zip %APPVEYOR_BUILD_FOLDER%\dist\*.whl -bsp0
   # - IF "%APVYR_GENERATE_WHEELS%" == "true" (
