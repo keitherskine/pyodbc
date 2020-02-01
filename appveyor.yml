@@ -96,8 +96,7 @@ test_script:
 
 after_test:
   #    7z a apvyr_cache\wheels.zip %APPVEYOR_BUILD_FOLDER%\dist\*.whl -bsp0
-  - cmd: |
-    IF "%APVYR_GENERATE_WHEELS%" == "true" (
+  - IF "%APVYR_GENERATE_WHEELS%" == "true" (
       "%PYTHON%\\python -m pip install --upgrade pip --no-warn-script-location"
       "%PYTHON%\\python -m pip install wheel --no-warn-script-location"
       "%WITH_COMPILER% %PYTHON%\\python setup.py bdist_wheel"
