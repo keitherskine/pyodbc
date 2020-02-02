@@ -37,10 +37,11 @@ SET DRIVER={SQL Server Native Client 10.0}
 SET CONN_STR=Driver={SQL Server Native Client 10.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
+ECHO *** Run tests using connection string: "%CONN_STR%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
-  ECHO %CONN_STR%
+  ECHO "%CONN_STR%"
   GOTO :mssql2
 )
 "%PYTHON%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
@@ -54,7 +55,7 @@ ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
-  ECHO %CONN_STR%
+  ECHO "%CONN_STR%"
   GOTO :mssql3
 )
 "%PYTHON%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
@@ -68,7 +69,7 @@ ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
-  ECHO %CONN_STR%
+  ECHO "%CONN_STR%"
   GOTO :mssql4
 )
 "%PYTHON%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
@@ -82,7 +83,7 @@ ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
-  ECHO %CONN_STR%
+  ECHO "%CONN_STR%"
   GOTO :mssql5
 )
 "%PYTHON%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
@@ -96,7 +97,7 @@ ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
-  ECHO %CONN_STR%
+  ECHO "%CONN_STR%"
   GOTO :postgresql
 )
 "%PYTHON%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
@@ -126,7 +127,7 @@ ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
-  ECHO %CONN_STR%
+  ECHO "%CONN_STR%"
   GOTO :mysql
 )
 "%PYTHON%\python" "%TESTS_DIR%\pgtests.py" "%CONN_STR%"
@@ -158,7 +159,7 @@ ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
-  ECHO %CONN_STR%
+  ECHO "%CONN_STR%"
   GOTO :end
 )
 "%PYTHON%\python" "%TESTS_DIR%\mysqltests.py" "%CONN_STR%"
