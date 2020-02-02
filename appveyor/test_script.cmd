@@ -36,7 +36,7 @@ IF ERRORLEVEL 1 (
 :mssql1
 SET CONN_STR=Driver={SQL Server Native Client 10.0};Server=(local)\SQL2008R2SP2;Database=test_db;UID=sa;PWD=Password12!;
 ECHO Connection string (1): %CONN_STR%
-"%PYTHON%\python" -c "import pyodbc; pyodbc.connect("%CONN_STR%").close()"
+"%PYTHON%\python" test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO INFO: Could not connect using the connection string
   GOTO :mssql2
@@ -45,9 +45,9 @@ IF ERRORLEVEL 1 (
 IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :mssql2
-SET CONN_STR=Driver={SQL Server Native Client 11.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
+SET CONN_STR=Driver={SQL Server Native Client 11.0};Server=(local)\SQL2008R2SP2;Database=test_db;UID=sa;PWD=Password12!;
 ECHO Connection string (2): %CONN_STR%
-"%PYTHON%\python" -c "import pyodbc; pyodbc.connect("%CONN_STR%").close()"
+"%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO INFO: Could not connect using the connection string
   GOTO :mssql3
@@ -111,9 +111,9 @@ IF "%APVYR_RUN_MYSQL_TESTS%" == "true" (
   ECHO Running the MySQL unit tests
   ECHO Get MySQL version
   "%MYSQL_PATH%\bin\mysql" --version
-  "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "SELECT VERSION()"
+  REM "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "SELECT VERSION()"
   "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "STATUS"
-  "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "SHOW DATABASES"
+  REM "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "SHOW DATABASES"
   ECHO Connection string: %CONN_STR%
   "%PYTHON%\python" "%TESTS_DIR%\mysqltests.py" "%CONN_STR%"
   IF ERRORLEVEL 1 SET OVERALL_RESULT=1
