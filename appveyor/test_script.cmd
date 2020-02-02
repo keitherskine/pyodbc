@@ -1,5 +1,5 @@
 REM Retrieve the names of the available ODBC drivers
-"%PYTHON%\python" -c "import pyodbc; print('ODBC Drivers:'); print('\n'.join(pyodbc.drivers()))"
+"%PYTHON%\python" -c "import pyodbc; print('Available ODBC Drivers:'); print('\n'.join(sorted(pyodbc.drivers())))"
 
 REM 0 = success, 1 = failure
 SET OVERALL_RESULT=0
@@ -10,6 +10,7 @@ IF NOT "%APVYR_RUN_TESTS%" == "true" (
 )
 
 
+ECHO.
 ECHO ############################################################
 ECHO # MS SQL Server
 ECHO ############################################################
@@ -33,8 +34,8 @@ IF ERRORLEVEL 1 (
 )
 
 :mssql1
-SET CONN_STR=Driver={SQL Server Native Client 10.0};Server=(local)\SQL2008R2SP2;Database=test_db;UID=sa;PWD=Password12!;
-ECHO
+SET CONN_STR=Driver={SQL Server Native Client 10.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
+ECHO.
 ECHO Connection string (1): "%CONN_STR%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
@@ -45,8 +46,8 @@ IF ERRORLEVEL 1 (
 IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :mssql2
-SET CONN_STR=Driver={SQL Server Native Client 11.0};Server=(local)\SQL2008R2SP2;Database=test_db;UID=sa;PWD=Password12!;
-ECHO
+SET CONN_STR=Driver={SQL Server Native Client 11.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
+ECHO.
 ECHO Connection string (2): "%CONN_STR%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
@@ -58,7 +59,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :mssql3
 SET CONN_STR=Driver={ODBC Driver 11 for SQL Server};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
-ECHO
+ECHO.
 ECHO Connection string (3): "%CONN_STR%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
@@ -70,8 +71,20 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :mssql4
 SET CONN_STR=Driver={ODBC Driver 13 for SQL Server};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
-ECHO
+ECHO.
 ECHO Connection string (4): "%CONN_STR%"
+"%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
+IF ERRORLEVEL 1 (
+  ECHO INFO: Could not connect using the connection string
+  GOTO :mssql5
+)
+"%PYTHON%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
+IF ERRORLEVEL 1 SET OVERALL_RESULT=1
+
+:mssql5
+SET CONN_STR=Driver={ODBC Driver 17 for SQL Server};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
+ECHO.
+ECHO Connection string (5): "%CONN_STR%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO INFO: Could not connect using the connection string
@@ -83,6 +96,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :postgresql
 REM TODO: create a separate database for the tests?
+ECHO.
 ECHO ############################################################
 ECHO # PostgreSQL
 ECHO ############################################################
@@ -113,6 +127,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 REM TODO: create a separate database for the tests?  (with the right collation)
 REM       https://dev.mysql.com/doc/refman/5.7/en/charset-charsets.html
 REM       e.g. CREATE DATABASE test_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+ECHO.
 ECHO ############################################################
 ECHO # MySQL
 ECHO ############################################################
