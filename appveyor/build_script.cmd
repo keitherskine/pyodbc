@@ -1,3 +1,4 @@
+ECHO *** Environment variables:
 ECHO APPVEYOR_BUILD_FOLDER      : %APPVEYOR_BUILD_FOLDER%
 ECHO APPVEYOR_BUILD_WORKER_IMAGE: %APPVEYOR_BUILD_WORKER_IMAGE%
 ECHO APPVEYOR_JOB_NUMBER: %APPVEYOR_JOB_NUMBER%
@@ -20,14 +21,20 @@ REM ECHO MSSQL_CONN4   : %MSSQL_CONN4%
 REM ECHO POSTGRES_CONN : %POSTGRES_CONN%
 REM ECHO MYSQL_CONN    : %MYSQL_CONN%
 
-ECHO Python build and compiler:
+ECHO.
+ECHO *** Python build and compiler:
 "%PYTHON%\python" -c "import platform; print(platform.python_build(), platform.python_compiler())"
 
-ECHO Building pyodbc...
+ECHO.
+ECHO *** Building pyodbc...
 %WITH_COMPILER% "%PYTHON%\python" setup.py build
 
-ECHO Installing pyodbc...
+ECHO.
+ECHO *** Installing pyodbc...
 "%PYTHON%\python" setup.py install
 
-ECHO pyodbc version:
+ECHO.
+ECHO *** pyodbc version:
 "%PYTHON%\python" -c "import pyodbc; print(pyodbc.version)"
+
+ECHO.
