@@ -23,7 +23,7 @@ IF "%APVYR_RUN_MSSQL_TESTS%" == "true" (
 ECHO Get MS SQL Server version
 sqlcmd -S "%MSSQL_INSTANCE%" -U sa -P "Password12!" -Q "SELECT @@VERSION"
 IF ERRORLEVEL 1 (
-  ECHO ERROR: Could not connect to instance %MSSQL_INSTANCE%
+  ECHO ERROR: Could not connect to instance
   GOTO :postgresql
 )
 ECHO Create test database
