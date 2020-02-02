@@ -34,7 +34,7 @@ IF ERRORLEVEL 1 (
 )
 
 :mssql1
-SET CONN_STR=Driver={SQL Server Native Client 10.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
+SET CONN_STR=Driver={SQL Server Native Client 10.0};Server=(local)\SQL2008R2SP2;Database=test_db;UID=sa;PWD=Password12!;
 ECHO Connection string (1): %CONN_STR%
 "%PYTHON%\python" -c "import pyodbc; pyodbc.connect("%CONN_STR%").close()"
 IF ERRORLEVEL 1 (
@@ -83,14 +83,14 @@ REM TODO: create a separate database for the tests?
 ECHO ############################################################
 ECHO # PostgreSQL
 ECHO ############################################################
+SET PGPASSWORD=Password12!
+SET CONN_STR=Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
 IF "%APVYR_RUN_POSTGRES_TESTS%" == "true" (
   ECHO Running the PostgreSQL unit tests
   REM ECHO Get psql version
   REM "C:\Program Files\PostgreSQL\9.6\bin\postgres" --version
   ECHO Get PostgreSQL version
-  SET PGPASSWORD=Password12!
   "%POSTGRES_PATH%\bin\psql" -U postgres -d postgres -c "SELECT version()"
-  SET "CONN_STR=Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;"
   ECHO Connection string: "%CONN_STR%"
   "%PYTHON%\python" "%TESTS_DIR%\pgtests.py" "%CONN_STR%"
   IF ERRORLEVEL 1 SET OVERALL_RESULT=1
@@ -106,6 +106,7 @@ REM       e.g. CREATE DATABASE test_db CHARACTER SET utf8mb4 COLLATE utf8mb4_gen
 ECHO ############################################################
 ECHO # MySQL
 ECHO ############################################################
+SET CONN_STR=Driver={MySQL ODBC 5.3 ANSI Driver};Charset=utf8mb4;Server=localhost;Port=3306;Database=mysql;Uid=root;Pwd=Password12!;
 IF "%APVYR_RUN_MYSQL_TESTS%" == "true" (
   ECHO Running the MySQL unit tests
   ECHO Get MySQL version
@@ -113,7 +114,6 @@ IF "%APVYR_RUN_MYSQL_TESTS%" == "true" (
   "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "SELECT VERSION()"
   "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "STATUS"
   "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "SHOW DATABASES"
-  SET CONN_STR=Driver={MySQL ODBC 5.3 ANSI Driver};Charset=utf8mb4;Server=localhost;Port=3306;Database=mysql;Uid=root;Pwd=Password12!;
   ECHO Connection string: %CONN_STR%
   "%PYTHON%\python" "%TESTS_DIR%\mysqltests.py" "%CONN_STR%"
   IF ERRORLEVEL 1 SET OVERALL_RESULT=1
