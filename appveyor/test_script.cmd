@@ -34,9 +34,9 @@ IF ERRORLEVEL 1 (
 
 :mssql1
 SET DRIVER={SQL Server Native Client 10.0}
-SET CONN_STR=Driver=%DRIVER%;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
+SET CONN_STR=Driver={SQL Server Native Client 10.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO.
-ECHO *** Run Tests Using Driver: "%DRIVER%"
+ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
@@ -50,7 +50,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 SET DRIVER={SQL Server Native Client 11.0}
 SET CONN_STR=Driver=%DRIVER%;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO.
-ECHO *** Run Tests Using Driver: "%DRIVER%"
+ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
@@ -64,7 +64,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 SET DRIVER={ODBC Driver 11 for SQL Server}
 SET CONN_STR=Driver=%DRIVER%;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO.
-ECHO *** Run Tests Using Driver: "%DRIVER%"
+ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
@@ -78,7 +78,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 SET DRIVER={ODBC Driver 13 for SQL Server}
 SET CONN_STR=Driver=%DRIVER%;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO.
-ECHO *** Run Tests Using Driver: "%DRIVER%"
+ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
@@ -92,7 +92,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 SET DRIVER={ODBC Driver 17 for SQL Server}
 SET CONN_STR=Driver=%DRIVER%;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO.
-ECHO *** Run Tests Using Driver: "%DRIVER%"
+ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
@@ -122,7 +122,7 @@ SET PGPASSWORD=Password12!
 SET DRIVER={PostgreSQL Unicode(x64)}
 SET CONN_STR=Driver=%DRIVER%;Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
 ECHO.
-ECHO *** Run Tests Using Driver: "%DRIVER%"
+ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
@@ -154,7 +154,7 @@ REM "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "SHOW DATABASES"
 SET DRIVER={MySQL ODBC 5.3 ANSI Driver}
 SET CONN_STR=Driver=%DRIVER%;Charset=utf8mb4;Server=localhost;Port=3306;Database=mysql;Uid=root;Pwd=Password12!;
 ECHO.
-ECHO *** Run Tests Using Driver: "%DRIVER%"
+ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:

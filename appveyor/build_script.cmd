@@ -22,11 +22,11 @@ REM ECHO POSTGRES_CONN : %POSTGRES_CONN%
 REM ECHO MYSQL_CONN    : %MYSQL_CONN%
 
 ECHO.
-ECHO *** Python build and compiler:
+ECHO *** Get build info and compiler for the current Python installation:
 "%PYTHON%\python" -c "import platform; print(platform.python_build(), platform.python_compiler())"
 
 ECHO.
-ECHO *** Building pyodbc...
+ECHO *** Building the pyodbc module...
 %WITH_COMPILER% "%PYTHON%\python" setup.py build
 
 ECHO.
@@ -34,7 +34,7 @@ ECHO *** Installing pyodbc...
 "%PYTHON%\python" setup.py install
 
 ECHO.
-ECHO *** pyodbc version:
+ECHO *** get version of the built pyodbc module:
 "%PYTHON%\python" -c "import pyodbc; print(pyodbc.version)"
 
 ECHO.
