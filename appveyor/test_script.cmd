@@ -36,7 +36,7 @@ IF ERRORLEVEL 1 (
 :mssql1
 SET CONN_STR=Driver={SQL Server Native Client 10.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO Connection string (1): %CONN_STR%
-"%PYTHON%\python" -c "import pyodbc; pyodbc.connect(%CONN_STR%).close()"
+"%PYTHON%\python" -c "import pyodbc; pyodbc.connect("%CONN_STR%").close()"
 IF ERRORLEVEL 1 (
   ECHO INFO: Could not connect using the connection string
   GOTO :mssql2
@@ -47,7 +47,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 :mssql2
 SET CONN_STR=Driver={SQL Server Native Client 11.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO Connection string (2): %CONN_STR%
-"%PYTHON%\python" -c "import pyodbc; pyodbc.connect(%CONN_STR%).close()"
+"%PYTHON%\python" -c "import pyodbc; pyodbc.connect("%CONN_STR%").close()"
 IF ERRORLEVEL 1 (
   ECHO INFO: Could not connect using the connection string
   GOTO :mssql3
@@ -58,7 +58,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 :mssql3
 SET CONN_STR=Driver={ODBC Driver 11 for SQL Server};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO Connection string (3): %CONN_STR%
-"%PYTHON%\python" -c "import pyodbc; pyodbc.connect(%CONN_STR%).close()"
+"%PYTHON%\python" -c "import pyodbc; pyodbc.connect("%CONN_STR%").close()"
 IF ERRORLEVEL 1 (
   ECHO INFO: Could not connect using the connection string
   GOTO :mssql4
@@ -69,7 +69,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 :mssql4
 SET CONN_STR=Driver={ODBC Driver 13 for SQL Server};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO Connection string (4): %CONN_STR%
-"%PYTHON%\python" -c "import pyodbc; pyodbc.connect(%CONN_STR%).close()"
+"%PYTHON%\python" -c "import pyodbc; pyodbc.connect("%CONN_STR%").close()"
 IF ERRORLEVEL 1 (
   ECHO INFO: Could not connect using the connection string
   GOTO :postgresql
@@ -90,8 +90,8 @@ IF "%APVYR_RUN_POSTGRES_TESTS%" == "true" (
   ECHO Get PostgreSQL version
   SET PGPASSWORD=Password12!
   "%POSTGRES_PATH%\bin\psql" -U postgres -d postgres -c "SELECT version()"
-  SET CONN_STR=Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
-  ECHO Connection string: %CONN_STR%
+  SET "CONN_STR=Driver={PostgreSQL Unicode(x64)};Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;"
+  ECHO Connection string: "%CONN_STR%"
   "%PYTHON%\python" "%TESTS_DIR%\pgtests.py" "%CONN_STR%"
   IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 ) ELSE (
