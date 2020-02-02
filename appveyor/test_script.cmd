@@ -34,10 +34,9 @@ IF ERRORLEVEL 1 (
 
 :mssql1
 SET DRIVER={SQL Server Native Client 10.0}
-SET CONN_STR=Driver={SQL Server Native Client 10.0};Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
+SET CONN_STR=Driver=%DRIVER%;;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
-ECHO *** Run tests using connection string: "%CONN_STR%"
 "%PYTHON%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
   ECHO *** INFO: Could not connect using the connection string:
@@ -167,4 +166,5 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 
 :end
+ECHO.
 EXIT /B %OVERALL_RESULT%

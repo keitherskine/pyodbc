@@ -10,4 +10,5 @@ IF "%APVYR_GENERATE_WHEELS%" == "true" (
   DIR /B dist
 ) ELSE (
   ECHO *** Skipping generation of the wheel file
+  ECHO.
 )
