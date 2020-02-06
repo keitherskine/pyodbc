@@ -103,6 +103,12 @@ environment:
       PYTHON_HOME: "C:\\Python38-x64"
       TESTS_DIR: tests3
 
+cache:
+  - apvyr_cache -> appveyor\install.ps1
+
+install:
+  - ps: .\appveyor\install.ps1
+
 # ref: https://www.appveyor.com/docs/services-databases/
 services:
   - mssql2008r2sp2
