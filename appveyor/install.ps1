@@ -3,14 +3,14 @@
 Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $msifile_path) {
     # check whether the driver is already installed
     if ($d = Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:SilentlyContinue) {
-        Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed"
-        Write-Output $d.Attribute.Driver
+        Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed: $d.Attribute.Driver"
         return
     } else {
         Write-Output "*** Driver ""$driver_name"" ($driver_bitness) not found"
     }
+    #-ErrorAction:SilentlyContinue
     Write-Output "Downloading the driver's msi file..."
-    if (-Not (Start-FileDownload $driver_url -FileName $msifile_path -ErrorAction:SilentlyContinue)) {
+    if (-Not (Start-FileDownload $driver_url -FileName $msifile_path)) {
         Write-Output "ERROR: Could not download the msi file from $driver_url"
         return
     }
@@ -25,14 +25,14 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
 Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $zipfile_path, $zip_internal_msi_file, $msifile_path) {
     # check whether the driver is already installed
     if ($d = Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:SilentlyContinue) {
-        Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed"
-        Write-Output $d.Attribute.Driver
+        Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed: $d.Attribute.Driver"
         return
     } else {
         Write-Output "*** Driver ""$driver_name"" ($driver_bitness) not found"
     }
     Write-Output "Downloading the driver's zip file..."
-    if (-Not (Start-FileDownload $driver_url -FileName $zipfile_path -ErrorAction:SilentlyContinue)) {
+    #-ErrorAction:SilentlyContinue
+    if (-Not (Start-FileDownload $driver_url -FileName $zipfile_path)) {
         Write-Output "ERROR: Could not download the zip file from $driver_url"
         return
     }
@@ -51,11 +51,13 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
 # create directories
 $cache_dir = "$env:APPVEYOR_BUILD_FOLDER\apvyr_cache"
 If (-Not (Test-Path $cache_dir)) {
-    New-Item -ItemType Directory -Path $cache_dir
+    Write-Output "Creating directory ""$cache_dir""..."
+    New-Item -ItemType Directory -Path $cache_dir | out-null
 }
 $temp_dir = "$env:APPVEYOR_BUILD_FOLDER\apvyr_tmp"
 If (-Not (Test-Path $temp_dir)) {
-    New-Item -ItemType Directory -Path $temp_dir
+    Write-Output "Creating directory ""$temp_dir""..."
+    New-Item -ItemType Directory -Path $temp_dir | out-null
 }
 
 
