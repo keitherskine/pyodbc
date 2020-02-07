@@ -93,6 +93,21 @@ if ([Environment]::Is64BitProcess) {
         -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-winx64.msi" `
         -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi";
 
+
+
+
+
+    Write-Host "KME Installing ODBC driver..." -ForegroundColor Cyan
+    Write-Host "Downloading..."
+    $msiPath = "$($env:USERPROFILE)\msodbcsql.msi"
+    (New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/E/6/B/E6BFDC7A-5BCD-4C51-9912-635646DA801E/en-US/msodbcsql_17.5.1.1_x64.msi', $msiPath)
+    Write-Host "Installing..."
+    cmd /c start /wait msiexec /i "$msiPath" /q
+    del $msiPath
+
+
+
+
 } else {
 
     CheckAndInstallZippedMsiFromUrl `
