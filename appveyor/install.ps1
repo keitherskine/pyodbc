@@ -67,6 +67,10 @@ If (-Not (Test-Path $temp_dir)) {
 }
 
 
+Get-ChildItem $cache_dir
+
+
+# TODO: this should be based on the Python bitness, not the server bitness (which will always be 64-bit)
 if ([Environment]::Is64BitProcess) {
 
     CheckAndInstallZippedMsiFromUrl `
