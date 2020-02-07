@@ -149,3 +149,4 @@ if ([Environment]::Is64BitProcess) {
 Get-ChildItem $temp_dir
 Get-ChildItem $cache_dir
 Get-Help Start-FileDownload
+Get-OdbcDriver
