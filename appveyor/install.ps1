@@ -25,6 +25,10 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
         return
     }
     Write-Output "...driver installed successfully"
+
+    # temp!!!
+    Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:Continue
+
 }
 
 Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $zipfile_path, $zip_internal_msi_file, $msifile_path) {
@@ -51,6 +55,10 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
         return
     }
     Write-Output "...driver installed successfully"
+
+    # temp!!!
+    Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:Continue
+
 }
 
 
@@ -104,6 +112,9 @@ if ([Environment]::Is64BitProcess) {
     Write-Host "Installing..."
     cmd /c start /wait msiexec /i "$msiPath" /q
     del $msiPath
+    # temp!!!
+    Get-OdbcDriver -Name "ODBC Driver 17 for SQL Server" -Platform "64-bit" -ErrorAction:Continue
+
 
 
 
