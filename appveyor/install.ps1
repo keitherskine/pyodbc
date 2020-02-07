@@ -90,7 +90,7 @@ If (-Not (Test-Path $temp_dir)) {
 
 
 # install drivers based on the Python bitness
-$python_arch = cmd /c "C:${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"
+$python_arch = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"
 if ($python_arch -eq "64") {
 
     CheckAndInstallZippedMsiFromUrl `
