@@ -106,14 +106,17 @@ environment:
 cache:
   - apvyr_cache -> appveyor\install.ps1
 
-install:
-  - ps: .\appveyor\install.ps1
+# install:
+#   - ps: .\appveyor\install.ps1
 
 # ref: https://www.appveyor.com/docs/services-databases/
 services:
   - mssql2008r2sp2
   - postgresql96
   - mysql
+
+before_build:
+  - ps: .\appveyor\install.ps1
 
 build_script:
   - call .\appveyor\build_script.cmd
