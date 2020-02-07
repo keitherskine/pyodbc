@@ -18,9 +18,10 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
     }
     Write-Output "Installing driver..."
     #if (-Not (msiexec /i $msifile_path /qn -ErrorAction:SilentlyContinue)) {
-    msiexec /i $msifile_path /qn -ErrorAction:SilentlyContinue -Verbose -ErrorAction:Continue
+    msiexec /i $msifile_path /qn /log C:\projects\pyodbc\apvyr_tmp\msiexec_log.txt  -ErrorAction:SilentlyContinue -Verbose -ErrorAction:Continue
     if (!$?) {
         Write-Output "ERROR: Driver installation failed"
+        Get-Content C:\projects\pyodbc\apvyr_tmp\msiexec_log.txt   # temp!!!!!!!!
         return
     }
     Write-Output "...driver installed successfully"
