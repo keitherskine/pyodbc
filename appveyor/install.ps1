@@ -3,14 +3,15 @@
 Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $msifile_path) {
     # check whether the driver is already installed
     if ($d = Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:SilentlyContinue) {
-        Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed: $d.Attribute.Driver"
+        Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed: $($d.Attribute.Driver)"
         return
     } else {
         Write-Output "*** Driver ""$driver_name"" ($driver_bitness) not found"
     }
-    #-ErrorAction:SilentlyContinue
     Write-Output "Downloading the driver's msi file..."
-    if (-Not (Start-FileDownload $driver_url -FileName $msifile_path)) {
+    #if (-Not (Start-FileDownload $driver_url -FileName $msifile_path -ErrorAction:SilentlyContinue)) {
+    Start-FileDownload $driver_url -FileName $msifile_path
+    if (!$?) {
         Write-Output "ERROR: Could not download the msi file from $driver_url"
         return
     }
@@ -25,7 +26,7 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
 Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $zipfile_path, $zip_internal_msi_file, $msifile_path) {
     # check whether the driver is already installed
     if ($d = Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:SilentlyContinue) {
-        Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed: $d.Attribute.Driver"
+        Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed: $($d.Attribute.Driver)"
         return
     } else {
         Write-Output "*** Driver ""$driver_name"" ($driver_bitness) not found"
@@ -100,3 +101,8 @@ CheckAndInstallMsiFromUrl `
     -driver_bitness "64-bit" `
     -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-winx64.msi" `
     -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi";
+
+
+# temp!!!
+Get-ChildItem $temp_dir
+Get-ChildItem $cache_dir
