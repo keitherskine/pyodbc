@@ -2,33 +2,48 @@
 
 Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $msifile_path) {
     Write-Output ""
+
     # check whether the driver is already installed
-    if ($d = Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:SilentlyContinue) {
+    $d = Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:SilentlyContinue
+    if ($?) {
         Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed: $($d.Attribute.Driver)"
         return
     } else {
         Write-Output "*** Driver ""$driver_name"" ($driver_bitness) not found"
     }
-    Write-Output "Downloading the driver's msi file..."
-    #if (-Not (Start-FileDownload $driver_url -FileName $msifile_path -ErrorAction:SilentlyContinue)) {
-    Start-FileDownload $driver_url -FileName $msifile_path -Verbose -ErrorAction:Continue
-    if (!$?) {
-        Write-Output "ERROR: Could not download the msi file from $driver_url"
-        return
+
+    # get the driver's msi file, check the appveyor cache first
+    if (Test-Path $msifile_path) {
+        Write-Output "Driver's msi file found in the cache"
+    } else {
+        Write-Output "Downloading the driver's msi file..."
+        Start-FileDownload $driver_url -FileName $msifile_path
+        if (!$?) {
+            Write-Output "ERROR: Could not download the msi file from ""$driver_url"""
+            return
+        }
     }
-    Write-Output "Installing driver..."
-    #if (-Not (msiexec /i $msifile_path /qn -ErrorAction:SilentlyContinue)) {
-    msiexec /i $msifile_path /qn /log C:\projects\pyodbc\apvyr_tmp\msiexec_log.txt -Verbose -ErrorAction:Continue
-    if (!$?) {
+
+    # install the driver's msi file
+    Write-Output "Installing the driver..."
+
+    # # method 1:
+    # cmd /c start /wait msiexec.exe /i "$msifile_path" /quiet /qn /norestart
+    # if (!$?) {
+    #     Write-Output "ERROR: Driver installation failed"
+    #     return
+    # }
+
+    # method 2:
+    $msi_args = @("/i", ('"{0}"' -f $msifile_path), "/quiet", "/qn", "/norestart")
+    $result = Start-Process "msiexec.exe" -ArgumentList $msi_args -Wait -PassThru
+    if ($result.ExitCode -ne 0) {
         Write-Output "ERROR: Driver installation failed"
-        Get-Content C:\projects\pyodbc\apvyr_tmp\msiexec_log.txt   # temp!!!!!!!!
+        Write-Output $result
         return
+
     }
     Write-Output "...driver installed successfully"
-
-    # temp!!!
-    Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:Continue
-
 }
 
 Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $zipfile_path, $zip_internal_msi_file, $msifile_path) {
@@ -55,31 +70,28 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
         return
     }
     Write-Output "...driver installed successfully"
-
-    # temp!!!
-    Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:Continue
-
 }
 
 
-# create directories
+# directories used exclusively by appveyor
 $cache_dir = "$env:APPVEYOR_BUILD_FOLDER\apvyr_cache"
-If (-Not (Test-Path $cache_dir)) {
-    Write-Output "Creating directory ""$cache_dir""..."
+If (Test-Path $cache_dir) {
+    Write-Output "*** Contents of the cache directory: $cache_dir"
+    Get-ChildItem $cache_dir
+} else {
+    Write-Output "*** Creating directory ""$cache_dir""..."
     New-Item -ItemType Directory -Path $cache_dir | out-null
 }
 $temp_dir = "$env:APPVEYOR_BUILD_FOLDER\apvyr_tmp"
 If (-Not (Test-Path $temp_dir)) {
-    Write-Output "Creating directory ""$temp_dir""..."
+    Write-Output "*** Creating directory ""$temp_dir""..."
     New-Item -ItemType Directory -Path $temp_dir | out-null
 }
 
 
-Get-ChildItem $cache_dir
-
-
-# TODO: this should be based on the Python bitness, not the server bitness (which will always be 64-bit)
-if ([Environment]::Is64BitProcess) {
+# install drivers based on the Python bitness
+$python_arch = cmd /c "C:${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"
+if ($python_arch -eq "64") {
 
     CheckAndInstallZippedMsiFromUrl `
         -driver_name "PostgreSQL Unicode(x64)" `
@@ -101,25 +113,7 @@ if ([Environment]::Is64BitProcess) {
         -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-winx64.msi" `
         -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi";
 
-
-
-
-
-    Write-Host "KME Installing ODBC driver..." -ForegroundColor Cyan
-    Write-Host "Downloading..."
-    $msiPath = "$($env:USERPROFILE)\msodbcsql.msi"
-    (New-Object Net.WebClient).DownloadFile('https://download.microsoft.com/download/E/6/B/E6BFDC7A-5BCD-4C51-9912-635646DA801E/en-US/msodbcsql_17.5.1.1_x64.msi', $msiPath)
-    Write-Host "Installing..."
-    cmd /c start /wait msiexec /i "$msiPath" /q
-    del $msiPath
-    # temp!!!
-    Get-OdbcDriver -Name "ODBC Driver 17 for SQL Server" -Platform "64-bit" -ErrorAction:Continue
-
-
-
-
-
-} else {
+} elseif ($python_arch -eq "32") {
 
     CheckAndInstallZippedMsiFromUrl `
         -driver_name "PostgreSQL Unicode" `
@@ -141,12 +135,21 @@ if ([Environment]::Is64BitProcess) {
         -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-win32.msi" `
         -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-win32.msi";
 
+} else {
+    Write-Output "ERROR: Unexpected Python architecture:"
+    Write-Output $python_arch
 }
 
 
 
 # temp!!!
-Get-ChildItem $temp_dir
+Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
+Write-Host "Contents of the cache directory: $cache_dir" -ForegroundColor Magenta
 Get-ChildItem $cache_dir
+Write-Host "Contents of the cache directory: $temp_dir" -ForegroundColor Magenta
+Get-ChildItem $temp_dir
+Write-Host "Get-Help Start-FileDownload:" -ForegroundColor Magenta
 Get-Help Start-FileDownload
+Write-Host "ODBC drivers:" -ForegroundColor Magenta
 Get-OdbcDriver
+Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
