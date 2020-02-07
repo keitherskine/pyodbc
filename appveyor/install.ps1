@@ -1,6 +1,7 @@
 # check that all the necessary ODBC drivers are available, if not install any missing ones
 
 Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $msifile_path) {
+    Write-Output ""
     # check whether the driver is already installed
     if ($d = Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:SilentlyContinue) {
         Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed: $($d.Attribute.Driver)"
@@ -10,13 +11,15 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
     }
     Write-Output "Downloading the driver's msi file..."
     #if (-Not (Start-FileDownload $driver_url -FileName $msifile_path -ErrorAction:SilentlyContinue)) {
-    Start-FileDownload $driver_url -FileName $msifile_path
+    Start-FileDownload $driver_url -FileName $msifile_path -Verbose -ErrorAction:Continue
     if (!$?) {
         Write-Output "ERROR: Could not download the msi file from $driver_url"
         return
     }
     Write-Output "Installing driver..."
-    if (-Not (msiexec /i $msifile_path /qn -ErrorAction:SilentlyContinue)) {
+    #if (-Not (msiexec /i $msifile_path /qn -ErrorAction:SilentlyContinue)) {
+    msiexec /i $msifile_path /qn -ErrorAction:SilentlyContinue -Verbose -ErrorAction:Continue
+    if (!$?) {
         Write-Output "ERROR: Driver installation failed"
         return
     }
@@ -24,6 +27,7 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
 }
 
 Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $zipfile_path, $zip_internal_msi_file, $msifile_path) {
+    Write-Output ""
     # check whether the driver is already installed
     if ($d = Get-OdbcDriver -Name $driver_name -Platform $driver_bitness -ErrorAction:SilentlyContinue) {
         Write-Output "*** Driver ""$driver_name"" ($driver_bitness) already installed: $($d.Attribute.Driver)"
@@ -106,3 +110,4 @@ CheckAndInstallMsiFromUrl `
 # temp!!!
 Get-ChildItem $temp_dir
 Get-ChildItem $cache_dir
+Get-Help Start-FileDownload
