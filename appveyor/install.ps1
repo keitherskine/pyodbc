@@ -18,7 +18,7 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
     }
     Write-Output "Installing driver..."
     #if (-Not (msiexec /i $msifile_path /qn -ErrorAction:SilentlyContinue)) {
-    msiexec /i $msifile_path /qn /log C:\projects\pyodbc\apvyr_tmp\msiexec_log.txt  -ErrorAction:SilentlyContinue -Verbose -ErrorAction:Continue
+    msiexec /i $msifile_path /qn /log C:\projects\pyodbc\apvyr_tmp\msiexec_log.txt -Verbose -ErrorAction:Continue
     if (!$?) {
         Write-Output "ERROR: Driver installation failed"
         Get-Content C:\projects\pyodbc\apvyr_tmp\msiexec_log.txt   # temp!!!!!!!!
@@ -67,45 +67,52 @@ If (-Not (Test-Path $temp_dir)) {
 }
 
 
-CheckAndInstallZippedMsiFromUrl `
-    -driver_name "PostgreSQL Unicode" `
-    -driver_bitness "32-bit" `
-    -driver_url "https://ftp.postgresql.org/pub/odbc/versions/msi/psqlodbc_09_06_0500-x86.zip" `
-    -zipfile_path "$temp_dir\psqlodbc_09_06_0500-x86.zip" `
-    -zip_internal_msi_file "psqlodbc_x86.msi" `
-    -msifile_path "$cache_dir\psqlodbc_09_06_0500-x86.msi";
+if ([Environment]::Is64BitProcess) {
 
-CheckAndInstallZippedMsiFromUrl `
-    -driver_name "PostgreSQL Unicode(x64)" `
-    -driver_bitness "64-bit" `
-    -driver_url "https://ftp.postgresql.org/pub/odbc/versions/msi/psqlodbc_09_06_0500-x64.zip" `
-    -zipfile_path "$temp_dir\psqlodbc_09_06_0500-x64.zip" `
-    -zip_internal_msi_file "psqlodbc_x64.msi" `
-    -msifile_path "$cache_dir\psqlodbc_09_06_0500-x64.msi";
+    CheckAndInstallZippedMsiFromUrl `
+        -driver_name "PostgreSQL Unicode(x64)" `
+        -driver_bitness "64-bit" `
+        -driver_url "https://ftp.postgresql.org/pub/odbc/versions/msi/psqlodbc_09_06_0500-x64.zip" `
+        -zipfile_path "$temp_dir\psqlodbc_09_06_0500-x64.zip" `
+        -zip_internal_msi_file "psqlodbc_x64.msi" `
+        -msifile_path "$cache_dir\psqlodbc_09_06_0500-x64.msi";
 
-CheckAndInstallMsiFromUrl `
-    -driver_name "MySQL ODBC 5.3 ANSI Driver" `
-    -driver_bitness "32-bit" `
-    -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-win32.msi" `
-    -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-win32.msi";
+    CheckAndInstallMsiFromUrl `
+        -driver_name "MySQL ODBC 5.3 ANSI Driver" `
+        -driver_bitness "64-bit" `
+        -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-winx64.msi" `
+        -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-winx64.msi";
 
-CheckAndInstallMsiFromUrl `
-    -driver_name "MySQL ODBC 5.3 ANSI Driver" `
-    -driver_bitness "64-bit" `
-    -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-winx64.msi" `
-    -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-winx64.msi";
+    CheckAndInstallMsiFromUrl `
+        -driver_name "MySQL ODBC 8.0 ANSI Driver" `
+        -driver_bitness "64-bit" `
+        -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-winx64.msi" `
+        -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi";
 
-CheckAndInstallMsiFromUrl `
-    -driver_name "MySQL ODBC 8.0 ANSI Driver" `
-    -driver_bitness "32-bit" `
-    -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-win32.msi" `
-    -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-win32.msi";
+} else {
 
-CheckAndInstallMsiFromUrl `
-    -driver_name "MySQL ODBC 8.0 ANSI Driver" `
-    -driver_bitness "64-bit" `
-    -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-winx64.msi" `
-    -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi";
+    CheckAndInstallZippedMsiFromUrl `
+        -driver_name "PostgreSQL Unicode" `
+        -driver_bitness "32-bit" `
+        -driver_url "https://ftp.postgresql.org/pub/odbc/versions/msi/psqlodbc_09_06_0500-x86.zip" `
+        -zipfile_path "$temp_dir\psqlodbc_09_06_0500-x86.zip" `
+        -zip_internal_msi_file "psqlodbc_x86.msi" `
+        -msifile_path "$cache_dir\psqlodbc_09_06_0500-x86.msi";
+
+    CheckAndInstallMsiFromUrl `
+        -driver_name "MySQL ODBC 5.3 ANSI Driver" `
+        -driver_bitness "32-bit" `
+        -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-win32.msi" `
+        -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-win32.msi";
+
+    CheckAndInstallMsiFromUrl `
+        -driver_name "MySQL ODBC 8.0 ANSI Driver" `
+        -driver_bitness "32-bit" `
+        -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-win32.msi" `
+        -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-win32.msi";
+
+}
+
 
 
 # temp!!!
