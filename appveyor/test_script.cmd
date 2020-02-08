@@ -52,8 +52,9 @@ ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
-  ECHO *** INFO: Could not connect using the connection string:
+  ECHO *** ERROR: Could not connect using the connection string:
   ECHO "%CONN_STR%"
+  SET OVERALL_RESULT=1
   GOTO :mssql2
 )
 "%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
@@ -66,8 +67,9 @@ ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
-  ECHO *** INFO: Could not connect using the connection string:
+  ECHO *** ERROR: Could not connect using the connection string:
   ECHO "%CONN_STR%"
+  SET OVERALL_RESULT=1
   GOTO :mssql3
 )
 "%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
@@ -80,8 +82,9 @@ ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
-  ECHO *** INFO: Could not connect using the connection string:
+  ECHO *** ERROR: Could not connect using the connection string:
   ECHO "%CONN_STR%"
+  SET OVERALL_RESULT=1
   GOTO :mssql4
 )
 "%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
@@ -94,8 +97,9 @@ ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
-  ECHO *** INFO: Could not connect using the connection string:
+  ECHO *** ERROR: Could not connect using the connection string:
   ECHO "%CONN_STR%"
+  SET OVERALL_RESULT=1
   GOTO :mssql5
 )
 "%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
@@ -108,8 +112,9 @@ ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
-  ECHO *** INFO: Could not connect using the connection string:
+  ECHO *** ERROR: Could not connect using the connection string:
   ECHO "%CONN_STR%"
+  SET OVERALL_RESULT=1
   GOTO :postgresql
 )
 "%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
@@ -140,8 +145,9 @@ ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
-  ECHO *** INFO: Could not connect using the connection string:
+  ECHO *** ERROR: Could not connect using the connection string:
   ECHO "%CONN_STR%"
+  SET OVERALL_RESULT=1
   GOTO :mysql
 )
 "%PYTHON_HOME%\python" "%TESTS_DIR%\pgtests.py" "%CONN_STR%"
@@ -176,8 +182,9 @@ ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
-  ECHO *** INFO: Could not connect using the connection string:
+  ECHO *** ERROR: Could not connect using the connection string:
   ECHO "%CONN_STR%"
+  SET OVERALL_RESULT=1
   GOTO :end
 )
 "%PYTHON_HOME%\python" "%TESTS_DIR%\mysqltests.py" "%CONN_STR%"
