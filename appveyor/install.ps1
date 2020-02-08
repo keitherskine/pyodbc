@@ -109,10 +109,13 @@ Get-OdbcDriver
 Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
 
 
-
+# Microsoft SQL Server
 # AppVeyor build servers are always 64-bit and only the 64-bit SQL Server ODBC
-# msi files can be installed on them.  However, the 64-bit msi file includes
+# driver msi files can be installed on them.  However, the 64-bit msi files include
 # both 32-bit and 64-bit drivers anyway.
+
+# The "SQL Server Native Client 10.0" and "SQL Server Native Client 11.0" driver
+# downloads do not appear to be available.
 
 CheckAndInstallMsiFromUrl `
     -driver_name "ODBC Driver 11 for SQL Server" `
