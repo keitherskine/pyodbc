@@ -11,6 +11,18 @@ IF NOT "%APVYR_RUN_TESTS%" == "true" (
   GOTO :end
 )
 
+REM Extract the major version of the current Python interpreter, and bitness
+FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON_HOME%\python -c "import sys; sys.stdout.write(str(sys.version_info.major))"`) DO (
+SET MAJOR_PYTHON_VERSION=%%F
+)
+FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON_HOME%\python -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"`) DO (
+SET PYTHON_ARCH=%%F
+)
+IF %MAJOR_PYTHON_VERSION% EQU 2 (
+    SET TESTS_DIR=tests2
+) ELSE (
+    SET TESTS_DIR=tests3
+)
 
 ECHO.
 ECHO ############################################################
@@ -118,7 +130,11 @@ ECHO *** Get PostgreSQL version
 SET PGPASSWORD=Password12!
 "%POSTGRES_PATH%\bin\psql" -U postgres -d postgres -c "SELECT version()"
 
-SET DRIVER={PostgreSQL Unicode(x64)}
+IF %PYTHON_ARCH% EQU 32 (
+  SET DRIVER={PostgreSQL Unicode}
+) ELSE (
+  SET DRIVER={PostgreSQL Unicode(x64)}
+)
 SET CONN_STR=Driver=%DRIVER%;Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
 ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
