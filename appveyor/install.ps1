@@ -16,8 +16,7 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
     if (Test-Path $msifile_path) {
         Write-Output "Driver's msi file found in the cache"
     } else {
-        Write-Output "Downloading the driver's msi file..."
-        Start-FileDownload $driver_url -FileName $msifile_path
+        Start-FileDownload -Url $driver_url -FileName $msifile_path
         if (!$?) {
             Write-Output "ERROR: Could not download the msi file from ""$driver_url"""
             return
@@ -61,8 +60,7 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
     if (Test-Path $msifile_path) {
         Write-Output "Driver's msi file found in the cache"
     } else {
-        Write-Output "Downloading the driver's zip file..."
-        Start-FileDownload $driver_url -FileName $zipfile_path
+        Start-FileDownload -Url $driver_url -FileName $zipfile_path
         if (!$?) {
             Write-Output "ERROR: Could not download the zip file from $driver_url"
             return
@@ -71,7 +69,7 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
         Expand-Archive -Path $zipfile_path -DestinationPath $temp_dir
         Copy-Item -Path "$temp_dir\$zip_internal_msi_file" -Destination $msifile_path -Force
     }
-    Write-Output "Installing driver..."
+    Write-Output "Installing the driver..."
     $msi_args = @("/i", ('"{0}"' -f $msifile_path), "/quiet", "/qn", "/norestart")
     $result = Start-Process "msiexec.exe" -ArgumentList $msi_args -Wait -PassThru
     if ($result.ExitCode -ne 0) {
