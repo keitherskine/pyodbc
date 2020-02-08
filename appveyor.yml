@@ -17,7 +17,7 @@
 #
 # For information about appveyor.yml files, see: https://www.appveyor.com/docs/appveyor-yml/
 
-# cache is used to transfer files between jobs, so make the jobs serial
+# the appveyor cache is used to carry files between jobs, so make sure the jobs are serial
 max_jobs: 1
 
 # the default Windows image for the jobs, but the images are individually set in the matrix
@@ -50,61 +50,47 @@ environment:
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       PYTHON_HOME: "C:\\Python27"
-      TESTS_DIR: tests2
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       PYTHON_HOME: "C:\\Python27-x64"
-      TESTS_DIR: tests2
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python33"
-    #   TESTS_DIR: tests3
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python33-x64"
-    #   TESTS_DIR: tests3
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python34"
-    #   TESTS_DIR: tests3
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python34-x64"
-    #   TESTS_DIR: tests3
 
     # # Python 3.5 needs at least the VS2015 image
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python35"
-    #   TESTS_DIR: tests3
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python35-x64"
-    #   TESTS_DIR: tests3
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python36"
-    #   TESTS_DIR: tests3
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python36-x64"
-    #   TESTS_DIR: tests3
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python37"
-    #   TESTS_DIR: tests3
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python37-x64"
-    #   TESTS_DIR: tests3
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON_HOME: "C:\\Python38"
-      TESTS_DIR: tests3
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON_HOME: "C:\\Python38-x64"
-      TESTS_DIR: tests3
 
 cache:
   - apvyr_cache -> appveyor\install.ps1

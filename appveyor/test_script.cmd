@@ -13,12 +13,12 @@ IF NOT "%APVYR_RUN_TESTS%" == "true" (
 
 REM Extract the major version of the current Python interpreter, and bitness
 FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON_HOME%\python -c "import sys; sys.stdout.write(str(sys.version_info.major))"`) DO (
-SET MAJOR_PYTHON_VERSION=%%F
+SET PYTHON_MAJOR_VERSION=%%F
 )
 FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON_HOME%\python -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"`) DO (
 SET PYTHON_ARCH=%%F
 )
-IF %MAJOR_PYTHON_VERSION% EQU 2 (
+IF %PYTHON_MAJOR_VERSION% EQU 2 (
     SET TESTS_DIR=tests2
 ) ELSE (
     SET TESTS_DIR=tests3
