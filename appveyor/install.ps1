@@ -1,4 +1,4 @@
-# check that all the necessary ODBC drivers are available, if not install any missing ones
+# check that all the required ODBC drivers are available, if not install the missing ones
 
 Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $msifile_path, $msiexec_paras) {
     Write-Output ""
