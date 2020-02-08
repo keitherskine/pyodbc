@@ -112,7 +112,8 @@ Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
 # Appveyor build servers are always 64-bit and only the 64-bit SQL Server ODBC
 # msi files can be installed on them.  However, the 64-bit msi file includes
-# both 32-bit and 64-bit drivers.
+# both 32-bit and 64-bit drivers anyway.
+# With the 13.0 driver, some tests fail for Python 2.7 so using version 13.1.
 # 13.0: https://download.microsoft.com/download/1/E/7/1E7B1181-3974-4B29-9A47-CC857B271AA2/English/X64/msodbcsql.msi
 # 13.1: https://download.microsoft.com/download/D/5/E/D5EEF288-A277-45C8-855B-8E2CB7E25B96/x64/msodbcsql.msi
 CheckAndInstallMsiFromUrl `
