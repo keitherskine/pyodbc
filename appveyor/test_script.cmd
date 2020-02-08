@@ -133,7 +133,7 @@ SET PGPASSWORD=Password12!
 IF %PYTHON_ARCH% EQU 32 (
   SET DRIVER={PostgreSQL Unicode}
 ) ELSE (
-  SET DRIVER={PostgreSQL Unicode(x64)}
+  SET DRIVER={PostgreSQL Unicode^(x64^)}
 )
 SET CONN_STR=Driver=%DRIVER%;Server=localhost;Port=5432;Database=postgres;Uid=postgres;Pwd=Password12!;
 ECHO.
