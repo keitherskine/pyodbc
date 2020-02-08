@@ -1,6 +1,6 @@
 # check that all the necessary ODBC drivers are available, if not install any missing ones
 
-Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $msifile_path) {
+Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $msifile_path, $msiexec_paras) {
     Write-Output ""
 
     # check whether the driver is already installed
@@ -35,7 +35,10 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
     # }
 
     # method 2:
-    $msi_args = @("/i", ('"{0}"' -f $msifile_path), "/quiet", "/qn", "/norestart")
+    $msi_args = @("/quiet", "/passive", "/qn", "/norestart", "/i", ('"{0}"' -f $msifile_path))
+    if ($msiexec_paras) {
+        $msi_args += $msiexec_paras
+    }
     $result = Start-Process "msiexec.exe" -ArgumentList $msi_args -Wait -PassThru
     if ($result.ExitCode -ne 0) {
         Write-Output "ERROR: Driver installation failed"
@@ -110,7 +113,8 @@ if ($python_arch -eq "64") {
         -driver_name "ODBC Driver 17 for SQL Server" `
         -driver_bitness "64-bit" `
         -driver_url "https://download.microsoft.com/download/E/6/B/E6BFDC7A-5BCD-4C51-9912-635646DA801E/en-US/msodbcsql_17.5.1.1_x64.msi" `
-        -msifile_path "$cache_dir\msodbcsql_17.5.1.1_x64.msi";
+        -msifile_path "$cache_dir\msodbcsql_17.5.1.1_x64.msi" `
+        -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
 
     CheckAndInstallZippedMsiFromUrl `
         -driver_name "PostgreSQL Unicode(x64)" `
@@ -124,13 +128,15 @@ if ($python_arch -eq "64") {
     #     -driver_name "MySQL ODBC 5.3 ANSI Driver" `
     #     -driver_bitness "64-bit" `
     #     -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-winx64.msi" `
-    #     -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-winx64.msi";
+    #     -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-winx64.msi" `
+    #     -msiexec_paras @();
 
     CheckAndInstallMsiFromUrl `
         -driver_name "MySQL ODBC 8.0 ANSI Driver" `
         -driver_bitness "64-bit" `
         -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-winx64.msi" `
-        -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi";
+        -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi" `
+        -msiexec_paras @();
 
 } elseif ($python_arch -eq "32") {
 
@@ -138,7 +144,8 @@ if ($python_arch -eq "64") {
         -driver_name "ODBC Driver 17 for SQL Server" `
         -driver_bitness "32-bit" `
         -driver_url "https://download.microsoft.com/download/E/6/B/E6BFDC7A-5BCD-4C51-9912-635646DA801E/en-US/msodbcsql_17.5.1.1_x86.msi" `
-        -msifile_path "$cache_dir\msodbcsql_17.5.1.1_x86.msi";
+        -msifile_path "$cache_dir\msodbcsql_17.5.1.1_x86.msi" `
+        -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
 
     CheckAndInstallZippedMsiFromUrl `
         -driver_name "PostgreSQL Unicode" `
@@ -152,13 +159,15 @@ if ($python_arch -eq "64") {
     #     -driver_name "MySQL ODBC 5.3 ANSI Driver" `
     #     -driver_bitness "32-bit" `
     #     -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-win32.msi" `
-    #     -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-win32.msi";
+    #     -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-win32.msi" `
+    #     -msiexec_paras @();
 
     CheckAndInstallMsiFromUrl `
         -driver_name "MySQL ODBC 8.0 ANSI Driver" `
         -driver_bitness "32-bit" `
         -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-win32.msi" `
-        -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-win32.msi";
+        -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-win32.msi" `
+        -msiexec_paras @();
 
 } else {
     Write-Output "ERROR: Unexpected Python architecture:"
