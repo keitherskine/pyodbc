@@ -56,17 +56,20 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
         Write-Output "*** Driver ""$driver_name"" ($driver_bitness) not found"
     }
     Write-Output "Downloading the driver's zip file..."
-    #-ErrorAction:SilentlyContinue
-    if (-Not (Start-FileDownload $driver_url -FileName $zipfile_path)) {
+    Start-FileDownload $driver_url -FileName $zipfile_path
+    if ($?) {
         Write-Output "ERROR: Could not download the zip file from $driver_url"
         return
     }
     Write-Output "Unzipping..."
     Expand-Archive -Path $zipfile_path -DestinationPath $temp_dir
-    Copy-Item -Path $temp_dir\$zip_internal_msi_file -Destination $msifile_path -Force
+    Copy-Item -Path "$temp_dir\$zip_internal_msi_file" -Destination $msifile_path -Force
     Write-Output "Installing driver..."
-    if (-Not (msiexec /i $msifile_path /qn -ErrorAction:SilentlyContinue)) {
+    $msi_args = @("/i", ('"{0}"' -f $msifile_path), "/quiet", "/qn", "/norestart")
+    $result = Start-Process "msiexec.exe" -ArgumentList $msi_args -Wait -PassThru
+    if ($result.ExitCode -ne 0) {
         Write-Output "ERROR: Driver installation failed"
+        Write-Output $result
         return
     }
     Write-Output "...driver installed successfully"
@@ -87,6 +90,16 @@ If (-Not (Test-Path $temp_dir)) {
     Write-Output "*** Creating directory ""$temp_dir""..."
     New-Item -ItemType Directory -Path $temp_dir | out-null
 }
+
+
+
+# temp!!!
+Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
+Write-Host "ODBC drivers:" -ForegroundColor Magenta
+Get-OdbcDriver
+Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
+
+
 
 
 # install drivers based on the Python bitness
