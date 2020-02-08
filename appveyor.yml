@@ -17,10 +17,10 @@
 #
 # For information about appveyor.yml files, see: https://www.appveyor.com/docs/appveyor-yml/
 
-# the appveyor cache is used to carry files between jobs, so make sure the jobs are serial
+# the appveyor cache is used to carry files between jobs, so make sure the jobs are serialized
 max_jobs: 1
 
-# the default Windows image for the jobs, but the images are individually set in the matrix
+# the default appveyor image for the jobs, but the images are individually set in the matrix
 image: Visual Studio 2015
 
 environment:
@@ -48,11 +48,11 @@ environment:
     # all the Python versions to be tested, both 32-bit and 64-bit
     # ref: https://www.appveyor.com/docs/windows-images-software/#python
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
-      PYTHON_HOME: "C:\\Python27"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+    #   PYTHON_HOME: "C:\\Python27"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
-      PYTHON_HOME: "C:\\Python27-x64"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+    #   PYTHON_HOME: "C:\\Python27-x64"
 
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python33"
@@ -60,31 +60,31 @@ environment:
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
     #   PYTHON_HOME: "C:\\Python33-x64"
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    #   PYTHON_HOME: "C:\\Python34"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python34"
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    #   PYTHON_HOME: "C:\\Python34-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python34-x64"
 
-    # # Python 3.5 needs at least the VS2015 image
+    # Python 3.5 needs at least the VS2015 image
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    #   PYTHON_HOME: "C:\\Python35"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python35"
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    #   PYTHON_HOME: "C:\\Python35-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python35-x64"
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    #   PYTHON_HOME: "C:\\Python36"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python36"
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    #   PYTHON_HOME: "C:\\Python36-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python36-x64"
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    #   PYTHON_HOME: "C:\\Python37"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python37"
 
-    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    #   PYTHON_HOME: "C:\\Python37-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python37-x64"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       PYTHON_HOME: "C:\\Python38"
@@ -103,9 +103,6 @@ services:
   - mssql2008r2sp2
   - postgresql96
   - mysql
-
-# before_build:
-#   - ps: .\appveyor\install.ps1
 
 build_script:
   - call .\appveyor\build_script.cmd
