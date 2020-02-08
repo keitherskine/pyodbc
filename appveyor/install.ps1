@@ -113,11 +113,13 @@ Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 # Appveyor build servers are always 64-bit and only the 64-bit SQL Server ODBC
 # msi files can be installed on them.  However, the 64-bit msi file includes
 # both 32-bit and 64-bit drivers.
+# 13.0: https://download.microsoft.com/download/1/E/7/1E7B1181-3974-4B29-9A47-CC857B271AA2/English/X64/msodbcsql.msi
+# 13.1: https://download.microsoft.com/download/D/5/E/D5EEF288-A277-45C8-855B-8E2CB7E25B96/x64/msodbcsql.msi
 CheckAndInstallMsiFromUrl `
     -driver_name "ODBC Driver 13 for SQL Server" `
     -driver_bitness "64-bit" `
-    -driver_url "https://download.microsoft.com/download/1/E/7/1E7B1181-3974-4B29-9A47-CC857B271AA2/English/X64/msodbcsql.msi" `
-    -msifile_path "$cache_dir\msodbcsql_13.0.0.0_x64.msi" `
+    -driver_url "https://download.microsoft.com/download/D/5/E/D5EEF288-A277-45C8-855B-8E2CB7E25B96/x64/msodbcsql.msi" `
+    -msifile_path "$cache_dir\msodbcsql_13.1.0.0_x64.msi" `
     -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
 
 CheckAndInstallMsiFromUrl `
