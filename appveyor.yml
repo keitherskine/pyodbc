@@ -1,11 +1,11 @@
-# This Appveyor CI configuration file:
+# This AppVeyor CI configuration file:
 #   - builds pyodbc in multiple versions of Python
 #   - tests the generated pyodbc module against various databases and drivers
 #   - creates "wheel" files for distribution, and stores them as appveyor
-#     artifacts which can be downloaded from the Appveyor UI
+#     artifacts which can be downloaded from the AppVeyor UI
 #
 # Various aspects of this file's behavior can be controlled by setting environment
-# variables in the Appveyor UI.  You will need an Appveyor account for this (see
+# variables in the AppVeyor UI.  You will need an AppVeyor account for this (see
 # the Settings tab -> Environment -> Environment variables).  Here are
 # the control variables and their possible values.  Note, "*" indicates the
 # defaults:
@@ -18,16 +18,16 @@
 # For information about appveyor.yml files, see: https://www.appveyor.com/docs/appveyor-yml/
 
 
-# the appveyor cache is used to carry files between jobs, so make sure the jobs are serialized
+# the AppVeyor cache is used to carry files between jobs, so make sure the jobs are serialized
 max_jobs: 1
 
-# the default appveyor image for the jobs, but the images are also set in the matrix
+# the default AppVeyor image for the jobs, but the images are also set in the matrix
 image: Visual Studio 2015
 
 environment:
 
   global:
-    # the following variables can be overridden as necessary through the Appveyor UI
+    # the following variables can be overridden as necessary through the AppVeyor UI
     APVYR_RUN_TESTS: "true"
     APVYR_RUN_MSSQL_TESTS: "true"
     APVYR_RUN_POSTGRES_TESTS: "true"

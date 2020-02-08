@@ -12,7 +12,7 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
         Write-Output "*** Driver ""$driver_name"" ($driver_bitness) not found"
     }
 
-    # get the driver's msi file, check the appveyor cache first
+    # get the driver's msi file, check the AppVeyor cache first
     if (Test-Path $msifile_path) {
         Write-Output "Driver's msi file found in the cache"
     } else {
@@ -85,7 +85,7 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
 $python_version = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write(str(sys.version_info.major))"
 $python_arch = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"
 
-# directories exclusively for appveyor
+# directories exclusively for AppVeyor
 $cache_dir = "$env:APPVEYOR_BUILD_FOLDER\apvyr_cache"
 If (Test-Path $cache_dir) {
     Write-Output "*** Contents of the cache directory: $cache_dir"
@@ -110,7 +110,7 @@ Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
 
 
-# Appveyor build servers are always 64-bit and only the 64-bit SQL Server ODBC
+# AppVeyor build servers are always 64-bit and only the 64-bit SQL Server ODBC
 # msi files can be installed on them.  However, the 64-bit msi file includes
 # both 32-bit and 64-bit drivers anyway.
 # With the 13.0 driver, some tests fail for Python 2.7 so using version 13.1.
