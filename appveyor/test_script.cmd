@@ -1,15 +1,18 @@
-REM Output a list of the available ODBC drivers
+REM 0 = success, 1 = failure
+SET OVERALL_RESULT=0
+
+
+REM Output a list of the ODBC drivers available to pyodbc
 ECHO *** Available ODBC Drivers:
 "%PYTHON_HOME%\python" -c "import pyodbc; print('\n'.join(sorted(pyodbc.drivers())))"
 
 
-REM 0 = success, 1 = failure
-SET OVERALL_RESULT=0
-
+REM check if any testing should be done at all
 IF NOT "%APVYR_RUN_TESTS%" == "true" (
   ECHO *** Skipping all the unit tests
   GOTO :end
 )
+
 
 REM Extract the major version of the current Python interpreter, and bitness
 FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON_HOME%\python -c "import sys; sys.stdout.write(str(sys.version_info.major))"`) DO (
@@ -24,6 +27,8 @@ IF %PYTHON_MAJOR_VERSION% EQU 2 (
     SET TESTS_DIR=tests3
 )
 
+
+:mssql
 ECHO.
 ECHO ############################################################
 ECHO # MS SQL Server
@@ -47,7 +52,7 @@ IF ERRORLEVEL 1 (
 
 :mssql1
 SET DRIVER={SQL Server Native Client 10.0}
-SET CONN_STR=Driver=%DRIVER%;;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
+SET CONN_STR=Driver=%DRIVER%;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
@@ -57,7 +62,11 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :mssql2
 )
-"%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR%"
+IF "%APVYR_VERBOSE%" == "true" (
+  SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
+)
+"%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" %PYTHON_ARGS%
 IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :mssql2
@@ -72,7 +81,11 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :mssql3
 )
-"%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR%"
+IF "%APVYR_VERBOSE%" == "true" (
+  SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
+)
+"%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" %PYTHON_ARGS%
 IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :mssql3
@@ -87,7 +100,11 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :mssql4
 )
-"%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR%"
+IF "%APVYR_VERBOSE%" == "true" (
+  SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
+)
+"%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" %PYTHON_ARGS%
 IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :mssql4
@@ -102,7 +119,11 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :mssql5
 )
-"%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR%"
+IF "%APVYR_VERBOSE%" == "true" (
+  SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
+)
+"%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" %PYTHON_ARGS%
 IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :mssql5
@@ -117,7 +138,11 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :postgresql
 )
-"%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" "%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR%"
+IF "%APVYR_VERBOSE%" == "true" (
+  SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
+)
+"%PYTHON_HOME%\python" "%TESTS_DIR%\sqlservertests.py" %PYTHON_ARGS%
 IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 
@@ -150,7 +175,11 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :mysql
 )
-"%PYTHON_HOME%\python" "%TESTS_DIR%\pgtests.py" "%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR%"
+IF "%APVYR_VERBOSE%" == "true" (
+  SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
+)
+"%PYTHON_HOME%\python" "%TESTS_DIR%\pgtests.py" %PYTHON_ARGS%
 IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 
@@ -169,7 +198,6 @@ IF NOT "%APVYR_RUN_MYSQL_TESTS%" == "true" (
 ECHO *** Get MySQL version
 "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "STATUS"
 
-REM Either the 5.3 MySQL drivers or the 8.0 MySQL drivers can be installed at any one time, but not both.
 :mysql1
 REM MySQL 8.0 drivers apparently don't work on Python 2.7 ("system error 126").
 IF %PYTHON_MAJOR_VERSION% EQU 2 (
@@ -187,7 +215,11 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :end
 )
-"%PYTHON_HOME%\python" "%TESTS_DIR%\mysqltests.py" "%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR%"
+IF "%APVYR_VERBOSE%" == "true" (
+  SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
+)
+"%PYTHON_HOME%\python" "%TESTS_DIR%\mysqltests.py" %PYTHON_ARGS%
 IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 
