@@ -164,22 +164,13 @@ ECHO *** Get MySQL version
 "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "STATUS"
 
 REM Either the 5.3 MySQL drivers or the 8.0 MySQL drivers can be installed at any one time, but not both.
-REM :mysql1
-REM SET DRIVER={MySQL ODBC 5.3 ANSI Driver}
-REM SET CONN_STR=Driver=%DRIVER%;Charset=utf8mb4;Server=localhost;Port=3306;Database=mysql;Uid=root;Pwd=Password12!;
-REM ECHO.
-REM ECHO *** Run tests using driver: "%DRIVER%"
-REM "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
-REM IF ERRORLEVEL 1 (
-REM   ECHO *** INFO: Could not connect using the connection string:
-REM   ECHO "%CONN_STR%"
-REM   GOTO :mysql2
-REM )
-REM "%PYTHON_HOME%\python" "%TESTS_DIR%\mysqltests.py" "%CONN_STR%"
-REM IF ERRORLEVEL 1 SET OVERALL_RESULT=1
-
-:mysql2
-SET DRIVER={MySQL ODBC 8.0 ANSI Driver}
+:mysql1
+REM MySQL 8.0 drivers apparently don't work on Python 2.7 ("system error 126").
+IF %PYTHON_MAJOR_VERSION% EQU 2 (
+  SET DRIVER={MySQL ODBC 5.3 ANSI Driver}
+) ELSE (
+  SET DRIVER={MySQL ODBC 8.0 ANSI Driver}
+)
 SET CONN_STR=Driver=%DRIVER%;Charset=utf8mb4;Server=localhost;Port=3306;Database=mysql;Uid=root;Pwd=Password12!;
 ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
