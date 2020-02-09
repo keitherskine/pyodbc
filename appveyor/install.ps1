@@ -83,6 +83,7 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
 
 # get python version and bitness
 $python_version = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write(str(sys.version_info.major))"
+$python_minor_version = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write(str(sys.version_info.minor))"
 $python_arch = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"
 
 # directories exclusively for AppVeyor
@@ -209,13 +210,15 @@ Write-Host "Get-Help Start-FileDownload:" -ForegroundColor Magenta
 Get-Help Start-FileDownload
 Write-Host "ODBC drivers:" -ForegroundColor Magenta
 Get-OdbcDriver
-Write-Host "PATH and SPECIFIC DIRECTORIES"
+Write-Host "KME PATH:"
 Write-Host "${env:PATH}"
-Write-Host "KME DIR: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
-Get-ChildItem -LiteralPath "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
-Write-Host "KME DIR: C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64"
-Get-ChildItem -LiteralPath "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64"
-Write-Host "KME DIR: COPY ITEMS"
-Copy-Item "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64\rc.exe" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\" -Force
-Copy-Item "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64\rcdll.dll" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\" -Force
+# Write-Host "KME DIR: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
+# Get-ChildItem -LiteralPath "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
+# Write-Host "KME DIR: C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64"
+# Get-ChildItem -LiteralPath "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64"
+if ($python_version -eq "3" -And $python_minor_version -eq "5") {
+    Write-Host "KME DIR: COPY ITEMS"
+    Copy-Item "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64\rc.exe"    "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
+    Copy-Item "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64\rcdll.dll" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
+}
 Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta

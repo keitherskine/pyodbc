@@ -57,9 +57,8 @@ ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
-  ECHO *** ERROR: Could not connect using the connection string:
+  ECHO *** INFO: Could not connect using the connection string:
   ECHO "%CONN_STR%"
-  SET OVERALL_RESULT=1
   GOTO :mssql2
 )
 SET PYTHON_ARGS="%CONN_STR%"
@@ -76,9 +75,8 @@ ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
-  ECHO *** ERROR: Could not connect using the connection string:
+  ECHO *** INFO: Could not connect using the connection string:
   ECHO "%CONN_STR%"
-  SET OVERALL_RESULT=1
   GOTO :mssql3
 )
 SET PYTHON_ARGS="%CONN_STR%"
