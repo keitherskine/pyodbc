@@ -82,7 +82,7 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
 
 
 # get python version and bitness
-$python_version = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write(str(sys.version_info.major))"
+$python_major_version = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write(str(sys.version_info.major))"
 $python_minor_version = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write(str(sys.version_info.minor))"
 $python_arch = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"
 
@@ -154,7 +154,7 @@ if ($python_arch -eq "64") {
 
     # MySQL 8.0 drivers apparently don't work on Python 2.7 ("system error 126").
     # Note, installing MySQL 8.0 ODBC drivers causes the 5.3 drivers to be uninstalled.
-    if ($python_version -eq "2") {
+    if ($python_major_version -eq "2") {
         CheckAndInstallMsiFromUrl `
             -driver_name "MySQL ODBC 5.3 ANSI Driver" `
             -driver_bitness "64-bit" `
@@ -180,7 +180,7 @@ if ($python_arch -eq "64") {
 
     # MySQL 8.0 drivers apparently don't work on Python 2.7 ("system error 126").
     # Note, installing MySQL 8.0 ODBC drivers causes the 5.3 drivers to be uninstalled.
-    if ($python_version -eq 2) {
+    if ($python_major_version -eq 2) {
         CheckAndInstallMsiFromUrl `
             -driver_name "MySQL ODBC 5.3 ANSI Driver" `
             -driver_bitness "32-bit" `
