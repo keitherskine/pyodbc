@@ -51,17 +51,19 @@ IF ERRORLEVEL 1 (
 )
 
 :mssql1
+REM Native Client 10.0 is so old, it might not be available on the server
 SET DRIVER={SQL Server Native Client 10.0}
 SET CONN_STR=Driver=%DRIVER%;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
+  REM Don't fail the tests
   ECHO *** INFO: Could not connect using the connection string:
   ECHO "%CONN_STR%"
   GOTO :mssql2
 )
-SET PYTHON_ARGS="%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR:"=\"%"
 IF "%APVYR_VERBOSE%" == "true" (
   SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
 )
@@ -69,17 +71,19 @@ IF "%APVYR_VERBOSE%" == "true" (
 IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :mssql2
+REM Native Client 11.0 is so old, it might not be available on the server
 SET DRIVER={SQL Server Native Client 11.0}
 SET CONN_STR=Driver=%DRIVER%;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
 ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
 IF ERRORLEVEL 1 (
+  REM Don't fail the tests
   ECHO *** INFO: Could not connect using the connection string:
   ECHO "%CONN_STR%"
   GOTO :mssql3
 )
-SET PYTHON_ARGS="%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR:"=\"%"
 IF "%APVYR_VERBOSE%" == "true" (
   SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
 )
@@ -98,7 +102,7 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :mssql4
 )
-SET PYTHON_ARGS="%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR:"=\"%"
 IF "%APVYR_VERBOSE%" == "true" (
   SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
 )
@@ -117,7 +121,7 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :mssql5
 )
-SET PYTHON_ARGS="%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR:"=\"%"
 IF "%APVYR_VERBOSE%" == "true" (
   SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
 )
@@ -136,7 +140,7 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :postgresql
 )
-SET PYTHON_ARGS="%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR:"=\"%"
 IF "%APVYR_VERBOSE%" == "true" (
   SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
 )
@@ -173,7 +177,7 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :mysql
 )
-SET PYTHON_ARGS="%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR:"=\"%"
 IF "%APVYR_VERBOSE%" == "true" (
   SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
 )
@@ -213,7 +217,7 @@ IF ERRORLEVEL 1 (
   SET OVERALL_RESULT=1
   GOTO :end
 )
-SET PYTHON_ARGS="%CONN_STR%"
+SET PYTHON_ARGS="%CONN_STR:"=\"%"
 IF "%APVYR_VERBOSE%" == "true" (
   SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
 )

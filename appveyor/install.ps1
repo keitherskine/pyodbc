@@ -1,4 +1,4 @@
-# check that all the required ODBC drivers are available, if not install the missing ones
+# check that all the required ODBC drivers are available, and install them if they are missing
 
 Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $msifile_path, $msiexec_paras) {
     Write-Output ""
@@ -24,16 +24,10 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
     }
 
     # install the driver's msi file
+    # Note, there is an alternate method of calling msiexec.exe using cmd:
+    #   cmd /c start /wait msiexec.exe /i "$msifile_path" /quiet /qn /norestart
+    #   if (!$?) {...}
     Write-Output "Installing the driver..."
-
-    # # method 1:
-    # cmd /c start /wait msiexec.exe /i "$msifile_path" /quiet /qn /norestart
-    # if (!$?) {
-    #     Write-Output "ERROR: Driver installation failed"
-    #     return
-    # }
-
-    # method 2:
     $msi_args = @("/quiet", "/passive", "/qn", "/norestart", "/i", ('"{0}"' -f $msifile_path))
     if ($msiexec_paras) {
         $msi_args += $msiexec_paras
@@ -86,7 +80,8 @@ $python_major_version = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.s
 $python_minor_version = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write(str(sys.version_info.minor))"
 $python_arch = cmd /c "${env:PYTHON_HOME}\python" -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"
 
-# directories exclusively for AppVeyor
+
+# directories used exclusively by AppVeyor
 $cache_dir = "$env:APPVEYOR_BUILD_FOLDER\apvyr_cache"
 If (Test-Path $cache_dir) {
     Write-Output "*** Contents of the cache directory: $cache_dir"
@@ -102,12 +97,11 @@ If (-Not (Test-Path $temp_dir)) {
 }
 
 
-
-# temp!!!
-Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
-Write-Host "ODBC drivers:" -ForegroundColor Magenta
-Get-OdbcDriver
-Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
+If (${env:APVYR_VERBOSE} -eq "true") {
+    Write-Output ""
+    Write-Output "*** Installed ODBC drivers:"
+    Get-OdbcDriver
+}
 
 
 # Microsoft SQL Server
@@ -199,32 +193,28 @@ if ($python_arch -eq "64") {
 }
 
 
+If (${env:APVYR_VERBOSE} -eq "true") {
+    Write-Output ""
+    Write-Output "*** Contents of the cache directory: $cache_dir"
+    Get-ChildItem $cache_dir
+    Write-Output ""
+    Write-Output "*** Contents of the temporary directory: $temp_dir"
+    Get-ChildItem $temp_dir
+    Write-Output ""
+    Write-Output "*** Installed ODBC drivers:"
+    Get-OdbcDriver
+}
 
-# temp!!!
-Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
-Write-Host "Contents of the cache directory: $cache_dir" -ForegroundColor Magenta
-Get-ChildItem $cache_dir
-Write-Host "Contents of the cache directory: $temp_dir" -ForegroundColor Magenta
-Get-ChildItem $temp_dir
-Write-Host "Get-Help Start-FileDownload:" -ForegroundColor Magenta
-Get-Help Start-FileDownload
-Write-Host "ODBC drivers:" -ForegroundColor Magenta
-Get-OdbcDriver
-Write-Host "KME PATH:"
-Write-Host "${env:PATH}"
-# Write-Host "KME DIR: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
-# Get-ChildItem -LiteralPath "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
-# Write-Host "KME DIR: C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64"
-# Get-ChildItem -LiteralPath "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64"
-# To compile Python 3.5 on VS 2017/2019, we have to copy some files into Visual Studio 14.0
-# https://stackoverflow.com/a/52580041
+
+# To compile Python 3.5 on VS 2019, we have to copy some files into Visual Studio 14.0
+# otherwise we get an error on the build as follows:
+#   LINK : fatal error LNK1158: cannot run 'rc.exe'
+# See: https://stackoverflow.com/a/52580041
 if ($python_major_version -eq "3" -And $python_minor_version -eq "5") {
-    if ("$env:APPVEYOR_BUILD_WORKER_IMAGE" -eq "Visual Studio 2017" -Or
-        "$env:APPVEYOR_BUILD_WORKER_IMAGE" -eq "Visual Studio 2019") {
+    if ("$env:APPVEYOR_BUILD_WORKER_IMAGE" -eq "Visual Studio 2019") {
         Write-Output ""
         Write-Output "*** Copy rc files from Windows Kits into Visual Studio 14.0"
         Copy-Item "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64\rc.exe"    "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
         Copy-Item "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64\rcdll.dll" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
     }
 }
-Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
