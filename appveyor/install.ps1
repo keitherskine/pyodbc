@@ -211,6 +211,11 @@ Write-Host "ODBC drivers:" -ForegroundColor Magenta
 Get-OdbcDriver
 Write-Host "PATH and SPECIFIC DIRECTORIES"
 Write-Host "${env:PATH}"
-Get-ChildItem "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
-Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64"
+Write-Host "KME DIR: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
+Get-ChildItem -LiteralPath "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
+Write-Host "KME DIR: C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64"
+Get-ChildItem -LiteralPath "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64"
+Write-Host "KME DIR: COPY ITEMS"
+Copy-Item "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64\rc.exe" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\" -Force
+Copy-Item "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64\rcdll.dll" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\" -Force
 Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
