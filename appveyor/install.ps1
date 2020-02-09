@@ -209,4 +209,8 @@ Write-Host "Get-Help Start-FileDownload:" -ForegroundColor Magenta
 Get-Help Start-FileDownload
 Write-Host "ODBC drivers:" -ForegroundColor Magenta
 Get-OdbcDriver
+Write-Host "PATH and SPECIFIC DIRECTORIES"
+Write-Host "${env:PATH}"
+Get-ChildItem "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin"
+Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\10.0.17134.0\x64"
 Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" -ForegroundColor Magenta
