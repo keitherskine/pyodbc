@@ -37,7 +37,7 @@ ECHO *** Installing pyodbc...
 
 ECHO.
 ECHO *** pip freeze...
-"%PYTHON_HOME%\pip" freeze --all
+"%PYTHON_HOME%\Scripts\pip" freeze --all
 
 ECHO.
 ECHO *** Get version of the built pyodbc module:
