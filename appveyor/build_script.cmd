@@ -36,6 +36,10 @@ ECHO *** Installing pyodbc...
 "%PYTHON_HOME%\python" setup.py install
 
 ECHO.
+ECHO *** pip freeze...
+"%PYTHON_HOME%\pip" freeze --all
+
+ECHO.
 ECHO *** Get version of the built pyodbc module:
 "%PYTHON_HOME%\python" -c "import pyodbc; print(pyodbc.version)"
 
