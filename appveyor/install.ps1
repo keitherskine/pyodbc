@@ -4,19 +4,21 @@ Function DownloadFileFromUrl ($url, $file_path) {
     # try multiple times to download the file
     $success = $false
     $attempt_number = 1
+    $max_attempts = 3
     while ($true) {
         Try {
             Start-FileDownload -Url $url -FileName $file_path
             $success = $true
         } Catch {
             Write-Error $_
-            Write-Output "WARNING: download attempt number $attempt_number failed"
+            Write-Output "WARNING: download attempt number $attempt_number of $max_attempts failed"
         }
         if ($success) {return}
-        if ($attempt_number -ge 3) {break}
+        if ($attempt_number -ge $max_attempts) {break}
         Start-Sleep -Seconds 10
         $attempt_number += 1
     }
+    # delete the file, just in case, to indicate failure
     If (Test-Path $file_path) {
         Remove-Item $file_path
     }
