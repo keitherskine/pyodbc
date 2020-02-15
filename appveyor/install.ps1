@@ -1,5 +1,20 @@
 # check that all the required ODBC drivers are available, and install them if they are missing
 
+Function DownloadFileFromUrl ($url, $file_path) {
+    # try multiple times to download the file
+    $attempt_number = 1
+    while ($true) {
+        Start-FileDownload -Url $url -FileName $file_path
+        if ($?) {return}
+        if ($attempt_number -ge 3) {break}
+        Start-Sleep -Seconds 10
+        $attempt_number += 1
+    }
+    If (Test-Path $file_path) {
+        Remove-Item $file_path
+    }
+}
+
 Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, $msifile_path, $msiexec_paras) {
     Write-Output ""
 
@@ -16,8 +31,8 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
     if (Test-Path $msifile_path) {
         Write-Output "Driver's msi file found in the cache"
     } else {
-        Start-FileDownload -Url $driver_url -FileName $msifile_path
-        if (!$?) {
+        DownloadFileFromUrl -url $driver_url -file_path $msifile_path
+        If (-Not (Test-Path $msifile_path)) {
             Write-Output "ERROR: Could not download the msi file from ""$driver_url"""
             return
         }
