@@ -173,7 +173,7 @@ if ($python_arch -eq "64") {
         CheckAndInstallMsiFromUrl `
             -driver_name "MySQL ODBC 8.0 ANSI Driver" `
             -driver_bitness "64-bit" `
-            -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-winx64.msi" `
+            -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-9.9.99-winx64.msi" `
             -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi";
     }
 
