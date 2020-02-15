@@ -2,10 +2,16 @@
 
 Function DownloadFileFromUrl ($url, $file_path) {
     # try multiple times to download the file
+    $success = $false
     $attempt_number = 1
     while ($true) {
-        Start-FileDownload -Url $url -FileName $file_path
-        if ($?) {return}
+        Try {
+            Start-FileDownload -Url $url -FileName $file_path
+            $success = $true
+        } Catch {
+            Write-Output "Download attempt number $attempt_number failed"
+        }
+        if ($success) {return}
         if ($attempt_number -ge 3) {break}
         Start-Sleep -Seconds 10
         $attempt_number += 1
