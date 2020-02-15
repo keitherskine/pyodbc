@@ -9,7 +9,8 @@ Function DownloadFileFromUrl ($url, $file_path) {
             Start-FileDownload -Url $url -FileName $file_path
             $success = $true
         } Catch {
-            Write-Output "Download attempt number $attempt_number failed"
+            Write-Error $_
+            Write-Output "WARNING: download attempt number $attempt_number failed"
         }
         if ($success) {return}
         if ($attempt_number -ge 3) {break}
