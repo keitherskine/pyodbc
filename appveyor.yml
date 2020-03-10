@@ -89,11 +89,43 @@ environment:
     # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
     #   PYTHON_HOME: "C:\\Python37-x64"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python38"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python38"
 
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python38-x64"
+
+
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python35-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      PYTHON_HOME: "C:\\Python35-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      PYTHON_HOME: "C:\\Python35-x64"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python36-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      PYTHON_HOME: "C:\\Python36-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      PYTHON_HOME: "C:\\Python36-x64"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python37-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      PYTHON_HOME: "C:\\Python37-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      PYTHON_HOME: "C:\\Python37-x64"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_HOME: "C:\\Python38-x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      PYTHON_HOME: "C:\\Python38-x64"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       PYTHON_HOME: "C:\\Python38-x64"
+
+
 
 cache:
   - apvyr_cache -> appveyor\install.ps1
