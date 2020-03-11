@@ -128,93 +128,93 @@ If (${env:APVYR_VERBOSE} -eq "true") {
 }
 
 
-# # Microsoft SQL Server
-# # AppVeyor build servers are always 64-bit and only the 64-bit SQL Server ODBC
-# # driver msi files can be installed on them.  However, the 64-bit msi files include
-# # both 32-bit and 64-bit drivers anyway.
+# Microsoft SQL Server
+# AppVeyor build servers are always 64-bit and only the 64-bit SQL Server ODBC
+# driver msi files can be installed on them.  However, the 64-bit msi files include
+# both 32-bit and 64-bit drivers anyway.
 
-# # The "SQL Server Native Client 10.0" and "SQL Server Native Client 11.0" driver
-# # downloads do not appear to be available.
+# The "SQL Server Native Client 10.0" and "SQL Server Native Client 11.0" driver
+# downloads do not appear to be available.
 
-# CheckAndInstallMsiFromUrl `
-#     -driver_name "ODBC Driver 11 for SQL Server" `
-#     -driver_bitness "64-bit" `
-#     -driver_url "https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi" `
-#     -msifile_path "$cache_dir\msodbcsql_11.0.0.0_x64.msi" `
-#     -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
+CheckAndInstallMsiFromUrl `
+    -driver_name "ODBC Driver 11 for SQL Server" `
+    -driver_bitness "64-bit" `
+    -driver_url "https://download.microsoft.com/download/5/7/2/57249A3A-19D6-4901-ACCE-80924ABEB267/ENU/x64/msodbcsql.msi" `
+    -msifile_path "$cache_dir\msodbcsql_11.0.0.0_x64.msi" `
+    -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
 
-# # With the 13.0 driver, some tests fail for Python 2.7 so using version 13.1.
-# # 13.0: https://download.microsoft.com/download/1/E/7/1E7B1181-3974-4B29-9A47-CC857B271AA2/English/X64/msodbcsql.msi
-# # 13.1: https://download.microsoft.com/download/D/5/E/D5EEF288-A277-45C8-855B-8E2CB7E25B96/x64/msodbcsql.msi
-# CheckAndInstallMsiFromUrl `
-#     -driver_name "ODBC Driver 13 for SQL Server" `
-#     -driver_bitness "64-bit" `
-#     -driver_url "https://download.microsoft.com/download/D/5/E/D5EEF288-A277-45C8-855B-8E2CB7E25B96/x64/msodbcsql.msi" `
-#     -msifile_path "$cache_dir\msodbcsql_13.1.0.0_x64.msi" `
-#     -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
+# With the 13.0 driver, some tests fail for Python 2.7 so using version 13.1.
+# 13.0: https://download.microsoft.com/download/1/E/7/1E7B1181-3974-4B29-9A47-CC857B271AA2/English/X64/msodbcsql.msi
+# 13.1: https://download.microsoft.com/download/D/5/E/D5EEF288-A277-45C8-855B-8E2CB7E25B96/x64/msodbcsql.msi
+CheckAndInstallMsiFromUrl `
+    -driver_name "ODBC Driver 13 for SQL Server" `
+    -driver_bitness "64-bit" `
+    -driver_url "https://download.microsoft.com/download/D/5/E/D5EEF288-A277-45C8-855B-8E2CB7E25B96/x64/msodbcsql.msi" `
+    -msifile_path "$cache_dir\msodbcsql_13.1.0.0_x64.msi" `
+    -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
 
-# CheckAndInstallMsiFromUrl `
-#     -driver_name "ODBC Driver 17 for SQL Server" `
-#     -driver_bitness "64-bit" `
-#     -driver_url "https://download.microsoft.com/download/E/6/B/E6BFDC7A-5BCD-4C51-9912-635646DA801E/en-US/17.5.2.1/x64/msodbcsql.msi" `
-#     -msifile_path "$cache_dir\msodbcsql_17.5.1.1_x64.msi" `
-#     -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
+CheckAndInstallMsiFromUrl `
+    -driver_name "ODBC Driver 17 for SQL Server" `
+    -driver_bitness "64-bit" `
+    -driver_url "https://download.microsoft.com/download/E/6/B/E6BFDC7A-5BCD-4C51-9912-635646DA801E/en-US/17.5.2.1/x64/msodbcsql.msi" `
+    -msifile_path "$cache_dir\msodbcsql_17.5.1.1_x64.msi" `
+    -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
     
-# if ($python_arch -eq "64") {
+if ($python_arch -eq "64") {
 
-#     CheckAndInstallZippedMsiFromUrl `
-#         -driver_name "PostgreSQL Unicode(x64)" `
-#         -driver_bitness "64-bit" `
-#         -driver_url "https://ftp.postgresql.org/pub/odbc/versions/msi/psqlodbc_09_06_0500-x64.zip" `
-#         -zipfile_path "$temp_dir\psqlodbc_09_06_0500-x64.zip" `
-#         -zip_internal_msi_file "psqlodbc_x64.msi" `
-#         -msifile_path "$cache_dir\psqlodbc_09_06_0500-x64.msi";
+    CheckAndInstallZippedMsiFromUrl `
+        -driver_name "PostgreSQL Unicode(x64)" `
+        -driver_bitness "64-bit" `
+        -driver_url "https://ftp.postgresql.org/pub/odbc/versions/msi/psqlodbc_09_06_0500-x64.zip" `
+        -zipfile_path "$temp_dir\psqlodbc_09_06_0500-x64.zip" `
+        -zip_internal_msi_file "psqlodbc_x64.msi" `
+        -msifile_path "$cache_dir\psqlodbc_09_06_0500-x64.msi";
 
-#     # MySQL 8.0 drivers apparently don't work on Python 2.7 ("system error 126").
-#     # Note, installing MySQL 8.0 ODBC drivers causes the 5.3 drivers to be uninstalled.
-#     if ($python_major_version -eq "2") {
-#         CheckAndInstallMsiFromUrl `
-#             -driver_name "MySQL ODBC 5.3 ANSI Driver" `
-#             -driver_bitness "64-bit" `
-#             -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-winx64.msi" `
-#             -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-winx64.msi";
-#     } else {
-#         CheckAndInstallMsiFromUrl `
-#             -driver_name "MySQL ODBC 8.0 ANSI Driver" `
-#             -driver_bitness "64-bit" `
-#             -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-winx64.msi" `
-#             -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi";
-#     }
+    # MySQL 8.0 drivers apparently don't work on Python 2.7 ("system error 126").
+    # Note, installing MySQL 8.0 ODBC drivers causes the 5.3 drivers to be uninstalled.
+    if ($python_major_version -eq "2") {
+        CheckAndInstallMsiFromUrl `
+            -driver_name "MySQL ODBC 5.3 ANSI Driver" `
+            -driver_bitness "64-bit" `
+            -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-winx64.msi" `
+            -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-winx64.msi";
+    } else {
+        CheckAndInstallMsiFromUrl `
+            -driver_name "MySQL ODBC 8.0 ANSI Driver" `
+            -driver_bitness "64-bit" `
+            -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-winx64.msi" `
+            -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi";
+    }
 
-# } elseif ($python_arch -eq "32") {
+} elseif ($python_arch -eq "32") {
 
-#     CheckAndInstallZippedMsiFromUrl `
-#         -driver_name "PostgreSQL Unicode" `
-#         -driver_bitness "32-bit" `
-#         -driver_url "https://ftp.postgresql.org/pub/odbc/versions/msi/psqlodbc_09_06_0500-x86.zip" `
-#         -zipfile_path "$temp_dir\psqlodbc_09_06_0500-x86.zip" `
-#         -zip_internal_msi_file "psqlodbc_x86.msi" `
-#         -msifile_path "$cache_dir\psqlodbc_09_06_0500-x86.msi";
+    CheckAndInstallZippedMsiFromUrl `
+        -driver_name "PostgreSQL Unicode" `
+        -driver_bitness "32-bit" `
+        -driver_url "https://ftp.postgresql.org/pub/odbc/versions/msi/psqlodbc_09_06_0500-x86.zip" `
+        -zipfile_path "$temp_dir\psqlodbc_09_06_0500-x86.zip" `
+        -zip_internal_msi_file "psqlodbc_x86.msi" `
+        -msifile_path "$cache_dir\psqlodbc_09_06_0500-x86.msi";
 
-#     # MySQL 8.0 drivers apparently don't work on Python 2.7 ("system error 126").
-#     # Note, installing MySQL 8.0 ODBC drivers causes the 5.3 drivers to be uninstalled.
-#     if ($python_major_version -eq 2) {
-#         CheckAndInstallMsiFromUrl `
-#             -driver_name "MySQL ODBC 5.3 ANSI Driver" `
-#             -driver_bitness "32-bit" `
-#             -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-win32.msi" `
-#             -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-win32.msi";
-#     } else {
-#             CheckAndInstallMsiFromUrl `
-#             -driver_name "MySQL ODBC 8.0 ANSI Driver" `
-#             -driver_bitness "32-bit" `
-#             -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-win32.msi" `
-#             -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-win32.msi";
-#     }
-# } else {
-#     Write-Output "ERROR: Unexpected Python architecture:"
-#     Write-Output $python_arch
-# }
+    # MySQL 8.0 drivers apparently don't work on Python 2.7 ("system error 126").
+    # Note, installing MySQL 8.0 ODBC drivers causes the 5.3 drivers to be uninstalled.
+    if ($python_major_version -eq 2) {
+        CheckAndInstallMsiFromUrl `
+            -driver_name "MySQL ODBC 5.3 ANSI Driver" `
+            -driver_bitness "32-bit" `
+            -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-win32.msi" `
+            -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-win32.msi";
+    } else {
+            CheckAndInstallMsiFromUrl `
+            -driver_name "MySQL ODBC 8.0 ANSI Driver" `
+            -driver_bitness "32-bit" `
+            -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-win32.msi" `
+            -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-win32.msi";
+    }
+} else {
+    Write-Output "ERROR: Unexpected Python architecture:"
+    Write-Output $python_arch
+}
 
 
 If (${env:APVYR_VERBOSE} -eq "true") {
