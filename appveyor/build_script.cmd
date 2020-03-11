@@ -26,6 +26,7 @@ IF ERRORLEVEL 1 (
   ECHO *** ERROR: update failed
   EXIT 1
 )
+"%PYTHON_HOME%\Scripts\pip" freeze --all
 
 ECHO.
 ECHO *** Building the pyodbc module...
