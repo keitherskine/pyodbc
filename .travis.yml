@@ -39,9 +39,10 @@ addons:
 install:
   - echo "*** update unixODBC - commented out for now!"
   - which odbcinst
-  - sudo ls -l /usr/bin/*odbc* || true
-  - sudo ls -l /usr/lib/libodbc* || true
-  - sudo ls -l /usr/lib64/libodbc* || true
+  - sudo ls -ld /usr/bin/*odbc* || true
+  - sudo ls -ld /usr/local/bin/*odbc* || true
+  - sudo ls -ld /usr/lib/libodbc* || true
+  - sudo ls -ld /usr/lib64/libodbc* || true
   - odbcinst -j
   - _PWD="$PWD"
   - cd /tmp
@@ -56,7 +57,8 @@ install:
   - tail -20 zzz_log_make_err
   - sudo make install 1> zzz_log_makeinstall_std 2> zzz_log_makeinstall_err
   - tail -20 zzz_log_makeinstall_err
-  - ls -l
+  - sudo ls -ld /usr/local/bin/*odbc* || true
+  - sudo /usr/local/bin/odbcinst -j || true
   - cd "$_PWD"
   - odbcinst -j
   - echo "*** install MSSQL driver"
