@@ -9,7 +9,19 @@ jobs:
     env:
     - TESTS_DIR=tests2
   - name: Python3.7
+    python: "3.5"
+    env:
+    - TESTS_DIR=tests3
+  - name: Python3.7
+    python: "3.6"
+    env:
+    - TESTS_DIR=tests3
+  - name: Python3.7
     python: "3.7"
+    env:
+    - TESTS_DIR=tests3
+  - name: Python3.7
+    python: "3.8"
     env:
     - TESTS_DIR=tests3
 
@@ -27,7 +39,7 @@ install:
     #odbcinst -j
     #_PWD="$PWD"
     #cd /tmp
-    #curl -sS -O 'ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz'
+    #curl -sS -O 'ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz'  # for some reason, this call times out
     #tar -xz -f unixODBC-2.3.7.tar.gz
     #cd unixODBC-2.3.7
     #./configure 1> zzz_log_configure_std 2> zzz_log_configure_err
@@ -42,8 +54,8 @@ install:
     sudo bash -c 'curl https://packages.microsoft.com/config/ubuntu/18.04/prod.list > /etc/apt/sources.list.d/mssql-release.list'
     sudo apt-get update
     sudo ACCEPT_EULA=Y apt-get install msodbcsql17
-    echo "*** dpkg -L msodbcsql17"
-    dpkg -L msodbcsql17
+    # echo "*** dpkg -L msodbcsql17"
+    # dpkg -L msodbcsql17
     echo "*** cat /etc/odbcinst.ini"
     cat /etc/odbcinst.ini
   - |
@@ -53,15 +65,18 @@ install:
 
 before_script:
   - |
-    echo "*** set up MSSQL in docker container"
+    echo "*** set up MSSQL in a docker container"
     docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=StrongPassword1' -p 1433:1433 --name mssql1 -d mcr.microsoft.com/mssql/server:2017-latest
-  - |
-    echo "*** MSSQL - create test database"
     # sometimes the first call to MSSQL in a docker container does not work, in which case
     # pause for a few seconds, see: https://github.com/microsoft/mssql-docker/issues/203
     docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'SELECT @@VERSION' || sleep 10
+  - |
+    echo "*** create test database in MSSQL"
     docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test'
 
 script:
-  - cd "$TRAVIS_BUILD_DIR"
-  - python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
+  - |
+    cd "$TRAVIS_BUILD_DIR"
+  - |
+    echo "*** run SQL Server tests"
+    python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
