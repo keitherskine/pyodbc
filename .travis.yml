@@ -97,13 +97,16 @@ before_script:
   - echo "*** set up SQL Server in a docker container"
   - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=StrongPassword1' -p 1433:1433 --name mssql1 -d mcr.microsoft.com/mssql/server:2017-latest
   - sleep 10  # give MSSQL docker a chance to warm up, see: https://github.com/microsoft/mssql-docker/issues/203
-  - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'SELECT @@VERSION' || sleep 10
+  - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q "SELECT @@VERSION" || sleep 10
   - echo "*** create test database in SQL Server"
-  - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test'
+  - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q "CREATE DATABASE test"
   - echo "*** create test database in PostgreSQL"
-  - psql -c 'CREATE DATABASE test;' -U postgres
+  - psql -c "SELECT version()" -U postgres
+  - psql -c "CREATE DATABASE test WITH encoding='UTF8'" -U postgres
+  - #psql test -c "SHOW SERVER_ENCODING"
   - echo "*** create test database in MySQL"
-  - mysql -e 'CREATE DATABASE test;'
+  - mysql -e "STATUS"
+  - mysql -e "CREATE DATABASE test"
 
 script:
   - cd "$TRAVIS_BUILD_DIR"
