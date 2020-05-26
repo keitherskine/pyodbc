@@ -37,64 +37,52 @@ addons:
       - unixodbc-dev
 
 install:
-  - |
-    echo "*** update unixODBC - commented out for now!"
-    #odbcinst -j
-    _PWD="$PWD"
-    cd /tmp
-    sudo bash -c 'curl -sS -O "ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz"'  # for some reason, this call times out
-    #tar -xz -f unixODBC-2.3.7.tar.gz
-    #cd unixODBC-2.3.7
-    #./configure 1> zzz_log_configure_std 2> zzz_log_configure_err
-    #make 1> zzz_log_make_std 2> zzz_log_make_err
-    #sudo make install 1> zzz_log_makeinstall_std 2> zzz_log_makeinstall_err
-    #ls -l
-    cd "$_PWD"
-    #odbcinst -j
-  - |
-    echo "*** install MSSQL driver"
-    sudo bash -c 'curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -'
-    sudo bash -c 'curl https://packages.microsoft.com/config/ubuntu/18.04/prod.list > /etc/apt/sources.list.d/mssql-release.list'
-    sudo apt-get update
-    sudo ACCEPT_EULA=Y apt-get install msodbcsql17
-    # echo "*** dpkg -L msodbcsql17"
-    # dpkg -L msodbcsql17
-  - |
-    echo "*** cat /etc/odbcinst.ini"
-    cat /etc/odbcinst.ini
-    echo "*** cat /etc/odbc.ini"
-    cat /etc/odbc.ini
-  - |
-    echo "*** install pyodbc"
-    cd "$TRAVIS_BUILD_DIR"
-    python setup.py install
+  - echo "*** update unixODBC - commented out for now!"
+  - odbcinst -j
+  - _PWD="$PWD"
+  - cd /tmp
+  - sudo bash -c 'curl -sS -O "ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz"'  # for some reason, this call times out
+  - tar -xz -f unixODBC-2.3.7.tar.gz
+  - cd unixODBC-2.3.7
+  - ./configure 1> zzz_log_configure_std 2> zzz_log_configure_err
+  - make 1> zzz_log_make_std 2> zzz_log_make_err
+  - sudo make install 1> zzz_log_makeinstall_std 2> zzz_log_makeinstall_err
+  - ls -l
+  - cd "$_PWD"
+  - odbcinst -j
+  - echo "*** install MSSQL driver"
+  - sudo bash -c 'curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -'
+  - sudo bash -c 'curl https://packages.microsoft.com/config/ubuntu/18.04/prod.list > /etc/apt/sources.list.d/mssql-release.list'
+  - sudo apt-get update
+  - sudo ACCEPT_EULA=Y apt-get install msodbcsql17
+  - # echo "*** dpkg -L msodbcsql17"
+  - # dpkg -L msodbcsql17
+  - echo "*** cat /etc/odbcinst.ini"
+  - cat /etc/odbcinst.ini
+  - echo "*** cat /etc/odbc.ini"
+  - cat /etc/odbc.ini
+  - echo "*** install pyodbc"
+  - cd "$TRAVIS_BUILD_DIR"
+  - python setup.py install
 
 before_script:
-  - |
-    echo "*** set up SQL Server in a docker container"
-    docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=StrongPassword1' -p 1433:1433 --name mssql1 -d mcr.microsoft.com/mssql/server:2017-latest
-    sleep 10  # give MSSQL docker a chance to warm up, see: https://github.com/microsoft/mssql-docker/issues/203
-    docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'SELECT @@VERSION' || sleep 10
-  - |
-    echo "*** create test database in SQL Server"
-    docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test'
-  - |
-    echo "*** create test database in PostgreSQL"
-    psql -c 'CREATE DATABASE test;' -U postgres
-  - |
-    echo "*** create test database in MySQL"
-    mysql -e 'CREATE DATABASE test;'
+  - echo "*** set up SQL Server in a docker container"
+  - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=StrongPassword1' -p 1433:1433 --name mssql1 -d mcr.microsoft.com/mssql/server:2017-latest
+  - sleep 10  # give MSSQL docker a chance to warm up, see: https://github.com/microsoft/mssql-docker/issues/203
+  - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'SELECT @@VERSION' || sleep 10
+  - echo "*** create test database in SQL Server"
+  - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test'
+  - echo "*** create test database in PostgreSQL"
+  - psql -c 'CREATE DATABASE test;' -U postgres
+  - echo "*** create test database in MySQL"
+  - mysql -e 'CREATE DATABASE test;'
 
 script:
-  - |
-    cd "$TRAVIS_BUILD_DIR"
-    python -VV
-  - |
-    echo "*** run SQL Server tests"
-    python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
-  - |
-    echo "*** run PostgreSQL tests"
-    python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
-  - |
-    echo "*** run MySQL tests"
-    python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
+  - cd "$TRAVIS_BUILD_DIR"
+  - python -VV
+  - echo "*** run SQL Server tests"
+  - python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
+  - echo "*** run PostgreSQL tests"
+  - python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
+  - echo "*** run MySQL tests"
+  - python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
