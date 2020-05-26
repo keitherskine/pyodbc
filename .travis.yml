@@ -33,8 +33,9 @@ services:
 addons:
   apt:
     packages:
-      - odbc-postgresql
       - unixodbc-dev
+      - odbc-postgresql
+      - libmyodbc
 
 install:
   - echo "*** update unixODBC - commented out for now!"
