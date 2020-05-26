@@ -53,6 +53,14 @@ install:
   - tar -xz -f mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz
   - sudo cp mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
   - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
+  - |
+    cat << 'EOF' >> /etc/odbcinst.ini
+
+    [MySQL ODBC 5.3 ANSI Driver]
+    Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc.so
+    UsageCount  = 1
+    Threading   = 2
+    EOF
   - cd /tmp
   - curl -O "ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz"  # for some reason, this call times out
   - ls -l unixODBC-2.3.7.tar.gz
@@ -107,4 +115,4 @@ script:
   - echo "*** run PostgreSQL tests"
   - python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
   - echo "*** run MySQL tests"
-  - python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
+  - python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
