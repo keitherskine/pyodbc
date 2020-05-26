@@ -38,6 +38,9 @@ addons:
 
 install:
   - echo "*** update unixODBC - commented out for now!"
+  - which odbcinst
+  - ls -l /usr/lib/libodbc*
+  - ls -l /usr/lib64/libodbc*
   - odbcinst -j
   - _PWD="$PWD"
   - cd /tmp
