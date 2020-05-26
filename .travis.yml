@@ -59,6 +59,7 @@ install:
     sudo ACCEPT_EULA=Y apt-get install msodbcsql17
     # echo "*** dpkg -L msodbcsql17"
     # dpkg -L msodbcsql17
+  - |
     echo "*** cat /etc/odbcinst.ini"
     cat /etc/odbcinst.ini
     echo "*** cat /etc/odbc.ini"
@@ -87,6 +88,7 @@ before_script:
 script:
   - |
     cd "$TRAVIS_BUILD_DIR"
+    python -VV
   - |
     echo "*** run SQL Server tests"
     python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
@@ -94,5 +96,5 @@ script:
     echo "*** run MySQL tests"
     python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;DATABASE=test"
   - |
-    echo "*** run MySQL tests"
-    python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode(x64)};SERVER=localhost;UID=postgres;DATABASE=test"
+    echo "*** run PostgreSQL tests"
+    python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
