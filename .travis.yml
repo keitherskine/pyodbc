@@ -44,6 +44,7 @@ install:
   - sudo ls -ld /usr/local/bin/*odbc* || true
   - sudo ls -ld /usr/lib/libodbc* || true
   - sudo ls -ld /usr/lib64/libodbc* || true
+  - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
   - odbcinst -j
   - _PWD="$PWD"
   - cd /tmp
@@ -54,7 +55,7 @@ install:
   - sudo rm /usr/lib64/libodbc* || true  # remove any existing unixODBC build
   - export CPPFLAGS="-DSIZEOF_LONG_INT=8"
   - #./configure --prefix=/usr --libdir=/usr/lib64 --sysconfdir=/etc --enable-gui=no --enable-drivers=no --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE --enable-stats=no 1> zzz_log_configure_std 2> zzz_log_configure_err
-  - ./configure --prefix=/usr --libdir=/usr/lib64 1> zzz_log_configure_std 2> zzz_log_configure_err
+  - ./configure --prefix=/usr 1> zzz_log_configure_std 2> zzz_log_configure_err
   - tail -20 zzz_log_configure_err
   - make 1> zzz_log_make_std 2> zzz_log_make_err
   - tail -20 zzz_log_make_err
