@@ -102,8 +102,8 @@ before_script:
   - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q "CREATE DATABASE test"
   - echo "*** create test database in PostgreSQL"
   - psql -c "SELECT version()" -U postgres
-  - psql -c "CREATE DATABASE test WITH encoding='UTF8'" -U postgres
-  - #psql test -c "SHOW SERVER_ENCODING"
+  - psql -c "CREATE DATABASE test WITH encoding='UTF8' LC_CTYPE='en_US.utf8' LC_COLLATE='en_US.utf8'" -U postgres
+  - psql test -c "SHOW SERVER_ENCODING"
   - echo "*** create test database in MySQL"
   - mysql -e "STATUS"
   - mysql -e "CREATE DATABASE test"
