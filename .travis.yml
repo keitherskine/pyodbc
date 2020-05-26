@@ -41,12 +41,16 @@ install:
   - odbcinst -j
   - _PWD="$PWD"
   - cd /tmp
-  - sudo bash -c 'curl -sS -O "ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz"'  # for some reason, this call times out
+  - curl -sS -O "ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz"  # for some reason, this call times out
+  - ls -l unixODBC-2.3.7.tar.gz
   - tar -xz -f unixODBC-2.3.7.tar.gz
   - cd unixODBC-2.3.7
   - ./configure 1> zzz_log_configure_std 2> zzz_log_configure_err
+  - tail -20 zzz_log_configure_err
   - make 1> zzz_log_make_std 2> zzz_log_make_err
+  - tail -20 zzz_log_make_err
   - sudo make install 1> zzz_log_makeinstall_std 2> zzz_log_makeinstall_err
+  - tail -20 zzz_log_makeinstall_err
   - ls -l
   - cd "$_PWD"
   - odbcinst -j
