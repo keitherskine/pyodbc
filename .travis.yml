@@ -8,11 +8,11 @@ jobs:
     python: "2.7"
     env:
     - TESTS_DIR=tests2
-  - name: Python3.7
+  - name: Python3.5
     python: "3.5"
     env:
     - TESTS_DIR=tests3
-  - name: Python3.7
+  - name: Python3.6
     python: "3.6"
     env:
     - TESTS_DIR=tests3
@@ -20,17 +20,21 @@ jobs:
     python: "3.7"
     env:
     - TESTS_DIR=tests3
-  - name: Python3.7
+  - name: Python3.8
     python: "3.8"
     env:
     - TESTS_DIR=tests3
 
 services:
   - docker
+  - mysql
+  - postgresql
 
 addons:
   apt:
     packages:
+      - libmyodbc
+      - odbc-postgresql
       - unixodbc-dev
 
 install:
@@ -58,6 +62,8 @@ install:
     # dpkg -L msodbcsql17
     echo "*** cat /etc/odbcinst.ini"
     cat /etc/odbcinst.ini
+    echo "*** cat /etc/odbc.ini"
+    cat /etc/odbc.ini
   - |
     echo "*** install pyodbc"
     cd "$TRAVIS_BUILD_DIR"
@@ -65,14 +71,19 @@ install:
 
 before_script:
   - |
-    echo "*** set up MSSQL in a docker container"
+    echo "*** set up SQL Server in a docker container"
     docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=StrongPassword1' -p 1433:1433 --name mssql1 -d mcr.microsoft.com/mssql/server:2017-latest
-    # sometimes the first call to MSSQL in a docker container does not work, in which case
-    # pause for a few seconds, see: https://github.com/microsoft/mssql-docker/issues/203
+    sleep 10  # give MSSQL docker a chance to warm up, see: https://github.com/microsoft/mssql-docker/issues/203
     docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'SELECT @@VERSION' || sleep 10
   - |
-    echo "*** create test database in MSSQL"
+    echo "*** create test database in SQL Server"
     docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test'
+  - |
+    echo "*** create test database in MySQL"
+    mysql -e 'CREATE DATABASE test;'
+  - |
+    echo "*** create test database in PostgreSQL"
+    psql -c 'CREATE DATABASE test;' -U postgres
 
 script:
   - |
@@ -80,3 +91,9 @@ script:
   - |
     echo "*** run SQL Server tests"
     python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
+  - |
+    echo "*** run MySQL tests"
+    python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;DATABASE=test"
+  - |
+    echo "*** run MySQL tests"
+    python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode(x64)};SERVER=localhost;UID=postgres;DATABASE=test"
