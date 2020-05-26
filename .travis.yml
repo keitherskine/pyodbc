@@ -39,9 +39,9 @@ addons:
 install:
   - echo "*** update unixODBC - commented out for now!"
   - which odbcinst
-  - sudo ls -l /usr/bin/*odbc*
-  - sudo ls -l /usr/lib/libodbc*
-  - sudo ls -l /usr/lib64/libodbc*
+  - sudo ls -l /usr/bin/*odbc* || true
+  - sudo ls -l /usr/lib/libodbc* || true
+  - sudo ls -l /usr/lib64/libodbc* || true
   - odbcinst -j
   - _PWD="$PWD"
   - cd /tmp
