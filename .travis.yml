@@ -54,7 +54,7 @@ install:
   - sudo cp mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
   - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
   - sudo echo '[MySQL ODBC 5.3 ANSI Driver]' > mysql_odbcinst.ini
-  - sudo echo 'Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc.so' >> mysql_odbcinst.ini
+  - sudo echo 'Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc5a.so' >> mysql_odbcinst.ini
   - sudo echo 'UsageCount  = 1' >> mysql_odbcinst.ini
   - sudo echo 'Threading   = 2' >> mysql_odbcinst.ini
   - sudo odbcinst -i -d -f mysql_odbcinst.ini
