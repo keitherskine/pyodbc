@@ -39,6 +39,7 @@ addons:
 install:
   - echo "*** update unixODBC - commented out for now!"
   - which odbcinst
+  - sudo ls -ld /usr || true
   - sudo ls -ld /usr/bin/*odbc* || true
   - sudo ls -ld /usr/local/bin/*odbc* || true
   - sudo ls -ld /usr/lib/libodbc* || true
@@ -50,7 +51,7 @@ install:
   - ls -l unixODBC-2.3.7.tar.gz
   - tar -xz -f unixODBC-2.3.7.tar.gz
   - cd unixODBC-2.3.7
-  - sudo rm /usr/lib64/libodbc*  # remove any existing unixODBC drivers
+  - sudo rm /usr/lib64/libodbc* || true  # remove any existing unixODBC drivers
   - export CPPFLAGS="-DSIZEOF_LONG_INT=8"
   - ./configure --prefix=/usr --libdir=/usr/lib64 --sysconfdir=/etc --enable-gui=no --enable-drivers=no --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE --enable-stats=no 1> zzz_log_configure_std 2> zzz_log_configure_err
   - tail -20 zzz_log_configure_err
