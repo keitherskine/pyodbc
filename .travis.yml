@@ -35,7 +35,6 @@ addons:
     packages:
       - unixodbc-dev
       - odbc-postgresql
-      - libmyodbc
 
 install:
   - echo "*** update unixODBC - commented out for now!"
@@ -48,6 +47,12 @@ install:
   - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
   - odbcinst -j
   - _PWD="$PWD"
+  - cd /tmp
+  - curl -O https://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz
+  - ls -l mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit
+  - tar -xz -f mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz
+  - cp mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
+  - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
   - cd /tmp
   - curl -O "ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz"  # for some reason, this call times out
   - ls -l unixODBC-2.3.7.tar.gz
