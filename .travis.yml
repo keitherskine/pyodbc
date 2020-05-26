@@ -53,14 +53,11 @@ install:
   - tar -xz -f mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz
   - sudo cp mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
   - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
-  - |
-    cat << 'EOF' >> /etc/odbcinst.ini
-
-    [MySQL ODBC 5.3 ANSI Driver]
-    Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc.so
-    UsageCount  = 1
-    Threading   = 2
-    EOF
+  - sudo echo '' >> /etc/odbcinst.ini
+  - sudo echo '[MySQL ODBC 5.3 ANSI Driver]' >> /etc/odbcinst.ini
+  - sudo echo 'Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc.so' >> /etc/odbcinst.ini
+  - sudo echo 'UsageCount  = 1' >> /etc/odbcinst.ini
+  - sudo echo 'Threading   = 2' >> /etc/odbcinst.ini
   - cd /tmp
   - curl -O "ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz"  # for some reason, this call times out
   - ls -l unixODBC-2.3.7.tar.gz
