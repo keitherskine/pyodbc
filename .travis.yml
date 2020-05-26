@@ -7,19 +7,15 @@ jobs:
   - name: Python3.7
     python: "3.7"
     env:
-    - ODBC_DIR=odbc
+    - TESTS_DIR=tests3
 
 services:
   - docker
-  - mysql
-  - postgresql
 
 addons:
   apt:
     packages:
       - unixodbc-dev
-      - libmyodbc
-      - odbc-postgresql=1:09.02.0100-2ubuntu1
 
 before_script: |
     odbcinst -j
@@ -40,7 +36,7 @@ before_script: |
 
 script:
   - python -VV
-  - python tests3\sqlservertests.py "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
+  - python "$TESTS_DIR\sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
 
 
 
