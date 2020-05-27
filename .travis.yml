@@ -82,7 +82,7 @@ install:
     if [ -f "$TRAVIS_BUILD_DIR/travis_cache/unixODBC-2.3.7.tar.gz" ]; then
       cp "$TRAVIS_BUILD_DIR/travis_cache/unixODBC-2.3.7.tar.gz" .
     else
-      curl -O "ftp://ftp.unixodbc.org/pub/unixODBC/unixODBC-2.3.7.tar.gz"
+      curl -O "http://www.unixodbc.org/unixODBC-2.3.7.tar.gz"
     fi
   - ls -l unixODBC-2.3.7.tar.gz
   - |
