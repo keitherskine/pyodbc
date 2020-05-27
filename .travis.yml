@@ -1,5 +1,5 @@
 os: linux
-dist: xenial
+dist: bionic
 language: python
 
 jobs:
@@ -31,7 +31,7 @@ services:
   - postgresql
 
 addons:
-  postgresql: "10"
+  postgresql: "11"
   apt:
     packages:
       - unixodbc
