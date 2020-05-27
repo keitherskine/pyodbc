@@ -92,7 +92,8 @@ install:
   - sudo rm -v /usr/lib64/libodbc* || true
   - export CPPFLAGS="-DSIZEOF_LONG_INT=8"
   #- ./configure --prefix=/usr --libdir=/usr/lib64 --sysconfdir=/etc --enable-gui=no --enable-drivers=no --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE --enable-stats=no 1> zzz_log_configure_std 2> zzz_log_configure_err
-  - ./configure --prefix=/usr 1> zzz_log_configure_std 2> zzz_log_configure_err
+  #- ./configure --prefix=/usr 1> zzz_log_configure_std 2> zzz_log_configure_err
+  - ./configure --prefix=/usr --with-iconv-ucode-enc=UTF16LE 1> zzz_log_configure_std 2> zzz_log_configure_err
   - tail -20 zzz_log_configure_err
   - make 1> zzz_log_make_std 2> zzz_log_make_err
   - tail -20 zzz_log_make_err
