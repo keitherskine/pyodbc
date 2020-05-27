@@ -41,8 +41,8 @@ cache:
     - travis_cache
 
 install:
-  - mkdir "$TRAVIS_BUILD_DIR/travis_cache" || true
-  - ls -l "$TRAVIS_BUILD_DIR/travis_cache" || true
+  - test ! -d "$TRAVIS_BUILD_DIR/travis_cache" && mkdir "$TRAVIS_BUILD_DIR/travis_cache"
+  - ls -l "$TRAVIS_BUILD_DIR/travis_cache"
   - echo "*** update unixODBC - commented out for now!"
   - which odbcinst
   - sudo ls -l /usr || true
@@ -53,6 +53,7 @@ install:
   - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
   - odbcinst -j
   - _PWD="$PWD"
+  # install MySQL driver
   - cd /tmp
   - |
     if [ -f "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz" ]; then
@@ -65,7 +66,7 @@ install:
     if [ ! -f "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz" ]; then
       cp mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz "$TRAVIS_BUILD_DIR/travis_cache"
     fi
-  - ls -l "$TRAVIS_BUILD_DIR/travis_cache" || true
+  - ls -l "$TRAVIS_BUILD_DIR/travis_cache"
   - tar -xz -f mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz
   - sudo cp mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
   - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
@@ -75,6 +76,7 @@ install:
   - echo 'Threading   = 2' >> mysql_odbcinst.ini
   - sudo odbcinst -i -d -f mysql_odbcinst.ini
   - cat /etc/odbcinst.ini
+  # install latest unixODBC driver manager
   - cd /tmp
   - |
     if [ -f "$TRAVIS_BUILD_DIR/travis_cache/unixODBC-2.3.7.tar.gz" ]; then
@@ -90,7 +92,7 @@ install:
   - ls -l "$TRAVIS_BUILD_DIR/travis_cache" || true
   - tar -xz -f unixODBC-2.3.7.tar.gz
   - cd unixODBC-2.3.7
-  - sudo rm /usr/lib64/libodbc* || true  # remove any existing unixODBC build
+  - sudo rm -v /usr/lib64/libodbc* || true
   - export CPPFLAGS="-DSIZEOF_LONG_INT=8"
   #- ./configure --prefix=/usr --libdir=/usr/lib64 --sysconfdir=/etc --enable-gui=no --enable-drivers=no --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE --enable-stats=no 1> zzz_log_configure_std 2> zzz_log_configure_err
   - ./configure --prefix=/usr 1> zzz_log_configure_std 2> zzz_log_configure_err
@@ -103,19 +105,17 @@ install:
   - sudo /usr/local/bin/odbcinst -j || true
   - cd "$_PWD"
   - odbcinst -j
-  - echo "*** install MSSQL driver"
+  # install MSSQL driver
   - sudo bash -c 'curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -'
   - sudo bash -c 'curl https://packages.microsoft.com/config/ubuntu/18.04/prod.list > /etc/apt/sources.list.d/mssql-release.list'
   - sudo apt-get update
   - sudo ACCEPT_EULA=Y apt-get install msodbcsql17
-  - odbcinst -j
-  #- echo "*** dpkg -L msodbcsql17"
   #- dpkg -L msodbcsql17
-  - echo "*** cat /etc/odbcinst.ini"
+  # odbc info
+  - odbcinst -j
   - cat /etc/odbcinst.ini
-  - echo "*** cat /etc/odbc.ini"
   - cat /etc/odbc.ini
-  - echo "*** install pyodbc"
+  # install pyodbc
   - cd "$TRAVIS_BUILD_DIR"
   - python setup.py install
 
@@ -138,9 +138,9 @@ before_script:
 script:
   - cd "$TRAVIS_BUILD_DIR"
   - python -VV
-  - echo "*** run SQL Server tests"
+  # run SQL Server tests
   - python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
-  - echo "*** run PostgreSQL tests"
+  # run PostgreSQL tests
   - python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
-  - echo "*** run MySQL tests"
+  # run MySQL tests
   - python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
