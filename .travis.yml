@@ -41,7 +41,7 @@ cache:
     - travis_cache
 
 install:
-  - test ! -d "$TRAVIS_BUILD_DIR/travis_cache" && mkdir "$TRAVIS_BUILD_DIR/travis_cache"
+  #- test ! -d "$TRAVIS_BUILD_DIR/travis_cache" && mkdir "$TRAVIS_BUILD_DIR/travis_cache"
   - ls -l "$TRAVIS_BUILD_DIR/travis_cache"
   - echo "*** update unixODBC - commented out for now!"
   - which odbcinst
