@@ -4,26 +4,26 @@ language: python
 
 jobs:
   include:
-  - name: Python2.7
-    python: "2.7"
-    env:
-      - TESTS_DIR=tests2
-  #- name: Python3.5
-  #  python: "3.5"
-  #  env:
-  #    - TESTS_DIR=tests3
-  - name: Python3.6
-    python: "3.6"
-    env:
-      - TESTS_DIR=tests3
-  - name: Python3.7
-    python: "3.7"
-    env:
-      - TESTS_DIR=tests3
-  - name: Python3.8
-    python: "3.8"
-    env:
-      - TESTS_DIR=tests3
+    - name: Python2.7
+      python: "2.7"
+      env:
+        - TESTS_DIR=tests2
+    #- name: Python3.5
+    #  python: "3.5"
+    #  env:
+    #    - TESTS_DIR=tests3
+    - name: Python3.6
+      python: "3.6"
+      env:
+        - TESTS_DIR=tests3
+    - name: Python3.7
+      python: "3.7"
+      env:
+        - TESTS_DIR=tests3
+    - name: Python3.8
+      python: "3.8"
+      env:
+        - TESTS_DIR=tests3
 
 services:
   - docker
@@ -41,32 +41,30 @@ cache:
     - travis_cache
 
 install:
-  #- test ! -d "$TRAVIS_BUILD_DIR/travis_cache" && mkdir "$TRAVIS_BUILD_DIR/travis_cache"
+  # show cache
+  - mkdir "$TRAVIS_BUILD_DIR/travis_cache" || true
   - ls -l "$TRAVIS_BUILD_DIR/travis_cache"
-  - echo "*** update unixODBC - commented out for now!"
-  - which odbcinst
-  - sudo ls -l /usr || true
-  - sudo ls -ld /usr/bin/*odbc* || true
-  - sudo ls -ld /usr/local/bin/*odbc* || true
-  - sudo ls -ld /usr/lib/libodbc* || true
-  - sudo ls -ld /usr/lib64/libodbc* || true
-  - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
-  - odbcinst -j
-  - _PWD="$PWD"
+  #- which odbcinst
+  #- sudo ls -l /usr || true
+  #- sudo ls -ld /usr/bin/*odbc* || true
+  #- sudo ls -ld /usr/local/bin/*odbc* || true
+  #- sudo ls -ld /usr/lib/libodbc* || true
+  #- sudo ls -ld /usr/lib64/libodbc* || true
+  #- sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
+  #- odbcinst -j
   # install MySQL driver
   - cd /tmp
   - |
     if [ -f "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz" ]; then
-      cp "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz" .
+      cp -v "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz" .
     else
-      curl -O "https://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz"
+      curl -v -O "https://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz"
     fi
-  - sudo ls -al || true
+  - ls -l mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz
   - |
     if [ ! -f "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz" ]; then
-      cp mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz "$TRAVIS_BUILD_DIR/travis_cache"
+      cp -v mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz "$TRAVIS_BUILD_DIR/travis_cache"
     fi
-  - ls -l "$TRAVIS_BUILD_DIR/travis_cache"
   - tar -xz -f mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz
   - sudo cp mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
   - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
@@ -75,21 +73,19 @@ install:
   - echo 'UsageCount  = 1' >> mysql_odbcinst.ini
   - echo 'Threading   = 2' >> mysql_odbcinst.ini
   - sudo odbcinst -i -d -f mysql_odbcinst.ini
-  - cat /etc/odbcinst.ini
-  # install latest unixODBC driver manager
+  # install the latest unixODBC driver manager
   - cd /tmp
   - |
     if [ -f "$TRAVIS_BUILD_DIR/travis_cache/unixODBC-2.3.7.tar.gz" ]; then
-      cp "$TRAVIS_BUILD_DIR/travis_cache/unixODBC-2.3.7.tar.gz" .
+      cp -v "$TRAVIS_BUILD_DIR/travis_cache/unixODBC-2.3.7.tar.gz" .
     else
-      curl -O "http://www.unixodbc.org/unixODBC-2.3.7.tar.gz"
+      curl -v -O "http://www.unixodbc.org/unixODBC-2.3.7.tar.gz"
     fi
   - ls -l unixODBC-2.3.7.tar.gz
   - |
     if [ ! -f "$TRAVIS_BUILD_DIR/travis_cache/unixODBC-2.3.7.tar.gz" ]; then
-      cp unixODBC-2.3.7.tar.gz "$TRAVIS_BUILD_DIR/travis_cache"
+      cp -v unixODBC-2.3.7.tar.gz "$TRAVIS_BUILD_DIR/travis_cache"
     fi
-  - ls -l "$TRAVIS_BUILD_DIR/travis_cache" || true
   - tar -xz -f unixODBC-2.3.7.tar.gz
   - cd unixODBC-2.3.7
   - sudo rm -v /usr/lib64/libodbc* || true
@@ -99,12 +95,11 @@ install:
   - tail -20 zzz_log_configure_err
   - make 1> zzz_log_make_std 2> zzz_log_make_err
   - tail -20 zzz_log_make_err
-  - sudo make install 1> zzz_log_makeinstall_std 2> zzz_log_makeinstall_err
+  - sudo make install 1> zzz_log_install_std 2> zzz_log_install_err
   - tail -20 zzz_log_makeinstall_err
-  - sudo ls -ld /usr/local/bin/*odbc* || true
-  - sudo /usr/local/bin/odbcinst -j || true
-  - cd "$_PWD"
-  - odbcinst -j
+  #- sudo ls -ld /usr/local/bin/*odbc* || true
+  #- sudo /usr/local/bin/odbcinst -j || true
+  #- odbcinst -j
   # install MSSQL driver
   - sudo bash -c 'curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -'
   - sudo bash -c 'curl https://packages.microsoft.com/config/ubuntu/18.04/prod.list > /etc/apt/sources.list.d/mssql-release.list'
@@ -115,29 +110,30 @@ install:
   - odbcinst -j
   - cat /etc/odbcinst.ini
   - cat /etc/odbc.ini
+  # show cache
+  - ls -l "$TRAVIS_BUILD_DIR/travis_cache"
   # install pyodbc
   - cd "$TRAVIS_BUILD_DIR"
+  - python -VV
   - python setup.py install
 
 before_script:
-  - echo "*** set up SQL Server in a docker container"
+  # set up SQL Server and test database in a docker container
   - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=StrongPassword1' -p 1433:1433 --name mssql1 -d mcr.microsoft.com/mssql/server:2017-latest
-  - sleep 10  # give MSSQL docker a chance to warm up, see: https://github.com/microsoft/mssql-docker/issues/203
+  - sleep 10  # give MSSQL in docker a chance to warm up, see: https://github.com/microsoft/mssql-docker/issues/203
   - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q "SELECT @@VERSION" || sleep 10
   - echo "*** create test database in SQL Server"
   - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q "CREATE DATABASE test"
-  - echo "*** create test database in PostgreSQL"
+  # create test database in PostgreSQL
   - psql -c "SELECT version()" -U postgres
   - psql -c "CREATE DATABASE test WITH encoding='UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8'" -U postgres
   - psql -l
-  #- psql test -c "SHOW SERVER_ENCODING"
-  - echo "*** create test database in MySQL"
+  # create test database in MySQL"
   - mysql -e "STATUS"
   - mysql -e "CREATE DATABASE test"
 
 script:
   - cd "$TRAVIS_BUILD_DIR"
-  - python -VV
   # run SQL Server tests
   - python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
   # run PostgreSQL tests
