@@ -66,15 +66,16 @@ install:
       cp -v mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz "$TRAVIS_BUILD_DIR/travis_cache"
     fi
   - tar -xz -f mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz
-  - sudo cp mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
-  - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
+  - sudo cp -v mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
+  #- sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
   - echo '[MySQL ODBC 5.3 ANSI Driver]' > mysql_odbcinst.ini
   - echo 'Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc5a.so' >> mysql_odbcinst.ini
   - echo 'UsageCount  = 1' >> mysql_odbcinst.ini
   - echo 'Threading   = 2' >> mysql_odbcinst.ini
   - sudo odbcinst -i -d -f mysql_odbcinst.ini
-  # install the latest unixODBC driver manager
+  # install the latest unixODBC driver manager (v2.3.1 is 10 years old and buggy)
   - cd /tmp
+  - odbcinst --version
   - |
     if [ -f "$TRAVIS_BUILD_DIR/travis_cache/unixODBC-2.3.7.tar.gz" ]; then
       cp -v "$TRAVIS_BUILD_DIR/travis_cache/unixODBC-2.3.7.tar.gz" .
@@ -99,7 +100,7 @@ install:
   - tail -20 zzz_log_install_err
   #- sudo ls -ld /usr/local/bin/*odbc* || true
   #- sudo /usr/local/bin/odbcinst -j || true
-  #- odbcinst -j
+  - odbcinst --version
   # install MSSQL driver
   - sudo bash -c 'curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -'
   - sudo bash -c 'curl https://packages.microsoft.com/config/ubuntu/18.04/prod.list > /etc/apt/sources.list.d/mssql-release.list'
@@ -135,8 +136,8 @@ before_script:
 script:
   - cd "$TRAVIS_BUILD_DIR"
   # run SQL Server tests
-  - python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
+  - python "./$TESTS_DIR/sqlservertests.py" -v "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
   # run PostgreSQL tests
-  - python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
+  - python "./$TESTS_DIR/pgtests.py" -v "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
   # run MySQL tests
-  - python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
+  - python "./$TESTS_DIR/mysqltests.py" -v "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
