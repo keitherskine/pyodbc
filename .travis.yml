@@ -96,7 +96,7 @@ install:
   - make 1> zzz_log_make_std 2> zzz_log_make_err
   - tail -20 zzz_log_make_err
   - sudo make install 1> zzz_log_install_std 2> zzz_log_install_err
-  - tail -20 zzz_log_makeinstall_err
+  - tail -20 zzz_log_install_err
   #- sudo ls -ld /usr/local/bin/*odbc* || true
   #- sudo /usr/local/bin/odbcinst -j || true
   #- odbcinst -j
