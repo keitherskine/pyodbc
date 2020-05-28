@@ -14,7 +14,7 @@ crsr.execute("CREATE TABLE t1(s1 varchar(100), s2 varchar(100))")
 v = "x \U0001F31C z"
 crsr.execute(r"insert into t1 values (U&'x \+01F31C z', '{}')".format(v))
 
-rows = crsr.execute("select s from t1").fetchall()
+rows = crsr.execute("select * from t1").fetchall()
 for row in rows:
     print('row:', row)
 
