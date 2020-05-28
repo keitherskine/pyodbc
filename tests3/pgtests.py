@@ -612,7 +612,7 @@ class PGTestCase(unittest.TestCase):
 
         self.assertEqual(result, v)
 
-    @unittest.skipIf(sys.platform != 'win32', "high unicode embedded characters not supported yet")
+    @unittest.skipIf(sys.platform != "win32", "high unicode embedded characters not supported yet")
     def test_emoticons_as_literal(self):
         # https://github.com/mkleehammer/pyodbc/issues/630
 

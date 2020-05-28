@@ -65,18 +65,18 @@ install:
   # install MySQL driver
   - cd /tmp
   - |
-    if [ -f "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz" ]; then
-      cp -v "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz" .
+    if [ -f "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.14-linux-ubuntu18.04-x86-64bit.tar.gz" ]; then
+      cp -v "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.14-linux-ubuntu18.04-x86-64bit.tar.gz" .
     else
-      curl -v -O "https://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz"
+      curl -v -O "https://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-linux-ubuntu18.04-x86-64bit.tar.gz"
     fi
-  - ls -l mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz
+  - ls -l mysql-connector-odbc-5.3.14-linux-ubuntu18.04-x86-64bit.tar.gz
   - |
-    if [ ! -f "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz" ]; then
-      cp -v mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz "$TRAVIS_BUILD_DIR/travis_cache"
+    if [ ! -f "$TRAVIS_BUILD_DIR/travis_cache/mysql-connector-odbc-5.3.14-linux-ubuntu18.04-x86-64bit.tar.gz" ]; then
+      cp -v mysql-connector-odbc-5.3.14-linux-ubuntu18.04-x86-64bit.tar.gz "$TRAVIS_BUILD_DIR/travis_cache"
     fi
-  - tar -xz -f mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit.tar.gz
-  - sudo cp -v mysql-connector-odbc-5.3.13-linux-ubuntu16.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
+  - tar -xz -f mysql-connector-odbc-5.3.14-linux-ubuntu18.04-x86-64bit.tar.gz
+  - sudo cp -v mysql-connector-odbc-5.3.14-linux-ubuntu18.04-x86-64bit/lib/libmyodbc5a.so /usr/lib/x86_64-linux-gnu/odbc/
   - sudo ls -l /usr/lib/x86_64-linux-gnu/odbc || true
   - echo '[MySQL ODBC 5.3 ANSI Driver]' > mysql_odbcinst.ini
   - echo 'Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc5a.so' >> mysql_odbcinst.ini
