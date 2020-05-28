@@ -14,7 +14,7 @@ crsr.execute("CREATE TABLE t1(id int, s1 varchar(100), s2 varchar(100))")
 v = "x \U0001F31C z"
 v2 = '我的'
 crsr.execute(r"insert into t1 values (1, U&'x \+01F31C z', '{}')".format(v))
-crsr.execute(r"insert into t1 values (2, U&'\6211\7684', '{}')".format(v))
+crsr.execute(r"insert into t1 values (2, U&'\6211\7684', '{}')".format(v2))
 
 rows = crsr.execute("select * from t1 order by id").fetchall()
 for row in rows:
