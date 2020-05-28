@@ -210,11 +210,11 @@ class PGTestCase(unittest.TestCase):
 
     def test_chinese(self):
         v = '我的'
-        self.cursor.execute("SELECT N'我的' AS name")
+        self.cursor.execute("SELECT '我的' AS name")
         row = self.cursor.fetchone()
         self.assertEqual(row[0], v)
 
-        self.cursor.execute("SELECT N'我的' AS name")
+        self.cursor.execute("SELECT '我的' AS name")
         rows = self.cursor.fetchall()
         self.assertEqual(rows[0][0], v)
 
@@ -618,10 +618,9 @@ class PGTestCase(unittest.TestCase):
         v = "x \U0001F31C z"
 
         self.cursor.execute("CREATE TABLE t1(s varchar(100))")
-        self.cursor.execute("insert into t1 values ('%s')" % v)
+        self.cursor.execute("insert into t1 values (N'%s')" % v)
 
         result = self.cursor.execute("select s from t1").fetchone()[0]
-        print(self.cursor.description)  #kme!!!!!
 
         self.assertEqual(result, v)
         
