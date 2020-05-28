@@ -20,10 +20,10 @@ rows = crsr.execute("select * from t1 order by id").fetchall()
 for row in rows:
     print('row:', row)
 
-print(v == rows[0][0])
-print(v == rows[0][1])
-print(v2 == rows[1][0])
-print(v2 == rows[1][1])
+print(v == rows[0].s1)
+print(v == rows[0].s2)
+print(v2 == rows[1].s1)
+print(v2 == rows[1].s2)
 
 crsr.close()
 cnxn.close()
