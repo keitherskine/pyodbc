@@ -69,7 +69,6 @@ class PGTestCase(unittest.TestCase):
         self.cursor = self.cnxn.cursor()
 
         # I've set my test database to use UTF-8 which seems most popular.
-        self.cnxn.setdecoding(pyodbc.SQL_CHAR, encoding='utf-8')
         self.cnxn.setdecoding(pyodbc.SQL_WCHAR, encoding='utf-8')
         self.cnxn.setencoding(encoding='utf-8')
 
@@ -619,7 +618,8 @@ class PGTestCase(unittest.TestCase):
         v = "x \U0001F31C z"
 
         self.cursor.execute("CREATE TABLE t1(s varchar(100))")
-        self.cursor.execute("insert into t1 values ('%s')" % v)
+        #self.cursor.execute("insert into t1 values ('%s')" % v)
+        self.cursor.execute(r'insert into t1 values (U&"x \+01F31C z")')
 
         result = self.cursor.execute("select s from t1").fetchone()[0]
 
