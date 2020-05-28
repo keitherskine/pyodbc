@@ -618,7 +618,8 @@ class PGTestCase(unittest.TestCase):
         v = "x \U0001F31C z"
 
         self.cursor.execute("CREATE TABLE t1(s varchar(100))")
-        self.cursor.execute("insert into t1 values (N'%s')" % v)
+        self.cursor.execute("insert into t1 values ('🌜')")
+        #self.cursor.execute("insert into t1 values ('%s')" % v)
 
         result = self.cursor.execute("select s from t1").fetchone()[0]
 
