@@ -609,6 +609,7 @@ class PGTestCase(unittest.TestCase):
         self.cursor.execute("insert into t1 values (?)", v)
 
         result = self.cursor.execute("select s from t1").fetchone()[0]
+        print(self.cursor.description)  #kme!!!!!
 
         self.assertEqual(result, v)
 
