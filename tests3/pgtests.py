@@ -612,14 +612,14 @@ class PGTestCase(unittest.TestCase):
 
         self.assertEqual(result, v)
 
+    @unittest.skipIf(sys.platform != 'win32', "high unicode embedded characters not supported yet")
     def test_emoticons_as_literal(self):
         # https://github.com/mkleehammer/pyodbc/issues/630
 
         v = "x \U0001F31C z"
 
         self.cursor.execute("CREATE TABLE t1(s varchar(100))")
-        #self.cursor.execute("insert into t1 values ('%s')" % v)
-        self.cursor.execute(r"insert into t1 values (U&'x \+01F31C z')")
+        self.cursor.execute("insert into t1 values ('%s')" % v)
 
         result = self.cursor.execute("select s from t1").fetchone()[0]
 

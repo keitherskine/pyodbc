@@ -43,14 +43,14 @@ cache:
     - travis_cache
 
 install:
-  - echo '[ODBC]' > /tmp/odbcinst.ini.new
-  - echo 'Trace = yes' >> /tmp/odbcinst.ini.new
-  - echo 'TraceFile = /tmp/pyodbcodbctrace.txt' >> /tmp/odbcinst.ini.new
-  - echo '' >> /tmp/odbcinst.ini.new
-  - cat /etc/odbcinst.ini >> /tmp/odbcinst.ini.new
-  - sudo mv /etc/odbcinst.ini /etc/odbcinst.ini.orig
-  - sudo mv /tmp/odbcinst.ini.new /etc/odbcinst.ini
-  - cat /etc/odbcinst.ini
+  #- echo '[ODBC]' > /tmp/odbcinst.ini.new
+  #- echo 'Trace = yes' >> /tmp/odbcinst.ini.new
+  #- echo 'TraceFile = /tmp/pyodbcodbctrace.txt' >> /tmp/odbcinst.ini.new
+  #- echo '' >> /tmp/odbcinst.ini.new
+  #- cat /etc/odbcinst.ini >> /tmp/odbcinst.ini.new
+  #- sudo mv /etc/odbcinst.ini /etc/odbcinst.ini.orig
+  #- sudo mv /tmp/odbcinst.ini.new /etc/odbcinst.ini
+  #- cat /etc/odbcinst.ini
   # show cache
   - mkdir "$TRAVIS_BUILD_DIR/travis_cache" || true
   - ls -l "$TRAVIS_BUILD_DIR/travis_cache"
@@ -150,11 +150,11 @@ before_script:
 
 script:
   - cd "$TRAVIS_BUILD_DIR"
-  #### run SQL Server tests
-  ###- python "./$TESTS_DIR/sqlservertests.py" -v "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
-  #### run PostgreSQL tests
-  ###- python "./$TESTS_DIR/pgtests.py" -v "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
-  #### run MySQL tests
-  ###- python "./$TESTS_DIR/mysqltests.py" -v "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
-  - python "./$TESTS_DIR/keith.py"
-  - tail -1000 /tmp/pyodbcodbctrace.txt
+  # run SQL Server tests
+  - python "./$TESTS_DIR/sqlservertests.py" -v "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
+  # run PostgreSQL tests
+  - python "./$TESTS_DIR/pgtests.py" -v "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
+  # run MySQL tests
+  - python "./$TESTS_DIR/mysqltests.py" -v "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
+  #- python "./$TESTS_DIR/keith.py"
+  #- tail -1000 /tmp/pyodbcodbctrace.txt
