@@ -43,13 +43,13 @@ cache:
     - travis_cache
 
 install:
-  - sudo echo '[ODBC]' > /etc/odbcinst.ini.new
-  - sudo echo 'Trace = yes' >> /etc/odbcinst.ini.new
-  - sudo echo 'TraceFile = /tmp/pyodbcodbctrace.txt' >> /etc/odbcinst.ini.new
-  - sudo echo '' >> /etc/odbcinst.ini.new
-  - sudo cat /etc/odbcinst.ini >> /etc/odbcinst.ini.new
+  - echo '[ODBC]' > /tmp/odbcinst.ini.new
+  - echo 'Trace = yes' >> /tmp/odbcinst.ini.new
+  - echo 'TraceFile = /tmp/pyodbcodbctrace.txt' >> /tmp/odbcinst.ini.new
+  - echo '' >> /tmp/odbcinst.ini.new
+  - cat /etc/odbcinst.ini >> /tmp/odbcinst.ini.new
   - sudo mv /etc/odbcinst.ini /etc/odbcinst.ini.orig
-  - sudo mv /etc/odbcinst.ini.new /etc/odbcinst.ini
+  - sudo mv /tmp/odbcinst.ini.new /etc/odbcinst.ini
   - cat /etc/odbcinst.ini
   # show cache
   - mkdir "$TRAVIS_BUILD_DIR/travis_cache" || true
