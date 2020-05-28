@@ -43,6 +43,14 @@ cache:
     - travis_cache
 
 install:
+  - sudo echo '[ODBC]' > /etc/odbcinst.ini.new
+  - sudo echo 'Trace = yes' >> /etc/odbcinst.ini.new
+  - sudo echo 'TraceFile = /tmp/pyodbcodbctrace.txt' >> /etc/odbcinst.ini.new
+  - sudo echo '' >> /etc/odbcinst.ini.new
+  - sudo cat /etc/odbcinst.ini >> /etc/odbcinst.ini.new
+  - sudo mv /etc/odbcinst.ini /etc/odbcinst.ini.orig
+  - sudo mv /etc/odbcinst.ini.new /etc/odbcinst.ini
+  - cat /etc/odbcinst.ini
   # show cache
   - mkdir "$TRAVIS_BUILD_DIR/travis_cache" || true
   - ls -l "$TRAVIS_BUILD_DIR/travis_cache"
@@ -142,9 +150,11 @@ before_script:
 
 script:
   - cd "$TRAVIS_BUILD_DIR"
-  # run SQL Server tests
-  - python "./$TESTS_DIR/sqlservertests.py" -v "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
-  # run PostgreSQL tests
-  - python "./$TESTS_DIR/pgtests.py" -v "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
-  # run MySQL tests
-  - python "./$TESTS_DIR/mysqltests.py" -v "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
+  #### run SQL Server tests
+  ###- python "./$TESTS_DIR/sqlservertests.py" -v "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
+  #### run PostgreSQL tests
+  ###- python "./$TESTS_DIR/pgtests.py" -v "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
+  #### run MySQL tests
+  ###- python "./$TESTS_DIR/mysqltests.py" -v "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
+  - python "./$TESTS_DIR/keith.py"
+  - tail -1000 /tmp/pyodbcodbctrace.txt
