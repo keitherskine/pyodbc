@@ -144,6 +144,9 @@ before_script:
   - psql -c "SELECT version()" -U postgres
   - psql -c "CREATE DATABASE test WITH encoding='UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8'" -U postgres
   - psql -l
+  - psql -c "create table tttt (s varchar(50))" -U postgres
+  - psql -c "insert into tttt values ('aaa 🌜 zzz')" -U postgres
+  - psql -c "select * from tttt" -U postgres
   # create test database in MySQL"
   - mysql -e "STATUS"
   - mysql -e "CREATE DATABASE test"
