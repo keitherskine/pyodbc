@@ -534,7 +534,7 @@ class PGTestCase(unittest.TestCase):
         brand_new_cursor = self.cnxn.cursor()
         self.assertIsNone(brand_new_cursor.messages)
 
-        self.cursor.execute("RAISE NOTICE USING MESSAGE = 'hello world', ERRCODE = '01000'")
+        self.cursor.execute("RAISE NOTICE 'hello world' USING ERRCODE = '01000'")
         self.assertTrue(type(self.cursor.messages) is list)
         self.assertEqual(len(self.cursor.messages), 1)
         self.assertTrue(type(self.cursor.messages[0]) is tuple)
