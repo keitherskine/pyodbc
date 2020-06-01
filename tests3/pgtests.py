@@ -642,6 +642,7 @@ class PGTestCase(unittest.TestCase):
 
         self.cursor.execute("""
             CREATE OR REPLACE PROCEDURE test_cursor_messages()
+            LANGUAGE plpgsql
             AS $$
             BEGIN
                 RAISE NOTICE 'hello world', ERRNO = '01000';
