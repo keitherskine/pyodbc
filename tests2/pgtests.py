@@ -535,12 +535,14 @@ class PGTestCase(unittest.TestCase):
         self.assertIsNone(brand_new_cursor.messages)
 
         self.cursor.execute("""
-            CREATE OR REPLACE PROCEDURE test_cursor_messages () AS $$
+            CREATE OR REPLACE PROCEDURE test_cursor_messages()
+            AS $$
             BEGIN
                 RAISE NOTICE 'hello world', ERRNO = '01000';
             END;
+            $$;
         """)
-        self.cursor.execute("CALL test_cursor_messages ()")
+        self.cursor.execute("CALL test_cursor_messages()")
         self.assertTrue(type(self.cursor.messages) is list)
         self.assertEqual(len(self.cursor.messages), 1)
         self.assertTrue(type(self.cursor.messages[0]) is tuple)
