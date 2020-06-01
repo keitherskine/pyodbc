@@ -539,7 +539,7 @@ class PGTestCase(unittest.TestCase):
             LANGUAGE plpgsql
             AS $$
             BEGIN
-                RAISE NOTICE 'hello world', ERRNO = '01000';
+                RAISE NOTICE 'hello world' USING ERRNO = '01000';
             END;
             $$;
         """)
