@@ -107,7 +107,7 @@ install:
 # ref: https://www.appveyor.com/docs/services-databases/
 services:
   - mssql2017
-  - postgresql111
+  - postgresql11
   - mysql
 
 build_script:
