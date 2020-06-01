@@ -24,7 +24,7 @@ jobs:
 env:
   global:
     - UNIXODBC_DM=unixODBC-2.3.7
-    - MYSQL_DRIVER=mysql-connector-odbc-5.3.14-linux-ubuntu18.04-x86-64bit
+    - MYSQL_DRIVER=mysql-connector-odbc-8.0.19-linux-ubuntu18.04-x86-64bit
 
 services:
   - docker
@@ -81,7 +81,7 @@ install:
     if [ -f "$TRAVIS_BUILD_DIR/travis_cache/${MYSQL_DRIVER}.tar.gz" ]; then
       cp -v "$TRAVIS_BUILD_DIR/travis_cache/${MYSQL_DRIVER}.tar.gz" .
     else
-      curl -v -O "https://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/Connector-ODBC/5.3/${MYSQL_DRIVER}.tar.gz"
+      curl -v -O "https://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/Connector-ODBC/8.0/${MYSQL_DRIVER}.tar.gz"
     fi
   - ls -l "${MYSQL_DRIVER}.tar.gz"
   - |
@@ -89,9 +89,9 @@ install:
       cp -v "${MYSQL_DRIVER}.tar.gz" "$TRAVIS_BUILD_DIR/travis_cache"
     fi
   - tar -xz -f "${MYSQL_DRIVER}.tar.gz"
-  - sudo cp -v "${MYSQL_DRIVER}/lib/libmyodbc5a.so" /usr/lib/x86_64-linux-gnu/odbc/
-  - echo '[MySQL ODBC 5.3 ANSI Driver]' > mysql_odbcinst.ini
-  - echo 'Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc5a.so' >> mysql_odbcinst.ini
+  - sudo cp -v "${MYSQL_DRIVER}/lib/libmyodbc8a.so" /usr/lib/x86_64-linux-gnu/odbc/
+  - echo '[MySQL ODBC 8.0 ANSI Driver]' > mysql_odbcinst.ini
+  - echo 'Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc8a.so' >> mysql_odbcinst.ini
   - echo 'UsageCount  = 1' >> mysql_odbcinst.ini
   - echo 'Threading   = 2' >> mysql_odbcinst.ini
   - sudo odbcinst -i -d -f mysql_odbcinst.ini
@@ -133,4 +133,4 @@ script:
   # run PostgreSQL tests
   - python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
   # run MySQL tests
-  - python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 5.3 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
+  - python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
