@@ -632,6 +632,24 @@ class PGTestCase(unittest.TestCase):
         else:
             self.assertEqual(result, v)
 
+    def test_cursor_messages_with_print(self):
+        """
+        Ensure the Cursor.messages attribute is handled correctly with a simple PRINT-like statement.
+        """
+        # self.cursor is used in setUp, hence is not brand new at this point
+        brand_new_cursor = self.cnxn.cursor()
+        self.assertIsNone(brand_new_cursor.messages)
+
+        self.cursor.execute("RAISE NOTICE USING MESSAGE = 'hello world', ERRCODE = '01000'")
+        self.assertTrue(type(self.cursor.messages) is list)
+        self.assertEqual(len(self.cursor.messages), 1)
+        self.assertTrue(type(self.cursor.messages[0]) is tuple)
+        self.assertEqual(len(self.cursor.messages[0]), 2)
+        self.assertTrue(type(self.cursor.messages[0][0]) is str)
+        self.assertTrue(type(self.cursor.messages[0][1]) is str)
+        self.assertEqual('[01000] (0)', self.cursor.messages[0][0])
+        self.assertTrue(self.cursor.messages[0][1].endswith('hello world'))
+
     def test_output_conversion(self):
         # Note the use of SQL_WVARCHAR, not SQL_VARCHAR.
 
