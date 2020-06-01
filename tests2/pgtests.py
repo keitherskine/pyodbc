@@ -550,7 +550,7 @@ class PGTestCase(unittest.TestCase):
         self.assertEqual(len(self.cursor.messages[0]), 2)
         self.assertTrue(type(self.cursor.messages[0][0]) is unicode)
         self.assertTrue(type(self.cursor.messages[0][1]) is unicode)
-        self.assertEqual('[01000] (0)', self.cursor.messages[0][0])
+        self.assertEqual('[01000] (-1)', self.cursor.messages[0][0])
         self.assertTrue(self.cursor.messages[0][1].endswith('hello world'))
 
 
