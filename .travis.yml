@@ -107,11 +107,15 @@ install:
   - python setup.py install
 
 before_script:
-  # set up SQL Server and test database in a docker container
-  - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=StrongPassword1' -p 1433:1433 --name mssql1 -d mcr.microsoft.com/mssql/server:2017-latest
+  # set up SQL Server 2017 and 2019 in docker containers
+  - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=StrongPassword2017' -p 1401:1433 --name mssql2017 -d mcr.microsoft.com/mssql/server:2017-latest
+  - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=StrongPassword2019' -p 1402:1433 --name mssql2019 -d mcr.microsoft.com/mssql/server:2019-latest
   - sleep 10  # MSSQL in docker needs time to warm up: https://github.com/microsoft/mssql-docker/issues/203
-  - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q "SELECT @@VERSION" || sleep 10
-  - docker exec -it mssql1 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q "CREATE DATABASE test"
+  # create test databases in SQL Server
+  - docker exec -it mssql2017 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
+  - docker exec -it mssql2017 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
+  - docker exec -it mssql2019 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
+  - docker exec -it mssql2019 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
   # create test database in PostgreSQL
   - psql -c "SELECT version()" -U postgres
   - psql -c "CREATE DATABASE test WITH encoding='UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8'" -U postgres
@@ -122,8 +126,10 @@ before_script:
 
 script:
   - cd "$TRAVIS_BUILD_DIR"
-  # run SQL Server tests
-  - python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost;UID=sa;PWD=StrongPassword1;DATABASE=test"
+  # run SQL Server 2017 tests
+  - python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
+  # run SQL Server 2019 tests
+  - python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
   # run PostgreSQL tests
   - python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
   # run MySQL tests
