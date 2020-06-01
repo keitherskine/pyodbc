@@ -534,14 +534,21 @@ class PGTestCase(unittest.TestCase):
         brand_new_cursor = self.cnxn.cursor()
         self.assertIsNone(brand_new_cursor.messages)
 
+        # self.cursor.execute("""
+        #     CREATE OR REPLACE PROCEDURE test_cursor_messages()
+        #     LANGUAGE plpgsql
+        #     AS $$
+        #     BEGIN
+        #         RAISE NOTICE 'hello world' USING ERRCODE = '01000';
+        #     END;
+        #     $$;
+        # """)
         self.cursor.execute("""
-            CREATE OR REPLACE PROCEDURE test_cursor_messages()
-            LANGUAGE plpgsql
-            AS $$
+            CREATE OR REPLACE FUNCTION test_cursor_messages() RETURNS void AS $$
             BEGIN
                 RAISE NOTICE 'hello world' USING ERRCODE = '01000';
             END;
-            $$;
+            $$ LANGUAGE plpgsql;
         """)
         self.cursor.execute("CALL test_cursor_messages();")
         self.assertTrue(type(self.cursor.messages) is list)
