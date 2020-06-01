@@ -645,7 +645,7 @@ class PGTestCase(unittest.TestCase):
             LANGUAGE plpgsql
             AS $$
             BEGIN
-                RAISE NOTICE 'hello world' USING ERRCODE = '01000';
+                RAISE INFO 'hello world' USING ERRCODE = '01000';
             END;
             $$;
         """)
