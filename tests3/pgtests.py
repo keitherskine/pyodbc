@@ -640,6 +640,8 @@ class PGTestCase(unittest.TestCase):
         brand_new_cursor = self.cnxn.cursor()
         self.assertIsNone(brand_new_cursor.messages)
 
+        # using INFO message level because they are always sent to the client regardless of
+        # client_min_messages: https://www.postgresql.org/docs/11/runtime-config-client.html
         self.cursor.execute("""
             CREATE OR REPLACE PROCEDURE test_cursor_messages()
             LANGUAGE plpgsql
