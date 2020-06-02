@@ -647,12 +647,16 @@ class PGTestCase(unittest.TestCase):
             LANGUAGE plpgsql
             AS $$
             BEGIN
+                SELECT 1 AS col1;
                 RAISE INFO 'hello world1' USING ERRCODE = '01001';
+                SELECT 2 AS col2;
                 RAISE INFO 'hello world2' USING ERRCODE = '01002';
+                RAISE INFO 'hello world3' USING ERRCODE = '01003';
             END;
             $$;
         """)
         self.cursor.execute("CALL test_cursor_messages();")
+        print(self.cursor.messages)  # temp!!!!
         self.assertIs(type(self.cursor.messages), list)
         self.assertEqual(len(self.cursor.messages), 1)
         message = self.cursor.messages[0]
@@ -664,6 +668,7 @@ class PGTestCase(unittest.TestCase):
         self.assertTrue(message[1].endswith('hello world1'))
 
         self.assertTrue(self.cursor.nextset())
+        print(self.cursor.messages)  # temp!!!!
         self.assertIs(type(self.cursor.messages), list)
         self.assertEqual(len(self.cursor.messages), 1)
         message = self.cursor.messages[0]
