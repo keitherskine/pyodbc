@@ -647,37 +647,19 @@ class PGTestCase(unittest.TestCase):
             LANGUAGE plpgsql
             AS $$
             BEGIN
-                SELECT 1 AS col1;
-                RAISE INFO 'hello world1' USING ERRCODE = '01001';
-                SELECT 2 AS col2;
-                RAISE INFO 'hello world2' USING ERRCODE = '01002';
-                RAISE INFO 'hello world3' USING ERRCODE = '01003';
+                RAISE INFO 'hello world' USING ERRCODE = '01000';
             END;
             $$;
         """)
         self.cursor.execute("CALL test_cursor_messages();")
-        print(self.cursor.messages)  # temp!!!!
-        self.assertIs(type(self.cursor.messages), list)
+        self.assertTrue(type(self.cursor.messages) is list)
         self.assertEqual(len(self.cursor.messages), 1)
-        message = self.cursor.messages[0]
-        self.assertIs(type(message), tuple)
-        self.assertEqual(len(message), 2)
-        self.assertIs(type(message[0]), str)
-        self.assertIs(type(message[1]), str)
-        self.assertEqual('[01001] (-1)', message[0])
-        self.assertTrue(message[1].endswith('hello world1'))
-
-        self.assertTrue(self.cursor.nextset())
-        print(self.cursor.messages)  # temp!!!!
-        self.assertIs(type(self.cursor.messages), list)
-        self.assertEqual(len(self.cursor.messages), 1)
-        message = self.cursor.messages[0]
-        self.assertIs(type(message), tuple)
-        self.assertEqual(len(message), 2)
-        self.assertIs(type(message[0]), str)
-        self.assertIs(type(message[1]), str)
-        self.assertEqual('[01002] (-1)', message[0])
-        self.assertTrue(message[1].endswith('hello world2'))
+        self.assertTrue(type(self.cursor.messages[0]) is tuple)
+        self.assertEqual(len(self.cursor.messages[0]), 2)
+        self.assertTrue(type(self.cursor.messages[0][0]) is str)
+        self.assertTrue(type(self.cursor.messages[0][1]) is str)
+        self.assertEqual('[01000] (-1)', self.cursor.messages[0][0])
+        self.assertTrue(self.cursor.messages[0][1].endswith('hello world'))
 
     def test_output_conversion(self):
         # Note the use of SQL_WVARCHAR, not SQL_VARCHAR.
