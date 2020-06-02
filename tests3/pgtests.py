@@ -654,7 +654,7 @@ class PGTestCase(unittest.TestCase):
         """)
         self.cursor.execute("CALL test_cursor_messages();")
         self.assertIs(type(self.cursor.messages), list)
-        self.assertEqual(len(self.cursor.messages), 2)
+        self.assertEqual(len(self.cursor.messages), 1)
         message = self.cursor.messages[0]
         self.assertIs(type(message), tuple)
         self.assertEqual(len(message), 2)
@@ -662,7 +662,11 @@ class PGTestCase(unittest.TestCase):
         self.assertIs(type(message[1]), str)
         self.assertEqual('[01001] (-1)', message[0])
         self.assertTrue(message[1].endswith('hello world1'))
-        message = self.cursor.messages[1]
+
+        self.assertTrue(self.cursor.nextset())
+        self.assertIs(type(self.cursor.messages), list)
+        self.assertEqual(len(self.cursor.messages), 1)
+        message = self.cursor.messages[0]
         self.assertIs(type(message), tuple)
         self.assertEqual(len(message), 2)
         self.assertIs(type(message[0]), str)
