@@ -23,7 +23,6 @@ jobs:
 
 env:
   global:
-    - TRVS_VERBOSE=false
     - UNIXODBC_DM=unixODBC-2.3.7
     - MYSQL_DRIVER=mysql-connector-odbc-8.0.19-linux-ubuntu18.04-x86-64bit
 
