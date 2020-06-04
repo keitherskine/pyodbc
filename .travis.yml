@@ -1,3 +1,6 @@
+# To increase the output in the log, set the environment variable
+# TRVS_VERBOSE to "true" in the repository settings in the Travis UI.
+
 os: linux
 dist: bionic
 language: python
