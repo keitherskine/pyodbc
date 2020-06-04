@@ -23,6 +23,7 @@ jobs:
 
 env:
   global:
+    - TRVS_VERBOSE=false
     - UNIXODBC_DM=unixODBC-2.3.7
     - MYSQL_DRIVER=mysql-connector-odbc-8.0.19-linux-ubuntu18.04-x86-64bit
 
@@ -126,11 +127,12 @@ before_script:
 
 script:
   - cd "$TRAVIS_BUILD_DIR"
+  - if [ "$TRVS_VERBOSE" = "true" ]; then TESTARGS="--verbose"; else TESTARGS=""; fi
   # run SQL Server tests on MSSQL2017
-  - python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
+  - python "./$TESTS_DIR/sqlservertests.py" $TESTARGS "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
   # run SQL Server tests on MSSQL2019
-  - python "./$TESTS_DIR/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
+  - python "./$TESTS_DIR/sqlservertests.py" $TESTARGS "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
   # run PostgreSQL tests
-  - python "./$TESTS_DIR/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
+  - python "./$TESTS_DIR/pgtests.py" $TESTARGS "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
   # run MySQL tests
-  - python "./$TESTS_DIR/mysqltests.py" "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
+  - python "./$TESTS_DIR/mysqltests.py" $TESTARGS "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
