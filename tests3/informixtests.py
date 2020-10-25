@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: latin-1 -*-
 
 usage = """\
 usage: %prog [options] connection_string
@@ -39,7 +38,7 @@ def _generate_test_string(length):
     if length <= len(_TESTSTR):
         return _TESTSTR[:length]
 
-    c = (length + len(_TESTSTR)-1) / len(_TESTSTR)
+    c = (length + len(_TESTSTR)-1) // len(_TESTSTR)
     v = _TESTSTR * c
     return v[:length]
 
@@ -163,7 +162,7 @@ class InformixTestCase(unittest.TestCase):
         self.cursor.execute("create table t1(s nchar(7))")
         self.cursor.execute("insert into t1 values(?)", u"t\xebsting")
         v = self.cursor.execute("select * from t1").fetchone()[0]
-        self.assertEqual(type(v), unicode)
+        self.assertEqual(type(v), str)
         self.assertEqual(len(v), len(value)) # If we alloc'd wrong, the test below might work because of an embedded NULL
         self.assertEqual(v, value)
 
@@ -254,7 +253,7 @@ class InformixTestCase(unittest.TestCase):
         self.assertEqual(v3, row.c3)
 
     def test_varchar_upperlatin(self):
-        self._test_strtype('varchar', 'แ')
+        self._test_strtype('varchar', 'รก')
 
     #
     # unicode
@@ -272,7 +271,7 @@ class InformixTestCase(unittest.TestCase):
         locals()['test_unicode_%s' % len(value)] = _maketest(value)
 
     def test_unicode_upperlatin(self):
-        self._test_strtype('varchar', 'แ')
+        self._test_strtype('varchar', 'รก')
 
     #
     # binary
@@ -309,7 +308,7 @@ class InformixTestCase(unittest.TestCase):
         locals()['test_image_%s' % len(value)] = _maketest(value)
 
     def test_image_upperlatin(self):
-        self._test_strliketype('image', buffer('แ'))
+        self._test_strliketype('image', buffer('รก'))
 
     #
     # text
@@ -330,7 +329,7 @@ class InformixTestCase(unittest.TestCase):
         locals()['test_text_%s' % len(value)] = _maketest(value)
 
     def test_text_upperlatin(self):
-        self._test_strliketype('text', 'แ')
+        self._test_strliketype('text', 'รก')
 
     #
     # bit
