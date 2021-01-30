@@ -1369,9 +1369,12 @@ class SqlServerTestCase(unittest.TestCase):
     def test_cursor_messages_with_use(self):
         print('self.cursor (before "use test"):', self.cursor)
         self.cursor.execute("use test")
-        print('self.cursor (after "use test"):', self.cursor)
-        print('self.cursor.messages (after "use test"):', self.cursor.messages)
+        # print('self.cursor (after "use test"):', self.cursor)
+        # print('self.cursor.messages (after "use test"):', self.cursor.messages)
+        print('About to close cursor (after "use test")')
         self.cursor.close()
+        print('About to close connection (after "use test")')
+        self.cnxn.close()
 
         # othercnxn = pyodbc.connect(self.connection_string, autocommit=True)
         # self.assertEqual(othercnxn.autocommit, True)
