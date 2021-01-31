@@ -568,17 +568,16 @@ static int GetDiagRecs(Cursor* cur)
 {
     // Retrieves all diagnostic records from the cursor and assigns them to the "messages" attribute.
 
-    PyObject* msg_list;
+    PyObject* msg_list;  // a Python list of the diagnostic records
 
     SQLSMALLINT iRecNumber = 1;
-
     ODBCCHAR    cSQLState[6];  // five-character SQLSTATE code (plus terminating NULL)
     SQLINTEGER  iNativeError;
-    ODBCCHAR    cMessageText[10240];  // PRINT statements can be large, hopefully 10K bytes will be enough
+    ODBCCHAR    cMessageText[10241];  // PRINT statements can be large, hopefully 10K bytes will be enough
     SQLSMALLINT iTextLength;
 
     SQLRETURN ret;
-    char sqlstate_ascii[6] = "";  //  ASCII version of the SQLState
+    char sqlstate_ascii[6] = "";  // ASCII version of the SQLState
 
     msg_list = PyList_New(0);
     if (!msg_list)
@@ -638,6 +637,8 @@ static int GetDiagRecs(Cursor* cur)
 
     Py_XDECREF(cur->messages);
     cur->messages = msg_list;  // cur->messages now owns the msg_list reference
+
+    return 0;
 }
 
 
