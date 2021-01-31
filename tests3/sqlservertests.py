@@ -1366,20 +1366,20 @@ class SqlServerTestCase(unittest.TestCase):
         self.assertEqual(t[5], 2)       # scale
         self.assertEqual(t[6], True)    # nullable
 
-    def test_cursor_messages_with_use(self):
-        print('self.cursor (before "use test"):', self.cursor)
-        self.cursor.execute("use test")
-        # print('self.cursor (after "use test"):', self.cursor)
-        # print('self.cursor.messages (after "use test"):', self.cursor.messages)
-        print('About to close cursor (after "use test")')
-        self.cursor.close()
-        print('About to close connection (after "use test")')
-        self.cnxn.close()
+    # def test_cursor_messages_with_use(self):
+    #     print('self.cursor (before "use test"):', self.cursor)
+    #     self.cursor.execute("use test")
+    #     # print('self.cursor (after "use test"):', self.cursor)
+    #     # print('self.cursor.messages (after "use test"):', self.cursor.messages)
+    #     print('About to close cursor (after "use test")')
+    #     self.cursor.close()
+    #     print('About to close connection (after "use test")')
+    #     self.cnxn.close()
 
-        # othercnxn = pyodbc.connect(self.connection_string, autocommit=True)
-        # self.assertEqual(othercnxn.autocommit, True)
-        # othercnxn.autocommit = False
-        # self.assertEqual(othercnxn.autocommit, False)
+    #     # othercnxn = pyodbc.connect(self.connection_string, autocommit=True)
+    #     # self.assertEqual(othercnxn.autocommit, True)
+    #     # othercnxn.autocommit = False
+    #     # self.assertEqual(othercnxn.autocommit, False)
 
     def test_cursor_messages_with_print(self):
         """

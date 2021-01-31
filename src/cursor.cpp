@@ -568,7 +568,7 @@ static int GetDiagRecs(Cursor* cur)
 {
     // Retrieves all diagnostic records from the cursor and assigns them to the "messages" attribute.
 
-    PyObject* msg_list;  // a Python list of the diagnostic records
+    PyObject* msg_list;  // the "messages" as a Python list of diagnostic records
 
     SQLSMALLINT iRecNumber = 1;
     ODBCCHAR    cSQLState[6];  // five-character SQLSTATE code (plus terminating NULL)
@@ -615,7 +615,7 @@ static int GetDiagRecs(Cursor* cur)
             msg_value = PyBytes_FromStringAndSize((char*)cMessageText, iTextLength * sizeof(ODBCCHAR));
         }
 
-        PyObject* msg_tuple = PyTuple_New(2);
+        PyObject* msg_tuple = PyTuple_New(2);  // the diagnostic message as a Python tuple
 
         if (msg_class && msg_value && msg_tuple)
         {
