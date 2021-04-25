@@ -1375,8 +1375,8 @@ class SqlServerTestCase(unittest.TestCase):
         self.assertIsNone(brand_new_cursor.messages)
 
         for msg in ('hello world', 'A' * 7000):
-            messages = self.cursor.messages
             self.cursor.execute("PRINT '{}'".format(msg))
+            messages = self.cursor.messages
             self.assertTrue(type(messages) is list)
             self.assertEqual(len(messages), 1)
             self.assertTrue(type(messages[0]) is tuple)
