@@ -661,6 +661,8 @@ static int GetDiagRecs(Cursor* cur)
 
     Py_XDECREF(cur->messages);
     cur->messages = msg_list;  // cur->messages now owns the msg_list reference
+
+    return 0;
 }
 
 
