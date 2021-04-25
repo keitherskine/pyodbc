@@ -536,7 +536,7 @@ class PGTestCase(unittest.TestCase):
 
         # using INFO message level because they are always sent to the client regardless of
         # client_min_messages: https://www.postgresql.org/docs/11/runtime-config-client.html
-        for msg in ('hello world', 'A' * 1234):
+        for msg in ('hello world', 'A' * 7000):
             self.cursor.execute("""
                 CREATE OR REPLACE PROCEDURE test_cursor_messages()
                 LANGUAGE plpgsql
@@ -556,7 +556,8 @@ class PGTestCase(unittest.TestCase):
             self.assertTrue(all(type(m[1]) is unicode for m in messages))
             self.assertTrue(all(m[0] == '[01000] (-1)' for m in messages))
             print("len(messages)", len(messages))
-            print("''.join(m[1] for m in messages)", ''.join(m[1] for m in messages))
+            for m in messages:
+                print("m[1]", m[1])
             self.assertTrue(''.join(m[1] for m in messages).endswith(msg))
 
 
