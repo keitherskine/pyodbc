@@ -642,7 +642,7 @@ class PGTestCase(unittest.TestCase):
 
         # using INFO message level because they are always sent to the client regardless of
         # client_min_messages: https://www.postgresql.org/docs/11/runtime-config-client.html
-        for msg in ('hello world', 'A' * 7000):
+        for msg in ('hello world', 'ABCDEFGHIJ' * 800):
             self.cursor.execute("""
                 CREATE OR REPLACE PROCEDURE test_cursor_messages()
                 LANGUAGE plpgsql

@@ -1492,7 +1492,7 @@ class SqlServerTestCase(unittest.TestCase):
         brand_new_cursor = self.cnxn.cursor()
         self.assertIsNone(brand_new_cursor.messages)
 
-        for msg in ('hello world', 'A' * 7000):
+        for msg in ('hello world', 'ABCDEFGHIJ' * 800):
             self.cursor.execute("PRINT '{}'".format(msg))
             messages = self.cursor.messages
             self.assertTrue(type(messages) is list)
