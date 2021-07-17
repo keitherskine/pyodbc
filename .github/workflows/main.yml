@@ -85,18 +85,20 @@ jobs:
     ### make install
     - name: check ODBC ini files post driver installs
       run: |
-        echo '*** find /usr -name psqlodbcw.so'
-        find /usr -name psqlodbcw.so
-        echo '*** find /usr -name libodbcpsqlS.so'
-        find /usr -name libodbcpsqlS.so
+        echo '*** sudo find /usr -name psqlodbcw.so'
+        sudo find /usr -name psqlodbcw.so || true
+        echo '*** sudo find /usr -name libodbcpsqlS.so'
+        sudo find /usr -name libodbcpsqlS.so || true
         echo "*** odbcinst -j"
         odbcinst -j
-        echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
-        ls -l /usr/lib/x86_64-linux-gnu/odbc || true
         echo "*** cat /etc/odbcinst.ini"
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
         cat /etc/odbc.ini
+        echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
+        ls -l /usr/lib/x86_64-linux-gnu/odbc || true
+        echo '*** ls -l /opt/microsoft/msodbcsql17/lib64'
+        ls -l /opt/microsoft/msodbcsql17/lib64 || true
     - name: Create test database in PostgreSQL
       run: |
         psql -c "SELECT version()"
