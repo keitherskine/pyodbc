@@ -59,13 +59,26 @@ jobs:
     - name: check unixODBC
       run: |
         odbcinst -j
+        echo 'echo $PATH'
+        echo $PATH
     - name: Install Postgres ODBC driver
       run: |
-          sudo apt-get install -y unixodbc-dev odbc-postgresql
+          sudo apt-get install -y odbc-postgresql
+    ### # ref:https://www.postgresql.org/ftp/odbc/versions/src/
+    ### cd /tmp
+    ### tar -x -z -f psqlodbc-11.01.0000.tar.gz
+    ### cd psqlodbc-11.01.0000
+    ### ./configure
+    ### make
+    ### make install
     - name: check ODBC ini files
       run: |
         echo "*** odbcinst -j"
         odbcinst -j
+        echo 'echo $PATH'
+        echo $PATH
+        echo 'ls /usr/lib/x86_64-linux-gnu/odbc/*psql*'
+        ls /usr/lib/x86_64-linux-gnu/odbc/*psql*
         echo "*** cat /etc/odbcinst.ini"
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
