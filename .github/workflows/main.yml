@@ -58,8 +58,14 @@ jobs:
         python -c "import pyodbc; print(pyodbc.version)"
     - name: check unixODBC
       run: |
-        echo "*** odbcinst --version"
-        odbcinst --version
+        odbcinst -j
+    - name: Install Postgres ODBC driver
+      run: |
+          sudo apt-get install -y unixodbc-dev odbc-postgresql devscripts
+    - name: check ODBC ini files
+      run: |
+        echo "*** odbcinst -j"
+        odbcinst -j
         echo "*** cat /etc/odbcinst.ini"
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
