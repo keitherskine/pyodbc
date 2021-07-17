@@ -68,11 +68,13 @@ jobs:
         echo '*** echo $PATH'
         echo $PATH
         echo '*** ls /usr/lib/*odbc*'
-        ls /usr/lib/*odbc*
+        ls /usr/lib/*odbc* || true
+        echo '*** ls /usr/lib'
+        ls /usr/lib || true
         echo '*** ls /usr/lib/x86_64-linux-gnu/odbc'
-        ls /usr/lib/x86_64-linux-gnu/odbc
+        ls /usr/lib/x86_64-linux-gnu/odbc || true
         echo '*** ls -l /etc'
-        ls -l /etc
+        ls -l /etc || true
         echo "*** cat /etc/odbcinst.ini"
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
@@ -97,9 +99,9 @@ jobs:
         echo '*** echo $PATH'
         echo $PATH
         echo '*** ls /usr/lib/*odbc*'
-        ls /usr/lib/*odbc*
+        ls /usr/lib/*odbc* || true
         echo '*** ls /usr/lib/x86_64-linux-gnu/odbc'
-        ls /usr/lib/x86_64-linux-gnu/odbc
+        ls /usr/lib/x86_64-linux-gnu/odbc || true
         echo "*** cat /etc/odbcinst.ini"
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
