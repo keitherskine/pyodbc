@@ -61,7 +61,7 @@ jobs:
         odbcinst -j
     - name: Install Postgres ODBC driver
       run: |
-          sudo apt-get install -y unixodbc-dev odbc-postgresql devscripts
+          sudo apt-get install -y unixodbc-dev odbc-postgresql
     - name: check ODBC ini files
       run: |
         echo "*** odbcinst -j"
