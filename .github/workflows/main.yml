@@ -58,9 +58,9 @@ jobs:
         python -c "import pyodbc; print(pyodbc.version)"
     - name: Create test database in PostgreSQL
       run: |
-        psql -h localhost -c "SELECT version()"
-        psql -c "CREATE DATABASE test WITH encoding='UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8'"
+        psql -c "SELECT version()"
         psql -l
+        psql -c "CREATE DATABASE test WITH encoding='UTF8' LC_COLLATE='en_US.utf8' LC_CTYPE='en_US.utf8'"
       env:
         PGHOST: localhost
         PGPORT: 5432
