@@ -56,23 +56,12 @@ jobs:
         python setup.py install
         python -m pip freeze --all
         python -c "import pyodbc; print(pyodbc.version)"
-    - name: check unixODBC
-      run: |
-        odbcinst -j
-        echo '*** echo $PATH'
-        echo $PATH
-    - name: check ODBC ini files
+    - name: check initial ODBC ini files
       run: |
         echo "*** odbcinst -j"
         odbcinst -j
         echo '*** echo $PATH'
         echo $PATH
-        echo '*** ls /usr/lib/*odbc*'
-        ls /usr/lib/*odbc* || true
-        echo '*** ls /usr/lib'
-        ls /usr/lib || true
-        echo '*** ls /usr/lib/x86_64-linux-gnu/odbc'
-        ls /usr/lib/x86_64-linux-gnu/odbc || true
         echo '*** ls -l /etc'
         ls -l /etc || true
         echo "*** cat /etc/odbcinst.ini"
@@ -92,16 +81,12 @@ jobs:
     ### ./configure
     ### make
     ### make install
-    - name: check ODBC ini files
+    - name: check ODBC ini files (post driver installs)
       run: |
         echo "*** odbcinst -j"
         odbcinst -j
-        echo '*** echo $PATH'
-        echo $PATH
-        echo '*** ls /usr/lib/*odbc*'
-        ls /usr/lib/*odbc* || true
-        echo '*** ls /usr/lib/x86_64-linux-gnu/odbc'
-        ls /usr/lib/x86_64-linux-gnu/odbc || true
+        echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
+        ls -l /usr/lib/x86_64-linux-gnu/odbc || true
         echo "*** cat /etc/odbcinst.ini"
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
@@ -119,4 +104,4 @@ jobs:
         PGPASSWORD: postgres_pwd
     - name: Run PostgreSQL tests
       run: |
-        python "./tests3/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres;DATABASE=test"
+        python "./tests3/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
