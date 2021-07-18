@@ -14,20 +14,20 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      ###fail-fast: false
+      fail-fast: false
       matrix:
         # python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
         include:
-          # - python-version: 2.7
-          #   tests-dir: tests2
-          # - python-version: 3.5
-          #   tests-dir: tests3
-          # - python-version: 3.6
-          #   tests-dir: tests3
-          # - python-version: 3.7
-          #   tests-dir: tests3
-          # - python-version: 3.8
-          #   tests-dir: tests3
+          - python-version: 2.7
+            tests-dir: tests2
+          - python-version: 3.5
+            tests-dir: tests3
+          - python-version: 3.6
+            tests-dir: tests3
+          - python-version: 3.7
+            tests-dir: tests3
+          - python-version: 3.8
+            tests-dir: tests3
           - python-version: 3.9
             tests-dir: tests3
 
@@ -45,21 +45,21 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      # mssql2017:
-      #   image: mcr.microsoft.com/mssql/server:2017-latest
-      #   ports:
-      #   - 1401:1433
-      #   env:
-      #     ACCEPT_EULA: Y
-      #     SA_PASSWORD: StrongPassword2017
+      mssql2017:
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        ports:
+        - 1401:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: StrongPassword2017
 
-      # mssql2019:
-      #   image: mcr.microsoft.com/mssql/server:2019-latest
-      #   ports:
-      #   - 1402:1433
-      #   env:
-      #     ACCEPT_EULA: Y
-      #     SA_PASSWORD: StrongPassword2019
+      mssql2019:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+        - 1402:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: StrongPassword2019
 
     steps:
 
@@ -90,13 +90,6 @@ jobs:
         sudo sed -i 's|Driver=psqlodbca.so|Driver=/usr/lib/x86_64-linux-gnu/odbc/psqlodbca.so|g' /etc/odbcinst.ini
         sudo sed -i 's|Driver=psqlodbcw.so|Driver=/usr/lib/x86_64-linux-gnu/odbc/psqlodbcw.so|g' /etc/odbcinst.ini
         sudo sed -i 's|Setup=libodbcpsqlS.so|Setup=/usr/lib/x86_64-linux-gnu/odbc/libodbcpsqlS.so|g' /etc/odbcinst.ini
-    ### # ref:https://www.postgresql.org/ftp/odbc/versions/src/
-    ### cd /tmp
-    ### tar -x -z -f psqlodbc-11.01.0000.tar.gz
-    ### cd psqlodbc-11.01.0000
-    ### ./configure
-    ### make
-    ### make install
 
     - name: Install MySQL ODBC driver
       run: |
@@ -131,13 +124,13 @@ jobs:
         echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
         ls -l /usr/lib/x86_64-linux-gnu/odbc || true
 
-    # - name: Create test databases in SQL Server
-    #   run: |
-    #     sleep 5
-    #     docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
-    #     docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
-    #     docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
-    #     docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
+    - name: Create test databases in SQL Server
+      run: |
+        sleep 5
+        docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
+        docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
+        docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
+        docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
 
     - name: Create test database in PostgreSQL
       run: |
@@ -182,15 +175,15 @@ jobs:
         python -m pip freeze --all
         python -c "import pyodbc; print(pyodbc.version)"
 
-    # - name: Run SQL Server 2017 tests
-    #   run: |
-    #     cd "$GITHUB_WORKSPACE"
-    #     python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
+    - name: Run SQL Server 2017 tests
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
 
-    # - name: Run SQL Server 2019 tests
-    #   run: |
-    #     cd "$GITHUB_WORKSPACE"
-    #     python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
+    - name: Run SQL Server 2019 tests
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
 
     - name: Run PostgreSQL tests
       run: |
