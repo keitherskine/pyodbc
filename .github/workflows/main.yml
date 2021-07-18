@@ -134,4 +134,4 @@ jobs:
 
     - name: Run PostgreSQL tests
       run: |
-        python "./tests2/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost:5432;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
+        python "./tests2/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;PORT=5432;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
