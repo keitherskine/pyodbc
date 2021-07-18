@@ -18,16 +18,16 @@ jobs:
       matrix:
         # python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
         include:
-          - python-version: 2.7
-            tests-dir: tests2
-          - python-version: 3.5
-            tests-dir: tests3
-          - python-version: 3.6
-            tests-dir: tests3
-          - python-version: 3.7
-            tests-dir: tests3
-          - python-version: 3.8
-            tests-dir: tests3
+          # - python-version: 2.7
+          #   tests-dir: tests2
+          # - python-version: 3.5
+          #   tests-dir: tests3
+          # - python-version: 3.6
+          #   tests-dir: tests3
+          # - python-version: 3.7
+          #   tests-dir: tests3
+          # - python-version: 3.8
+          #   tests-dir: tests3
           - python-version: 3.9
             tests-dir: tests3
 
@@ -45,25 +45,25 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      mssql2017:
-        image: mcr.microsoft.com/mssql/server:2017-latest
-        ports:
-        - 1401:1433
-        env:
-          ACCEPT_EULA: Y
-          SA_PASSWORD: StrongPassword2017
+      # mssql2017:
+      #   image: mcr.microsoft.com/mssql/server:2017-latest
+      #   ports:
+      #   - 1401:1433
+      #   env:
+      #     ACCEPT_EULA: Y
+      #     SA_PASSWORD: StrongPassword2017
 
-      mssql2019:
-        image: mcr.microsoft.com/mssql/server:2019-latest
-        ports:
-        - 1402:1433
-        env:
-          ACCEPT_EULA: Y
-          SA_PASSWORD: StrongPassword2019
+      # mssql2019:
+      #   image: mcr.microsoft.com/mssql/server:2019-latest
+      #   ports:
+      #   - 1402:1433
+      #   env:
+      #     ACCEPT_EULA: Y
+      #     SA_PASSWORD: StrongPassword2019
 
     steps:
 
-    - name: Check initial ODBC ini files
+    - name: Check initial ODBC setup
       run: |
         echo '*** echo $PATH'
         echo $PATH
@@ -94,6 +94,23 @@ jobs:
     ### make
     ### make install
 
+    - name: Install MySQL ODBC driver
+      run: |
+        cd "$RUNNER_TEMP"
+        curl -sS -w "$CURL_OUTPUT_FORMAT" -O "https://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/Connector-ODBC/8.0/${MYSQL_DRIVER}.tar.gz"
+        ls -l "${MYSQL_DRIVER}.tar.gz"
+        tar -xz -f "${MYSQL_DRIVER}.tar.gz"
+        sudo cp -v "${MYSQL_DRIVER}/lib/libmyodbc8a.so" /usr/lib/x86_64-linux-gnu/odbc/
+        sudo chmod a+r /usr/lib/x86_64-linux-gnu/odbc/libmyodbc8a.so
+        echo '[MySQL ODBC 8.0 ANSI Driver]' > mysql_odbcinst.ini
+        echo 'Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc8a.so' >> mysql_odbcinst.ini
+        echo 'UsageCount  = 1' >> mysql_odbcinst.ini
+        echo 'Threading   = 2' >> mysql_odbcinst.ini
+        sudo odbcinst -i -d -f mysql_odbcinst.ini
+      env:
+        CURL_OUTPUT_FORMAT: "%{http_code} %{filename_effective} %{size_download} %{time_total}"
+        MYSQL_DRIVER: mysql-connector-odbc-8.0.22-linux-glibc2.12-x86-64bit
+
     - name: Check ODBC setup
       run: |
         echo "*** odbcinst -j"
@@ -116,23 +133,25 @@ jobs:
 
     - name: Install Python dependencies
       run: |
+        cd "$GITHUB_WORKSPACE"
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Build and install pyodbc
       run: |
+        cd "$GITHUB_WORKSPACE"
         python -VV
         python setup.py install
         python -m pip freeze --all
         python -c "import pyodbc; print(pyodbc.version)"
 
-    - name: Create test databases in SQL Server
-      run: |
-        sleep 5
-        docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
-        docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
-        docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
-        docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
+    # - name: Create test databases in SQL Server
+    #   run: |
+    #     sleep 5
+    #     docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
+    #     docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
+    #     docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
+    #     docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
 
     - name: Create test database in PostgreSQL
       run: |
@@ -146,15 +165,17 @@ jobs:
         PGUSER: postgres_user
         PGPASSWORD: postgres_pwd
 
-    - name: Run SQL Server 2017 tests
-      run: |
-        python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
+    # - name: Run SQL Server 2017 tests
+    #   run: |
+    #     cd "$GITHUB_WORKSPACE"
+    #     python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
 
-    - name: Run SQL Server 2019 tests
-      run: |
-        python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
+    # - name: Run SQL Server 2019 tests
+    #   run: |
+    #     cd "$GITHUB_WORKSPACE"
+    #     python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
 
     - name: Run PostgreSQL tests
-      # if: ${{ matrix.python-version == '2.7' }}
       run: |
+        cd "$GITHUB_WORKSPACE"
         python "./${{ matrix.tests-dir }}/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;PORT=5432;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
