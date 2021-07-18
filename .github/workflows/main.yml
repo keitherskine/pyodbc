@@ -16,7 +16,7 @@ jobs:
     strategy:
       ###fail-fast: false
       matrix:
-        python-version: [2.7]
+        python-version: [3.7]
 
     services:
 
@@ -32,13 +32,13 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      # mssql2017:
-      #   image: mcr.microsoft.com/mssql/server:2017-latest
-      #   ports:
-      #   - 1401:1433
-      #   env:
-      #     ACCEPT_EULA: Y
-      #     SA_PASSWORD: StrongPassword2017
+      mssql2017:
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        ports:
+        - 1401:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: StrongPassword2017
 
       # mssql2019:
       #   image: mcr.microsoft.com/mssql/server:2019-latest
@@ -112,11 +112,11 @@ jobs:
         python -m pip freeze --all
         python -c "import pyodbc; print(pyodbc.version)"
 
-    # - name: Create test databases in SQL Server
-    #   run: |
-    #     sleep 5
-    #     docker exec -it ${{ job.services.mssql2017.options['name'] }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
-    #     docker exec -it ${{ job.services.mssql2017.options['name'] }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
+    - name: Create test databases in SQL Server ${{ job.services.mssql2017.id }} XXXXX
+      run: |
+        sleep 5
+        docker exec -it ${{ job.services.mssql2017.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
+        docker exec -it ${{ job.services.mssql2017.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
     #     docker exec -it ${{ job.services.mssql2019.options['name'] }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
     #     docker exec -it ${{ job.services.mssql2019.options['name'] }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
 
@@ -133,5 +133,6 @@ jobs:
         PGPASSWORD: postgres_pwd
 
     - name: Run PostgreSQL tests
+      # if: ${{ matrix.python-version == '2.7' }}
       run: |
-        python "./tests2/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;PORT=5432;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
+        python "./tests3/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;PORT=5432;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
