@@ -40,17 +40,17 @@ jobs:
           ACCEPT_EULA: Y
           SA_PASSWORD: StrongPassword2017
 
-      # mssql2019:
-      #   image: mcr.microsoft.com/mssql/server:2019-latest
-      #   ports:
-      #   - 1402:1433
-      #   env:
-      #     ACCEPT_EULA: Y
-      #     SA_PASSWORD: StrongPassword2019
+      mssql2019:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+        - 1402:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: StrongPassword2019
 
     steps:
 
-    - name: check initial ODBC ini files
+    - name: Check initial ODBC ini files
       run: |
         echo '*** echo $PATH'
         echo $PATH
@@ -81,7 +81,7 @@ jobs:
     ### make
     ### make install
 
-    - name: Check ODBC installations
+    - name: Check ODBC setup
       run: |
         echo "*** odbcinst -j"
         odbcinst -j
@@ -117,8 +117,8 @@ jobs:
         sleep 5
         docker exec -i ${{ job.services.mssql2017.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
         docker exec -i ${{ job.services.mssql2017.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
-    #     docker exec -it ${{ job.services.mssql2019.options['name'] }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
-    #     docker exec -it ${{ job.services.mssql2019.options['name'] }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
+        docker exec -i ${{ job.services.mssql2019.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
+        docker exec -i ${{ job.services.mssql2019.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
 
     - name: Create test database in PostgreSQL
       run: |
@@ -136,3 +136,8 @@ jobs:
       # if: ${{ matrix.python-version == '2.7' }}
       run: |
         python "./tests3/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;PORT=5432;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
+
+    - name: Run SQL Server tests
+      run: |
+        python "./tests3/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
+        python "./tests3/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
