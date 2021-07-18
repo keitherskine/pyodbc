@@ -16,7 +16,7 @@ jobs:
     strategy:
       ###fail-fast: false
       matrix:
-        python-version: [3.7]
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
 
     services:
 
@@ -106,13 +106,13 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Install pyodbc
+    - name: Build and install pyodbc
       run: |
         python setup.py install
         python -m pip freeze --all
         python -c "import pyodbc; print(pyodbc.version)"
 
-    - name: Create test databases in SQL Server ${{ job.services.mssql2017.id }} XXXXX
+    - name: Create test databases in SQL Server
       run: |
         sleep 5
         docker exec -i ${{ job.services.mssql2017.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
@@ -132,12 +132,15 @@ jobs:
         PGUSER: postgres_user
         PGPASSWORD: postgres_pwd
 
+    - name: Run SQL Server 2017 tests
+      run: |
+        python "./tests3/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
+
+    - name: Run SQL Server 2019 tests
+      run: |
+        python "./tests3/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
+
     - name: Run PostgreSQL tests
       # if: ${{ matrix.python-version == '2.7' }}
       run: |
         python "./tests3/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;PORT=5432;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
-
-    - name: Run SQL Server tests
-      run: |
-        python "./tests3/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
-        python "./tests3/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
