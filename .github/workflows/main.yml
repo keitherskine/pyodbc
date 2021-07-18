@@ -200,4 +200,4 @@ jobs:
     - name: Run MySQL tests
       run: |
         cd "$GITHUB_WORKSPACE"
-        python "./${{ matrix.tests-dir }}/mysqltests.py" "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
+        python "./${{ matrix.tests-dir }}/mysqltests.py" "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;UID=root;PWD=root;DATABASE=test;CHARSET=utf8mb4"
