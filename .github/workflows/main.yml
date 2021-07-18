@@ -1,12 +1,9 @@
 # Ref: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python package
+name: Run unit test on Ubuntu
 
 on:
   push:
-  ###  branches: [ master ]
-  ###pull_request:
-  ###  branches: [ master ]
 
 jobs:
   build:
@@ -16,18 +13,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
         include:
-          - python-version: 2.7
-            tests-dir: tests2
-          - python-version: 3.5
-            tests-dir: tests3
-          - python-version: 3.6
-            tests-dir: tests3
-          - python-version: 3.7
-            tests-dir: tests3
-          - python-version: 3.8
-            tests-dir: tests3
+          # - python-version: 2.7
+          #   tests-dir: tests2
+          # - python-version: 3.5
+          #   tests-dir: tests3
+          # - python-version: 3.6
+          #   tests-dir: tests3
+          # - python-version: 3.7
+          #   tests-dir: tests3
+          # - python-version: 3.8
+          #   tests-dir: tests3
           - python-version: 3.9
             tests-dir: tests3
 
@@ -35,7 +31,6 @@ jobs:
 
       postgres:
         image: postgres:11
-        # POSTGRES_HOST is postgres
         env:
           POSTGRES_DB: postgres_db
           POSTGRES_USER: postgres_user
@@ -143,7 +138,7 @@ jobs:
       env:
         PGHOST: localhost
         PGPORT: 5432
-        PGDATABASE: postgres_db
+        PGDATABASE: ${{ job.services.postgres.env.POSTGRES_DB }}
         PGUSER: postgres_user
         PGPASSWORD: postgres_pwd
 
@@ -170,9 +165,13 @@ jobs:
     - name: Build and install pyodbc
       run: |
         cd "$GITHUB_WORKSPACE"
+        echo "*** current python version"
         python -VV
+        echo "*** run setup.py"
         python setup.py install
+        echo "*** pip freeze"
         python -m pip freeze --all
+        echo "*** pyodbc version"
         python -c "import pyodbc; print(pyodbc.version)"
 
     - name: Run SQL Server 2017 tests
