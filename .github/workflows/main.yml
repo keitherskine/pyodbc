@@ -115,10 +115,10 @@ jobs:
     - name: Create test databases in SQL Server
       run: |
         sleep 5
-        docker exec -it localhost:1401 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
-        docker exec -it localhost:1401 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
-        docker exec -it localhost:1402 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
-        docker exec -it localhost:1402 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
+        docker exec -it ${{ job.services.mssql2017.options['name'] }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
+        docker exec -it ${{ job.services.mssql2017.options['name'] }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
+        docker exec -it ${{ job.services.mssql2019.options['name'] }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
+        docker exec -it ${{ job.services.mssql2019.options['name'] }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
 
     - name: Create test database in PostgreSQL
       run: |
