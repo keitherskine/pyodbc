@@ -63,6 +63,10 @@ jobs:
 
     steps:
 
+    - name: Start MySQL service
+      run: |
+        sudo systemctl start mysql.service
+
     - name: Check initial ODBC setup
       run: |
         echo '*** echo $PATH'
@@ -76,7 +80,7 @@ jobs:
         echo "*** cat /etc/odbc.ini"
         cat /etc/odbc.ini
 
-    - name: Install Postgres ODBC driver
+    - name: Install PostgreSQL ODBC driver
       run: |
         echo "*** sudo apt-get install --yes odbc-postgresql"
         sudo apt-get install --yes odbc-postgresql
@@ -97,18 +101,21 @@ jobs:
     - name: Install MySQL ODBC driver
       run: |
         cd "$RUNNER_TEMP"
-        curl -sS -w "$CURL_OUTPUT_FORMAT" -O "https://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/Connector-ODBC/8.0/${MYSQL_DRIVER}.tar.gz"
+        echo "*** download driver zip file"
+        curl --silent --show-error --write-out "$CURL_OUTPUT_FORMAT" -O "https://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/Connector-ODBC/8.0/${MYSQL_DRIVER}.tar.gz"
         ls -l "${MYSQL_DRIVER}.tar.gz"
         tar -xz -f "${MYSQL_DRIVER}.tar.gz"
+        echo "*** copy driver file to /usr/lib"
         sudo cp -v "${MYSQL_DRIVER}/lib/libmyodbc8a.so" /usr/lib/x86_64-linux-gnu/odbc/
         sudo chmod a+r /usr/lib/x86_64-linux-gnu/odbc/libmyodbc8a.so
+        echo "*** create odbcinst.ini entry"
         echo '[MySQL ODBC 8.0 ANSI Driver]' > mysql_odbcinst.ini
-        echo 'Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc8a.so' >> mysql_odbcinst.ini
-        echo 'UsageCount  = 1' >> mysql_odbcinst.ini
-        echo 'Threading   = 2' >> mysql_odbcinst.ini
+        echo 'Driver     = /usr/lib/x86_64-linux-gnu/odbc/libmyodbc8a.so' >> mysql_odbcinst.ini
+        echo 'UsageCount = 1' >> mysql_odbcinst.ini
+        echo 'Threading  = 2' >> mysql_odbcinst.ini
         sudo odbcinst -i -d -f mysql_odbcinst.ini
       env:
-        CURL_OUTPUT_FORMAT: "%{http_code} %{filename_effective} %{size_download} %{time_total}"
+        CURL_OUTPUT_FORMAT: '%{http_code} %{filename_effective} %{size_download} %{time_total}\n'
         MYSQL_DRIVER: mysql-connector-odbc-8.0.22-linux-glibc2.12-x86-64bit
 
     - name: Check ODBC setup
@@ -165,6 +172,11 @@ jobs:
         PGUSER: postgres_user
         PGPASSWORD: postgres_pwd
 
+    - name: Create test database in MySQL
+      run: |
+        mysql -e "STATUS"
+        mysql -e "CREATE DATABASE test"
+
     # - name: Run SQL Server 2017 tests
     #   run: |
     #     cd "$GITHUB_WORKSPACE"
@@ -179,3 +191,8 @@ jobs:
       run: |
         cd "$GITHUB_WORKSPACE"
         python "./${{ matrix.tests-dir }}/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;PORT=5432;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
+
+    - name: Run MySQL tests
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        python "./${{ matrix.tests-dir }}/mysqltests.py" "DRIVER={MySQL ODBC 8.0 ANSI Driver};SERVER=localhost;DATABASE=test;CHARSET=utf8mb4"
