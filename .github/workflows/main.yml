@@ -16,7 +16,20 @@ jobs:
     strategy:
       ###fail-fast: false
       matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
+        # python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
+        include:
+          - python-version: 2.7
+            tests-dir: tests2
+          - python-version: 3.5
+            tests-dir: tests3
+          - python-version: 3.6
+            tests-dir: tests3
+          - python-version: 3.7
+            tests-dir: tests3
+          - python-version: 3.8
+            tests-dir: tests3
+          - python-version: 3.9
+            tests-dir: tests3
 
     services:
 
@@ -108,6 +121,7 @@ jobs:
 
     - name: Build and install pyodbc
       run: |
+        python -VV
         python setup.py install
         python -m pip freeze --all
         python -c "import pyodbc; print(pyodbc.version)"
@@ -115,10 +129,10 @@ jobs:
     - name: Create test databases in SQL Server
       run: |
         sleep 5
-        docker exec -i ${{ job.services.mssql2017.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
-        docker exec -i ${{ job.services.mssql2017.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
-        docker exec -i ${{ job.services.mssql2019.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
-        docker exec -i ${{ job.services.mssql2019.id }} /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
+        docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
+        docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
+        docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
+        docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
 
     - name: Create test database in PostgreSQL
       run: |
@@ -134,13 +148,13 @@ jobs:
 
     - name: Run SQL Server 2017 tests
       run: |
-        python "./tests3/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
+        python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
 
     - name: Run SQL Server 2019 tests
       run: |
-        python "./tests3/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
+        python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
 
     - name: Run PostgreSQL tests
       # if: ${{ matrix.python-version == '2.7' }}
       run: |
-        python "./tests3/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;PORT=5432;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
+        python "./${{ matrix.tests-dir }}/pgtests.py" "DRIVER={PostgreSQL Unicode};SERVER=localhost;PORT=5432;UID=postgres_user;PWD=postgres_pwd;DATABASE=test"
