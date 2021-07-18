@@ -82,7 +82,7 @@ jobs:
 
     - name: Install PostgreSQL ODBC driver
       run: |
-        echo "*** sudo apt-get install --yes odbc-postgresql"
+        echo "*** apt-get install the driver"
         sudo apt-get install --yes odbc-postgresql
         echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
         ls -l /usr/lib/x86_64-linux-gnu/odbc || true
@@ -141,8 +141,11 @@ jobs:
 
     - name: Create test database in PostgreSQL
       run: |
+        echo "*** get version"
         psql -c "SELECT version()"
+        echo "*** create database"
         psql -c "CREATE DATABASE test WITH encoding='UTF8' LC_COLLATE='en_US.utf8' LC_CTYPE='en_US.utf8'"
+        echo "*** list databases"
         psql -l
       env:
         PGHOST: localhost
@@ -153,8 +156,10 @@ jobs:
 
     - name: Create test database in MySQL
       run: |
-        mysql -e "STATUS"
-        mysql -e "CREATE DATABASE test"
+        echo "*** get status"
+        mysql --user=root --password=root --execute "STATUS"
+        echo "*** create database"
+        mysql --user=root --password=root --execute "CREATE DATABASE test"
 
     - uses: actions/checkout@v2
 
