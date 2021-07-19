@@ -1,6 +1,6 @@
 # pyodbc
 
-[![Windows Status](https://ci.appveyor.com/api/projects/status/github/mkleehammer/pyodbc?branch=master&svg=true&passingText=Windows%20tests)](https://ci.appveyor.com/project/mkleehammer/pyodbc)
+[![Windows Status](https://ci.appveyor.com/api/projects/status/github/mkleehammer/pyodbc?branch=master&svg=true&passingText=Windows%20build)](https://ci.appveyor.com/project/mkleehammer/pyodbc)
 [![Ubuntu build](https://github.com/mkleehammer/pyodbc/actions/workflows/ubuntu_build.yml/badge.svg)](https://github.com/mkleehammer/pyodbc/actions/workflows/ubuntu_build.yml)
 [![PyPI](https://img.shields.io/pypi/v/pyodbc?color=brightgreen)](https://pypi.org/project/pyodbc/)
 
