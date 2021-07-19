@@ -1,9 +1,8 @@
-# Ref: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+# ref: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Ubuntu tests
+name: Ubuntu build
 
-on:
-  push:
+on: [push]
 
 jobs:
   run_tests:
