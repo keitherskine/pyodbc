@@ -62,7 +62,7 @@ jobs:
       run: |
         sudo systemctl start mysql.service
 
-    - name: Check initial ODBC setup
+    - name: Check initial setup
       run: |
         echo '*** echo $PATH'
         echo "$PATH"

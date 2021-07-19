@@ -1,7 +1,7 @@
 # pyodbc
 
-[![Windows Status](https://ci.appveyor.com/api/projects/status/github/mkleehammer/pyodbc?branch=master&svg=true)](https://ci.appveyor.com/project/mkleehammer/pyodbc)
-![Ubuntu tests](https://github.com/mkleehammer/pyodbc/actions/workflows/main.yml/badge.svg)
+[![Windows Status](https://ci.appveyor.com/api/projects/status/github/mkleehammer/pyodbc?branch=master&svg=true&passingText=Windows%20tests)](https://ci.appveyor.com/project/mkleehammer/pyodbc)
+[![Ubuntu tests](https://github.com/mkleehammer/pyodbc/actions/workflows/ubuntu_tests.yml/badge.svg)](https://github.com/mkleehammer/pyodbc/actions/workflows/ubuntu_tests.yml)
 [![PyPI](https://img.shields.io/pypi/v/pyodbc?color=brightgreen)](https://pypi.org/project/pyodbc/)
 
 pyodbc is an open source Python module that makes accessing ODBC databases simple.  It
