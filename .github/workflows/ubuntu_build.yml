@@ -197,7 +197,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-2019, macos-10.15]
+        os: [ubuntu-20.04, windows-2019, macos-11]
 
     steps:
       - uses: actions/checkout@v2
@@ -205,7 +205,9 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.8.1
         env:
+          # manylinux_2_24 is based on Debian 9 (https://github.com/pypa/manylinux)
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
+          # make sure a recent version of unixODBC is used
           CIBW_BEFORE_ALL_LINUX: >
             apt-get update &&
             cd /tmp &&
@@ -214,11 +216,12 @@ jobs:
             cd "unixODBC-2.3.11" &&
             CPPFLAGS="-DSIZEOF_LONG_INT=8" &&
             export CPPFLAGS &&
-            ./configure --prefix=/usr --sysconfdir=/etc --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE > /dev/null &&
-            make install > /dev/null &&
+            ./configure --prefix=/usr --sysconfdir=/etc --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE > /dev/null 2>&1 &&
+            make install > /dev/null 2>&1 &&
             odbcinst -j
-          # disable 32-bit and pypy builds
+          # disable 32-bit, musllinux, and pypy builds
           CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux_* pp*"
+          # repairing the wheel adds libraries to it, so don't (see issue 1081)
           CIBW_REPAIR_WHEEL_COMMAND_LINUX: ""
 
       - uses: actions/upload-artifact@v2
