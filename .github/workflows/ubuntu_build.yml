@@ -206,7 +206,16 @@ jobs:
         uses: pypa/cibuildwheel@v2.8.1
         env:
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
-          CIBW_BEFORE_ALL_LINUX: apt-get update && apt-get -y install unixodbc-dev
+          CIBW_BEFORE_ALL_LINUX: >
+            apt-get update &&
+            cd /tmp &&
+            curl -sSL -w "%{http_code} %{filename_effective} %{size_download} %{time_total}" -O "http://www.unixodbc.org/unixODBC-2.3.9.tar.gz" &&
+            tar -xz -f "unixODBC-2.3.9.tar.gz" &&
+            cd "unixODBC-2.3.9" &&
+            CPPFLAGS="-DSIZEOF_LONG_INT=8" &&
+            export CPPFLAGS &&
+            ./configure --prefix=/usr --sysconfdir=/etc --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE > /dev/null &&
+            sudo make install > /dev/null
           # disable 32-bit and pypy builds
           CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux_* pp*"
 
