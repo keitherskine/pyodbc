@@ -209,13 +209,14 @@ jobs:
           CIBW_BEFORE_ALL_LINUX: >
             apt-get update &&
             cd /tmp &&
-            curl -sSL -w "%{http_code} %{filename_effective} %{size_download} %{time_total}" -O "http://www.unixodbc.org/unixODBC-2.3.9.tar.gz" &&
-            tar -xz -f "unixODBC-2.3.9.tar.gz" &&
-            cd "unixODBC-2.3.9" &&
+            curl -sSL -w "%{http_code} %{filename_effective} %{size_download} %{time_total}" -O "http://www.unixodbc.org/unixODBC-2.3.11.tar.gz" &&
+            tar -xz -f "unixODBC-2.3.11.tar.gz" &&
+            cd "unixODBC-2.3.11" &&
             CPPFLAGS="-DSIZEOF_LONG_INT=8" &&
             export CPPFLAGS &&
-            ./configure --prefix=/usr --sysconfdir=/etc --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE &&
-            make install
+            ./configure --prefix=/usr --sysconfdir=/etc --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE > /dev/null &&
+            make install > /dev/null &&
+            odbcinst -j
           # disable 32-bit and pypy builds
           CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux_* pp*"
           CIBW_REPAIR_WHEEL_COMMAND_LINUX: ""
