@@ -197,7 +197,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-2019, macOS-11]
+        # https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job
+        os: [ubuntu-20.04, windows-2019, macos-11]
 
     steps:
       - uses: actions/checkout@v3
@@ -209,6 +210,7 @@ jobs:
           CIBW_ARCHS_MACOS: "x86_64 arm64"
           CIBW_ARCHS_WINDOWS: "AMD64 x86"
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
+          CIBW_BEFORE_ALL_LINUX: apt-get update && apt-get -y install unixodbc-dev
           CIBW_SKIP: "*-manylinux_i686 *-musllinux_* pp*"
 
           # # manylinux_2_24 is based on Debian 9 (https://github.com/pypa/manylinux)
