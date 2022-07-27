@@ -211,6 +211,7 @@ jobs:
           CIBW_ARCHS_WINDOWS: "AMD64 x86"
           CIBW_ARCHS_MACOS: "x86_64 arm64"
           #CIBW_ARCHS_LINUX: x86_64
+          CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
           #CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
           # CIBW_BEFORE_ALL_LINUX: >
           #   apt-get update &&
