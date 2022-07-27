@@ -210,8 +210,8 @@ jobs:
         env:
           CIBW_ARCHS_WINDOWS: "AMD64 x86"
           CIBW_ARCHS_MACOS: "x86_64 arm64"
-          #CIBW_ARCHS_LINUX: x86_64
           CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
+          #CIBW_ARCHS_LINUX: x86_64
           #CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
           # CIBW_BEFORE_ALL_LINUX: >
           #   apt-get update &&
@@ -224,7 +224,8 @@ jobs:
           #   ./configure --prefix=/usr --sysconfdir=/etc --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE > /dev/null 2>&1 &&
           #   make install > /dev/null 2>&1 &&
           #   odbcinst -j
-          # CIBW_SKIP: "*-manylinux_i686 *-musllinux_* pp*"
+          # disable pypy builds
+          CIBW_SKIP: "pp*"
 
           # # manylinux_2_24 is based on Debian 9 (https://github.com/pypa/manylinux)
           # CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
