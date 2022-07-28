@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   run_tests:
-
+    name: Run tests on Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -234,7 +234,7 @@ jobs:
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_ARCHS_LINUX: x86_64
           CIBW_BEFORE_ALL_LINUX: yum -y install unixODBC-devel && odbcinst -j
-          #CIBW_REPAIR_WHEEL_COMMAND_LINUX: ""
+          CIBW_REPAIR_WHEEL_COMMAND_LINUX: ""
 
           # Build choices - disable musl Linux and PyPy builds
           # https://cibuildwheel.readthedocs.io/en/stable/options/#build-skip
