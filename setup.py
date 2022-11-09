@@ -17,7 +17,10 @@ if sys.hexversion >= 0x03000000:
 else:
     from ConfigParser import ConfigParser
 
-OFFICIAL_BUILD = 9999
+
+# This version identifier should refer to the NEXT release version.
+# AFTER each release, this version should be incremented.
+VERSION = '4.0.35'
 
 
 def _print(s):
@@ -38,7 +41,7 @@ class VersionCommand(Command):
         pass
 
     def run(self):
-        version_str, _version = get_version()
+        version_str = get_version()
         sys.stdout.write(version_str + '\n')
 
 
@@ -65,7 +68,7 @@ class TagsCommand(Command):
 
 def main():
 
-    version_str, version = get_version()
+    version_str = get_version()
 
     with open(join(dirname(abspath(__file__)), 'README.md')) as f:
         long_description = f.read()
@@ -254,93 +257,35 @@ def get_version():
          read the version from the PKG-INFO file.
       3. Use 4.0.0.dev0 and complain a lot.
     """
-    # My goal is to (1) provide accurate tags for official releases but (2) not have to manage tags for every test
-    # release.
-    #
-    # Official versions are tagged using 3 numbers: major, minor, micro.  A build of a tagged version should produce
-    # the version using just these pieces, such as 2.1.4.
-    #
-    # Unofficial versions are "working towards" the next version.  So the next unofficial build after 2.1.4 would be a
-    # beta for 2.1.5.  Using 'git describe' we can find out how many changes have been made after 2.1.4 and we'll use
-    # this count as the beta id (beta1, beta2, etc.)
-    #
-    # Since the 4 numbers are put into the Windows DLL, we want to make sure the beta versions sort *before* the
-    # official, so we set the official build number to 9999, but we don't show it.
+    v_major, v_minor, v_micro = VERSION.split(".")
 
-    name    = None              # branch/feature name.  Should be None for official builds.
-    numbers = None              # The 4 integers that make up the version.
+    rc, result = getoutput("git describe --tags --always --match [0-9]*")
+    if rc != 0:
+        # we are not in a git repo at all, possibly in a downloaded zip file, hence
+        # this will be marked as a dev version of the new release
+        print('KME: rc=0')  # temp!!!!
+        return f'{v_major}.{v_minor}.dev{v_micro}'
 
-    # If this is a source release the version will have already been assigned and be in the PKG-INFO file.
+    match = re.match(r"^(\d+).(\d+).(\d+)-(\d+)-g[0-9a-z]+$", result)
+    if match is None:
+        # we are in a git repo but the tag cannot be found or cannot be parsed, in
+        # which case we are probably in Git Actions (bear in mind Github Actions fetches
+        # repos with the --no-tags, so we can't figure out the release version from the
+        # tags), hence use the new version
+        print('KME: match is None')  # temp!!!!
+        return f'{v_major}.{v_minor}.{v_micro}'
 
-    name, numbers = _get_version_pkginfo()
-
-    # If not a source release, we should be in a git repository.  Look for the latest tag.
-
-    if not numbers:
-        name, numbers = _get_version_git()
-
-    if not numbers:
-        _print('WARNING: Unable to determine version.  Using 4.0.0.0')
-        name, numbers = '4.0.dev0', [4,0,0,0]
-
-    return name, numbers
-
-
-def _get_version_pkginfo():
-    filename = join(dirname(abspath(__file__)), 'PKG-INFO')
-    if exists(filename):
-        re_ver = re.compile(r'^Version: \s+ (\d+)\.(\d+)\.(\d+) (?: b(\d+))?', re.VERBOSE)
-        for line in open(filename):
-            match = re_ver.search(line)
-            if match:
-                name    = line.split(':', 1)[1].strip()
-                numbers = [int(n or 0) for n in match.groups()[:3]]
-                numbers.append(int(match.group(4) or OFFICIAL_BUILD)) # don't use 0 as a default for build
-                return name, numbers
-
-    return None, None
-
-
-def _get_version_git():
-    """
-    If this is a git repo, returns the version as text and the version as a list of 4 subparts:
-    ("4.0.33", [4, 0, 33, 9999]).
-
-    If this is not a git repo, (None, None) is returned.
-    """
-    n, result = getoutput("git describe --tags --match [0-9]*")
-    if n:
-        _print('WARNING: git describe failed with: %s %s' % (n, result))
-        return None, None
-    match = re.match(r'(\d+).(\d+).(\d+) (?: -(\d+)-g[0-9a-z]+)?', result, re.VERBOSE)
-    if not match:
-        return None, None
-
-    numbers = [int(n or OFFICIAL_BUILD) for n in match.groups()]
-    if numbers[-1] == OFFICIAL_BUILD:
-        name = '%s.%s.%s' % tuple(numbers[:3])
-    if numbers[-1] != OFFICIAL_BUILD:
-        # This is a beta of the next micro release, so increment the micro number to reflect this.
-        numbers[-2] += 1
-        name = '%s.%s.%sb%d' % tuple(numbers)
-
-    n, result = getoutput('git rev-parse --abbrev-ref HEAD')
-
-    if result == 'HEAD':
-        # We are not on a branch.  In the past we would add "+commitHHHH" to it, but this
-        # interferes with the CI system which checks out by tag name.  The goal of the version
-        # numbers is to be reproducible, so we may want to put this back if we detect the
-        # current commit is not on the master branch.
-
-        #  n, result = getoutput('git rev-parse --short HEAD')
-        #  name = name + '+commit' + result
-
-        pass
+    g_major, g_minor, g_micro, g_num_commits = match.groups()
+    if g_num_commits == '0':
+        # we are in a repo and the current commit is the latest tag, so set the
+        # version as the tag
+        print('KME: match is not None, commits=0')  # temp!!!!
+        return f'{g_major}.{g_minor}.{g_micro}'
     else:
-        if result != 'master' and not re.match(r'^v\d+$', result):
-            name = name + '+' + result.replace('-', '')
-
-    return name, numbers
+        # we are in a repo but currently ahead of the latest tag, hence set the
+        # version as the tag plus the number of commits
+        print('KME: match is not None, commits>0')  # temp!!!!
+        return f'{g_major}.{g_minor}.{g_micro}b{g_num_commits}'
 
 
 def getoutput(cmd):

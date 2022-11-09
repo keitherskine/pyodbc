@@ -46,6 +46,10 @@ x86/
 # Executables
 *.exe
 
+# Linters
+.flake8
+.pylintrc
+
 # Other
 pyodbc.conf
 tmp
