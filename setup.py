@@ -19,7 +19,7 @@ else:
 
 
 # This version identifier should refer to the NEXT release version.
-# AFTER each release, this version should be incremented.
+# After each release, this version identifier should be incremented.
 VERSION = '4.0.35'
 
 
@@ -247,45 +247,32 @@ def get_compiler_settings(version_str):
 
 
 def get_version():
-    """
-    Returns the version of the product as (description, [major,minor,micro,beta]).
+    """Determines the release version of pyodbc"""
+    v_major, v_minor, v_micro = VERSION.split('.')
 
-    If the release is official, `beta` will be 9999 (OFFICIAL_BUILD).
-
-      1. If in a git repository, use the latest tag (git describe).
-      2. If in an unzipped source directory (from setup.py sdist),
-         read the version from the PKG-INFO file.
-      3. Use 4.0.0.dev0 and complain a lot.
-    """
-    v_major, v_minor, v_micro = VERSION.split(".")
-
-    rc, result = getoutput("git describe --tags --always --match [0-9]*")
+    rc, result = getoutput('git describe --tags --always --match [0-9]*')
     if rc != 0:
-        # we are not in a git repo at all, possibly in a downloaded zip file, hence
+        # we are not in a git repo at all, possibly in an unzipped zip file, hence
         # this will be marked as a dev version of the new release
-        print('KME: rc=0')  # temp!!!!
-        return f'{v_major}.{v_minor}.dev{v_micro}'
+        return '{}.{}.dev{}'.format(v_major, v_minor, v_micro)
 
-    match = re.match(r"^(\d+).(\d+).(\d+)-(\d+)-g[0-9a-z]+$", result)
+    match = re.match(r'^(\d+).(\d+).(\d+)-(\d+)-g[0-9a-z]+$', result)
     if match is None:
         # we are in a git repo but the tag cannot be found or cannot be parsed, in
-        # which case we are probably in Git Actions (bear in mind Github Actions fetches
-        # repos with the --no-tags, so we can't figure out the release version from the
-        # tags), hence use the new version
-        print('KME: match is None')  # temp!!!!
-        return f'{v_major}.{v_minor}.{v_micro}'
+        # which case we are probably in Github Actions (bear in mind Github Actions
+        # fetches repos with the --no-tags option, so we can't figure out the release
+        # version from the tags), hence use the new version
+        return '{}.{}.{}'.format(v_major, v_minor, v_micro)
 
     g_major, g_minor, g_micro, g_num_commits = match.groups()
     if g_num_commits == '0':
-        # we are in a repo and the current commit is the latest tag, so set the
-        # version as the tag
-        print('KME: match is not None, commits=0')  # temp!!!!
-        return f'{g_major}.{g_minor}.{g_micro}'
+        # we are in a repo and the current commit points to the latest tag, so set
+        # the version as the tag
+        return '{}.{}.{}'.format(g_major, g_minor, g_micro)
     else:
         # we are in a repo but currently ahead of the latest tag, hence set the
-        # version as the tag plus the number of commits
-        print('KME: match is not None, commits>0')  # temp!!!!
-        return f'{g_major}.{g_minor}.{g_micro}b{g_num_commits}'
+        # version as a beta release, made up of the tag plus the number of commits
+        return '{}.{}.{}b{}'.format(g_major, g_minor, g_micro, g_num_commits)
 
 
 def getoutput(cmd):
