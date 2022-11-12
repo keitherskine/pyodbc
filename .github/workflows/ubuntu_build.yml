@@ -239,8 +239,8 @@ jobs:
           CIBW_ARCHS_LINUX: x86_64
           #CIBW_BEFORE_ALL_LINUX: yum -y install unixODBC-devel && odbcinst -j
           #  apt-get update &&
+          #  yum remove unixODBC-utf16 unixODBC-utf16-devel &&
           CIBW_BEFORE_ALL_LINUX: >
-            yum remove unixODBC-utf16 unixODBC-utf16-devel &&
             cd /tmp &&
             curl -sSL -w "%{http_code} %{filename_effective} %{size_download} %{time_total}" -O "http://www.unixodbc.org/unixODBC-2.3.11.tar.gz" &&
             tar -xz -f "unixODBC-2.3.11.tar.gz" &&
