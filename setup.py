@@ -254,6 +254,10 @@ def get_version():
          read the version from the PKG-INFO file.
       3. Use 4.0.0.dev0 and complain a lot.
     """
+
+    return '4.0.35', [4, 0, 35, 0]
+
+
     # My goal is to (1) provide accurate tags for official releases but (2) not have to manage tags for every test
     # release.
     #
