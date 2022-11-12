@@ -237,23 +237,21 @@ jobs:
           # https://github.com/pypa/manylinux#docker-images
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_ARCHS_LINUX: x86_64
-          #CIBW_BEFORE_ALL_LINUX: yum -y install unixODBC-devel && odbcinst -j
-          #  apt-get update &&
-          #  yum remove unixODBC-utf16 unixODBC-utf16-devel &&
-          CIBW_BEFORE_ALL_LINUX: >
-            cd /tmp &&
-            curl -sSL -w "%{http_code} %{filename_effective} %{size_download} %{time_total}" -O "http://www.unixodbc.org/unixODBC-2.3.11.tar.gz" &&
-            tar -xz -f "unixODBC-2.3.11.tar.gz" &&
-            cd "unixODBC-2.3.11" &&
-            CPPFLAGS="-DSIZEOF_LONG_INT=8" &&
-            export CPPFLAGS &&
-            ./configure --prefix=/usr --libdir=/usr/lib64 --sysconfdir=/etc --enable-gui=no --enable-drivers=no --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE > /dev/null 2>&1 &&
-            make install > /dev/null 2>&1 &&
-            cd /usr/lib64 &&
-            ln -s libodbccr.so.2 libodbccr.so.1 &&
-            ln -s libodbcinst.so.2 libodbcinst.so.1 &&
-            ln -s libodbc.so.2 libodbc.so.1 &&
-            odbcinst -j
+          CIBW_BEFORE_ALL_LINUX: yum -y install unixODBC-devel
+          # CIBW_BEFORE_ALL_LINUX: >
+          #   cd /tmp &&
+          #   curl -sSL -w "%{http_code} %{filename_effective} %{size_download} %{time_total}" -O "http://www.unixodbc.org/unixODBC-2.3.11.tar.gz" &&
+          #   tar -xz -f "unixODBC-2.3.11.tar.gz" &&
+          #   cd "unixODBC-2.3.11" &&
+          #   CPPFLAGS="-DSIZEOF_LONG_INT=8" &&
+          #   export CPPFLAGS &&
+          #   ./configure --prefix=/usr --libdir=/usr/lib64 --sysconfdir=/etc --enable-gui=no --enable-drivers=no --enable-iconv --with-iconv-char-enc=UTF8 --with-iconv-ucode-enc=UTF16LE > /dev/null 2>&1 &&
+          #   make install > /dev/null 2>&1 &&
+          #   cd /usr/lib64 &&
+          #   ln -s libodbccr.so.2 libodbccr.so.1 &&
+          #   ln -s libodbcinst.so.2 libodbcinst.so.1 &&
+          #   ln -s libodbc.so.2 libodbc.so.1 &&
+          #   odbcinst -j
           #CIBW_REPAIR_WHEEL_COMMAND_LINUX: ""
           CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel --verbose repair --exclude libodbc.so.2 --exclude libltdl.so.7 --wheel-dir {dest_dir} {wheel}"
 
