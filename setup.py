@@ -82,7 +82,7 @@ def main():
         os.remove('MANIFEST')
 
     kwargs = {
-        'name': "pyodbc",
+        'name': "pyodbc-keef-v1",
         'version': version_str,
         'description': "DB API Module for ODBC",
 
