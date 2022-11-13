@@ -253,7 +253,7 @@ jobs:
           #   ln -s libodbc.so.2 libodbc.so.1 &&
           #   odbcinst -j
           #CIBW_REPAIR_WHEEL_COMMAND_LINUX: ""
-          CIBW_REPAIR_WHEEL_COMMAND_LINUX: >-
+          CIBW_REPAIR_WHEEL_COMMAND_LINUX:
             auditwheel --verbose repair
               --exclude libodbc.so.2
               --exclude libltdl.so.7
