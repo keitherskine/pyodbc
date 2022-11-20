@@ -63,6 +63,7 @@ jobs:
 
   upload_artifacts:
     name: Upload release artifacts
+    needs: [build_sdist, build_wheels]
     runs-on: ubuntu-latest
     steps:
       - name: Upload sdist and wheels
