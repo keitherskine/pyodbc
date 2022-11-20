@@ -23,7 +23,7 @@ jobs:
       - name: Upload sdist
         uses: actions/upload-artifact@v3
         with:
-          name: sdist_${{ env.hash }}
+          name: sdist_${{ github.sha }}
           path: ./dist/*.gz
 
   # build_wheels:
