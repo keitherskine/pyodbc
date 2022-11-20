@@ -20,12 +20,6 @@ jobs:
       - name: Build sdist
         run: python -m build --sdist --no-isolation
 
-      - name: Upload sdist
-        uses: actions/upload-artifact@v3
-        with:
-          name: sdist
-          path: ./dist/*.gz
-
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -67,8 +61,14 @@ jobs:
           # Build choices - disable musl Linux and PyPy builds
           CIBW_SKIP: "*-musllinux_* pp*"
 
-      - name: Upload wheels
+  upload_artifacts:
+    name: Upload release artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload sdist and wheels
         uses: actions/upload-artifact@v3
         with:
-          name: wheels
-          path: ./wheelhouse/*.whl
+          name: release_artifacts
+          path: |
+            ./dist/*.gz
+            ./wheelhouse/*.whl
