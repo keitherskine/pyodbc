@@ -1,0 +1,85 @@
+name: Ubuntu build
+
+on: [push, pull_request]
+
+jobs:
+  run_tests:
+    name: Run tests on Python ${{ matrix.python-version }}
+    runs-on: windows-latest
+    # defaults:
+    #   run:
+    #     shell: cmd
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python-version: "3.9"
+            tests-dir: tests3
+          - python-version: "3.10"
+            tests-dir: tests3
+
+    services:
+
+      mssql2017:
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        ports:
+        - 1401:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: StrongPassword2017
+
+      mssql2019:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+        - 1402:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: StrongPassword2019
+
+    steps:
+
+      - name: Check initial setup
+        run: |
+          Write-Output "*** Installed ODBC drivers:"
+          Get-OdbcDriver
+
+      - name: Create test databases in SQL Server
+        run: |
+          Write-Output "*** SQL Server 2017"
+          docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "SELECT @@VERSION" || sleep 5
+          docker exec -i "${{ job.services.mssql2017.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2017' -Q "CREATE DATABASE test"
+          Write-Output "*** SQL Server 2019"
+          docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "SELECT @@VERSION" || sleep 5
+          docker exec -i "${{ job.services.mssql2019.id }}" /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword2019' -Q "CREATE DATABASE test"
+
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # - name: Install Python dependencies
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     if exist requirements.txt (pip install -r requirements.txt)
+
+      - name: Build and install pyodbc
+        run: |
+          Write-Output "*** current python version"
+          python -VV
+          Write-Output "*** pip install"
+          python -m pip install .
+          Write-Output "*** pip freeze"
+          python -m pip freeze --all
+          Write-Output "*** pyodbc version"
+          python -c "import pyodbc; print(pyodbc.version)"
+
+      - name: Run SQL Server 2017 tests
+        run: |
+          python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
+
+      - name: Run SQL Server 2019 tests
+        run: |
+          python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test"
