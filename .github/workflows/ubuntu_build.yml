@@ -74,6 +74,19 @@ jobs:
         echo "*** cat /etc/odbc.ini"
         cat /etc/odbc.ini
 
+    - name: Install ODBC driver for SQL Server
+      run: |
+        echo "*** apt-get install the driver"
+        sudo ACCEPT_EULA=Y apt-get install --yes msodbcsql18
+        echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
+        ls -l /opt/microsoft/msodbcsql18/lib64 || true
+        #echo '*** add ODBC Driver 18 for SQL Server to /etc/odbcinst.ini'
+        #cd /tmp
+        #echo "[ODBC Driver 18 for SQL Server]" > msodbc18.template.odbcinst.ini
+        #echo "Description    = Microsoft ODBC Driver 18 for SQL Server" >> msodbc18.template.odbcinst.ini
+        #echo "Driver         = /opt/microsoft/msodbcsql18/lib64/libmsodbcsql-18.10.so.1.1" >> msodbc18.template.odbcinst.ini
+        #sudo odbcinst -i -d -f msodbc18.template.odbcinst.ini
+
     - name: Install ODBC driver for PostgreSQL
       run: |
         echo "*** apt-get install the driver"
@@ -115,6 +128,8 @@ jobs:
         cat /etc/odbc.ini
         echo '*** ls -l /opt/microsoft/msodbcsql17/lib64'
         ls -l /opt/microsoft/msodbcsql17/lib64 || true
+        echo '*** ls -l /opt/microsoft/msodbcsql18/lib64'
+        ls -l /opt/microsoft/msodbcsql18/lib64 || true
         echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
         ls -l /usr/lib/x86_64-linux-gnu/odbc || true
 
