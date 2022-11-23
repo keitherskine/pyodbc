@@ -80,12 +80,6 @@ jobs:
         sudo ACCEPT_EULA=Y apt-get install --yes msodbcsql18
         echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
         ls -l /opt/microsoft/msodbcsql18/lib64 || true
-        #echo '*** add ODBC Driver 18 for SQL Server to /etc/odbcinst.ini'
-        #cd /tmp
-        #echo "[ODBC Driver 18 for SQL Server]" > msodbc18.template.odbcinst.ini
-        #echo "Description    = Microsoft ODBC Driver 18 for SQL Server" >> msodbc18.template.odbcinst.ini
-        #echo "Driver         = /opt/microsoft/msodbcsql18/lib64/libmsodbcsql-18.10.so.1.1" >> msodbc18.template.odbcinst.ini
-        #sudo odbcinst -i -d -f msodbc18.template.odbcinst.ini
 
     - name: Install ODBC driver for PostgreSQL
       run: |
@@ -194,7 +188,7 @@ jobs:
     - name: Run SQL Server 2017 tests
       run: |
         cd "$GITHUB_WORKSPACE"
-        python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test;Encrypt=Optional"
+        python "./${{ matrix.tests-dir }}/sqlservertests.py" "DRIVER={ODBC Driver 17 for SQL Server};SERVER=localhost,1401;UID=sa;PWD=StrongPassword2017;DATABASE=test"
 
     - name: Run SQL Server 2019 tests
       run: |
