@@ -150,7 +150,7 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :mssql6
 SET DRIVER={ODBC Driver 18 for SQL Server}
-SET CONN_STR=Driver=%DRIVER%;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;
+SET CONN_STR=Driver=%DRIVER%;Server=%MSSQL_INSTANCE%;Database=test_db;UID=sa;PWD=Password12!;Encrypt=Optional;
 ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
 "%PYTHON_HOME%\python" appveyor\test_connect.py "%CONN_STR%"
