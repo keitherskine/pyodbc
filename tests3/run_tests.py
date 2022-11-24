@@ -86,24 +86,15 @@ def main(sqlserver: Optional[List[str]] = None,
     databases = {
         'SQL Server': {
             'conn_strs': sqlserver or [],
-            'discovery_patterns': [
-                # FUTURE: point to dir specific to SQL Server - os.path.join(tests_dir, 'sqlserver'),
-                os.path.join(tests_dir, 'sqlservertests.py'),
-            ],
+            'discovery_patterns': [os.path.join(tests_dir, 'sqlserver')],
         },
         'PostgreSQL': {
             'conn_strs': postgresql or [],
-            'discovery_patterns': [
-                # FUTURE: point to dir specific to PostgreSQL - os.path.join(tests_dir, 'postgresql'),
-                os.path.join(tests_dir, 'pgtests.py'),
-            ],
+            'discovery_patterns': [os.path.join(tests_dir, 'postgresql')],
         },
         'MySQL': {
             'conn_strs': mysql or [],
-            'discovery_patterns': [
-                # FUTURE: point to dir specific to MySQL - os.path.join(tests_dir, 'mysql'),
-                os.path.join(tests_dir, 'mysqltests.py'),
-            ],
+            'discovery_patterns': [os.path.join(tests_dir, 'mysql')],
         },
     }
 
