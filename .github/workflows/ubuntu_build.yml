@@ -170,7 +170,7 @@ jobs:
         cd "$GITHUB_WORKSPACE"
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
-        python -m pip install pytest
+        if [ -f requirements-test.txt ]; then python -m pip install -r requirements-test.txt; fi
 
     - name: Build and install pyodbc
       run: |

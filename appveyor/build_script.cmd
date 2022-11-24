@@ -26,7 +26,7 @@ IF ERRORLEVEL 1 (
   ECHO *** ERROR: pip/setuptools update failed
   EXIT 1
 )
-"%PYTHON_HOME%\python" -m pip install pytest
+"%PYTHON_HOME%\python" -m pip install -r requirements-test.txt --no-warn-script-location
 IF ERRORLEVEL 1 (
   ECHO *** ERROR: install test requirements failed
   EXIT 1
