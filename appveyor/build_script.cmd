@@ -30,7 +30,7 @@ IF ERRORLEVEL 1 (
 
 ECHO.
 ECHO *** Building the pyodbc module...
-%WITH_COMPILER% "%PYTHON_HOME%\python" setup.py build
+"%PYTHON_HOME%\python" setup.py build
 IF ERRORLEVEL 1 (
   ECHO *** ERROR: pyodbc build failed
   EXIT 1
