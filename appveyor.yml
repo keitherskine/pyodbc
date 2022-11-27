@@ -64,9 +64,12 @@ cache:
 install:
   - ps: .\appveyor\install.ps1
 
+init:
+  - net start MSSQL$SQL2019
+
 # ref: https://www.appveyor.com/docs/services-databases/
 services:
-  - mssql2019
+  # - mssql2019
   - postgresql13
   - mysql
 
