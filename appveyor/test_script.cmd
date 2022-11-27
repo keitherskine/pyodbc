@@ -36,12 +36,14 @@ ECHO *** Get MS SQL Server version:
 sqlcmd -S "%MSSQL_INSTANCE%" -U sa -P "Password12!" -Q "SELECT @@VERSION"
 IF ERRORLEVEL 1 (
   ECHO *** ERROR: Could not connect to instance
+  SET OVERALL_RESULT=1
   GOTO :postgresql
 )
 ECHO *** Create test database
 sqlcmd -S "%MSSQL_INSTANCE%" -U sa -P "Password12!" -Q "CREATE DATABASE test_db"
 IF ERRORLEVEL 1 (
   ECHO *** ERROR: Could not create the test database
+  SET OVERALL_RESULT=1
   GOTO :postgresql
 )
 
