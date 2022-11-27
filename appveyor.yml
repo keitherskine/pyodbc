@@ -66,8 +66,8 @@ install:
 
 # ref: https://www.appveyor.com/docs/services-databases/
 services:
-  - mssql2017
-  - postgresql11
+  - mssql2019
+  - postgresql13
   - mysql
 
 build_script:
