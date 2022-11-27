@@ -28,13 +28,13 @@ IF ERRORLEVEL 1 (
 )
 "%PYTHON_HOME%\python" -m pip freeze --all
 
-ECHO.
-ECHO *** Building the pyodbc module...
-"%PYTHON_HOME%\python" setup.py build
-IF ERRORLEVEL 1 (
-  ECHO *** ERROR: pyodbc build failed
-  EXIT 1
-)
+REM ECHO.
+REM ECHO *** Building the pyodbc module...
+REM "%PYTHON_HOME%\python" setup.py build
+REM IF ERRORLEVEL 1 (
+REM   ECHO *** ERROR: pyodbc build failed
+REM   EXIT 1
+REM )
 
 ECHO.
 ECHO *** Installing pyodbc...
