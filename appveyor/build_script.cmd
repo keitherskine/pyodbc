@@ -21,20 +21,12 @@ ECHO *** Get build info and compiler for the current Python installation:
 
 ECHO.
 ECHO *** Update pip and setuptools...
-"%PYTHON_HOME%\python" -m pip install --upgrade pip setuptools --quiet --no-warn-script-location
+"%PYTHON_HOME%\python" -m pip install --upgrade pip setuptools --no-warn-script-location
 IF ERRORLEVEL 1 (
   ECHO *** ERROR: pip/setuptools update failed
   EXIT 1
 )
 "%PYTHON_HOME%\python" -m pip freeze --all
-
-REM ECHO.
-REM ECHO *** Building the pyodbc module...
-REM "%PYTHON_HOME%\python" setup.py build
-REM IF ERRORLEVEL 1 (
-REM   ECHO *** ERROR: pyodbc build failed
-REM   EXIT 1
-REM )
 
 ECHO.
 ECHO *** Installing pyodbc...

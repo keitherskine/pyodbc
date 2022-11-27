@@ -15,18 +15,12 @@ IF NOT "%APVYR_RUN_TESTS%" == "true" (
 )
 
 
-REM Extract the major version of the current Python interpreter, and bitness
-FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON_HOME%\python -c "import sys; sys.stdout.write(str(sys.version_info.major))"`) DO (
-SET PYTHON_MAJOR_VERSION=%%F
-)
+REM Extract the bitness of the current Python interpreter
 FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON_HOME%\python -c "import sys; sys.stdout.write('64' if sys.maxsize > 2**32 else '32')"`) DO (
 SET PYTHON_ARCH=%%F
 )
-IF %PYTHON_MAJOR_VERSION% EQU 2 (
-    SET TESTS_DIR=tests2
-) ELSE (
-    SET TESTS_DIR=tests3
-)
+
+SET TESTS_DIR=tests3
 
 
 :mssql
@@ -221,12 +215,7 @@ ECHO *** Get MySQL version
 "%MYSQL_PATH%\bin\mysql" -u root -pPassword12! -e "STATUS"
 
 :mysql1
-REM MySQL 8.0 drivers apparently don't work on Python 2.7 ("system error 126") so use 5.3 instead.
-IF %PYTHON_MAJOR_VERSION% EQU 2 (
-  SET DRIVER={MySQL ODBC 5.3 ANSI Driver}
-) ELSE (
-  SET DRIVER={MySQL ODBC 8.0 ANSI Driver}
-)
+SET DRIVER={MySQL ODBC 8.0 ANSI Driver}
 SET CONN_STR=Driver=%DRIVER%;Charset=utf8mb4;Server=localhost;Port=3306;Database=mysql;Uid=root;Pwd=Password12!;
 ECHO.
 ECHO *** Run tests using driver: "%DRIVER%"
