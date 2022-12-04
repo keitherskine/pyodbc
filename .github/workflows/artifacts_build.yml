@@ -32,7 +32,7 @@ jobs:
     strategy:
       matrix:
         # https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job
-        os: [macos-11, macos-12]
+        os: [macos-11]
 
     steps:
       - uses: actions/checkout@v3
