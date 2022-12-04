@@ -3,7 +3,7 @@
 name: Build the release artifacts
 
 # include "workflow_dispatch" so this workflow can be run manually from the Actions portal
-on: [push, pull_request, workflow_dispatch]
+on: [push, workflow_dispatch]
 
 jobs:
   build_sdist:
@@ -32,7 +32,7 @@ jobs:
     strategy:
       matrix:
         # https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job
-        os: [windows-2019, macos-11, ubuntu-20.04]
+        os: [macos-11, macos-12]
 
     steps:
       - uses: actions/checkout@v3
