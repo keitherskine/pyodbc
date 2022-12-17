@@ -7,13 +7,11 @@ Function DownloadFileFromUrl ($url, $file_path) {
     $max_attempts = 5
     while ($true) {
         try {
-            # Start-FileDownload -Url $url -FileName $file_path
-            Write-Output "Downloading ""$url""..."
-            Invoke-WebRequest -Uri $url -OutFile $file_path
+            Start-FileDownload -Url $url -FileName $file_path
+            # Write-Output "Downloading ""$url""..."
+            # Invoke-WebRequest -Uri $url -OutFile $file_path
             $success = $true
         } catch {
-            Write-Error $_
-            Write-Error $_.ErrorDetails
             Write-Error $_.Exception.Message
             Write-Output "WARNING: download attempt number $attempt_number of $max_attempts failed"
         }
@@ -189,14 +187,14 @@ if ($python_arch -eq "64") {
         CheckAndInstallMsiFromUrl `
             -driver_name "MySQL ODBC 5.3 ANSI Driver" `
             -driver_bitness "64-bit" `
-            -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-winx64.msi" `
-            -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-winx64.msi";
+            -driver_url "https://downloads.mysql.com/archives/get/p/10/file/mysql-connector-odbc-5.3.13-winx64.msi" `
+            -msifile_path "$cache_dir\mysql-connector-odbc-5.3.13-winx64.msi";
     } else {
         CheckAndInstallMsiFromUrl `
             -driver_name "MySQL ODBC 8.0 ANSI Driver" `
             -driver_bitness "64-bit" `
-            -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-winx64.msi" `
-            -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-winx64.msi";
+            -driver_url "https://downloads.mysql.com/archives/get/p/10/file/mysql-connector-odbc-8.0.30-winx64.msi" `
+            -msifile_path "$cache_dir\mysql-connector-odbc-8.0.30-winx64.msi";
     }
 
 } elseif ($python_arch -eq "32") {
@@ -215,14 +213,14 @@ if ($python_arch -eq "64") {
         CheckAndInstallMsiFromUrl `
             -driver_name "MySQL ODBC 5.3 ANSI Driver" `
             -driver_bitness "32-bit" `
-            -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/5.3/mysql-connector-odbc-5.3.14-win32.msi" `
-            -msifile_path "$cache_dir\mysql-connector-odbc-5.3.14-win32.msi";
+            -driver_url "https://downloads.mysql.com/archives/get/p/10/file/mysql-connector-odbc-5.3.13-win32.msi" `
+            -msifile_path "$cache_dir\mysql-connector-odbc-5.3.13-win32.msi";
     } else {
             CheckAndInstallMsiFromUrl `
             -driver_name "MySQL ODBC 8.0 ANSI Driver" `
             -driver_bitness "32-bit" `
-            -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.19-win32.msi" `
-            -msifile_path "$cache_dir\mysql-connector-odbc-8.0.19-win32.msi";
+            -driver_url "https://downloads.mysql.com/archives/get/p/10/file/mysql-connector-odbc-8.0.30-win32.msi" `
+            -msifile_path "$cache_dir\mysql-connector-odbc-8.0.30-win32.msi";
     }
 } else {
     Write-Output "ERROR: Unexpected Python architecture:"
