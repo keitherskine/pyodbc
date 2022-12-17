@@ -9,8 +9,8 @@ Function DownloadFileFromUrl ($url, $file_path) {
         try {
             Write-Output "Downloading ""$url""..."
             [Net.ServicePointManager]::SecurityProtocol = 'Ssl3, Tls, Tls11, Tls12'
-            Start-FileDownload -Url $url -FileName $file_path
-            # Invoke-WebRequest -Uri $url -OutFile $file_path
+            # Start-FileDownload -Url $url -FileName $file_path
+            Invoke-WebRequest -Uri $url -OutFile $file_path | Select-Object -Expand Content
             $success = $true
         } catch {
             Write-Error $_.Exception.Message
@@ -21,7 +21,7 @@ Function DownloadFileFromUrl ($url, $file_path) {
         Start-Sleep -Seconds 10
         $attempt_number += 1
     }
-    # delete the file, just in case, to indicate failure
+    # delete the downloaded file if it exists because it is probably just a partial file
     if (Test-Path $file_path) {
         Remove-Item $file_path
     }
@@ -63,6 +63,11 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
     if ($result.ExitCode -ne 0) {
         Write-Output "ERROR: Driver installation failed"
         Write-Output $result
+        # delete the msi file in case it is corrupt
+        if (Test-Path $msifile_path) {
+            Write-Output "*** Deleting "$msifile_path"..."
+            Remove-Item $msifile_path
+        }
         return
 
     }
@@ -96,6 +101,11 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
     if ($result.ExitCode -ne 0) {
         Write-Output "ERROR: Driver installation failed"
         Write-Output $result
+        # delete the msi file in case it is corrupt
+        if (Test-Path $msifile_path) {
+            Write-Output "*** Deleting "$msifile_path"..."
+            Remove-Item $msifile_path
+        }
         return
     }
     Write-Output "...driver installed successfully"
