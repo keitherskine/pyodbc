@@ -7,9 +7,9 @@ Function DownloadFileFromUrl ($url, $file_path) {
     $max_attempts = 5
     while ($true) {
         try {
-            Start-FileDownload -Url $url -FileName $file_path
-            # Write-Output "Downloading ""$url""..."
-            # Invoke-WebRequest -Uri $url -OutFile $file_path
+            # Start-FileDownload -Url $url -FileName $file_path
+            Write-Output "Downloading ""$url""..."
+            Invoke-WebRequest -Uri $url -OutFile $file_path
             $success = $true
         } catch {
             Write-Error $_.Exception.Message
