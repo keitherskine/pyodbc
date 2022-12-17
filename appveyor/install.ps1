@@ -2,15 +2,18 @@
 
 Function DownloadFileFromUrl ($url, $file_path) {
     # try multiple times to download the file
+    $curl_params = "-f -sS -L -o `"$file_path`" `"$url`""
     $success = $false
     $attempt_number = 1
     $max_attempts = 5
     while ($true) {
         try {
             Write-Output "Downloading ""$url""..."
-            [Net.ServicePointManager]::SecurityProtocol = 'Ssl3, Tls, Tls11, Tls12'
+            # [Net.ServicePointManager]::SecurityProtocol = 'Ssl3, Tls, Tls11, Tls12'
             # Start-FileDownload -Url $url -FileName $file_path
-            Invoke-WebRequest -Uri $url -OutFile $file_path | Select-Object -Expand Content
+            # Invoke-WebRequest -Uri $url -OutFile $file_path | Select-Object -Expand Content
+            # & curl.exe -f -sS -L -o $file_path $url
+            Start-Process curl.exe -ArgumentList $curl_params -NoNewWindow -Wait -ErrorAction Stop
             $success = $true
         } catch {
             Write-Error $_.Exception.Message

@@ -54,7 +54,7 @@ ECHO *** Get version of the built pyodbc module:
 
 ECHO.
 ECHO *** Try curl:
-curl -v -f -sS -L -o "%APPVEYOR_BUILD_FOLDER%\apvyr_cache\mysql-connector-odbc-5.3.13-win32.msi" "https://downloads.mysql.com/archives/get/p/10/file/mysql-connector-odbc-5.3.13-win32.msi"
+curl -f -sS -L -o "%APPVEYOR_BUILD_FOLDER%\apvyr_cache\mysql-connector-odbc-5.3.13-win32.msi" "https://downloads.mysql.com/archives/get/p/10/file/mysql-connector-odbc-5.3.13-win32.msi"
 IF ERRORLEVEL 1 (
   ECHO *** ERROR: curl failed
 )
