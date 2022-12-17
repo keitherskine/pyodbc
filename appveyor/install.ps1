@@ -71,7 +71,7 @@ Function CheckAndInstallMsiFromUrl ($driver_name, $driver_bitness, $driver_url, 
         Write-Output $result
         # delete the msi file in case it is corrupt
         if (Test-Path $msifile_path) {
-            Write-Output "*** Deleting "$msifile_path"..."
+            Write-Output "Deleting the potentially-corrupt msi file: ""$msifile_path""..."
             Remove-Item $msifile_path
         }
         return
@@ -109,7 +109,7 @@ Function CheckAndInstallZippedMsiFromUrl ($driver_name, $driver_bitness, $driver
         Write-Output $result
         # delete the msi file in case it is corrupt
         if (Test-Path $msifile_path) {
-            Write-Output "*** Deleting "$msifile_path"..."
+            Write-Output "Deleting the potentially-corrupt msi file: ""$msifile_path""..."
             Remove-Item $msifile_path
         }
         return
