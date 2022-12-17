@@ -1,8 +1,8 @@
 # check that all the required ODBC drivers are available, and install any that are missing
 
 Function DownloadFileFromUrl ($url, $file_path) {
-    # try multiple times to download the file
     $curl_params = "-f -sS -L -o `"$file_path`" `"$url`""
+    # try multiple times to download the file
     $success = $false
     $attempt_number = 1
     $max_attempts = 5
@@ -12,9 +12,12 @@ Function DownloadFileFromUrl ($url, $file_path) {
             # [Net.ServicePointManager]::SecurityProtocol = 'Ssl3, Tls, Tls11, Tls12'
             # Start-FileDownload -Url $url -FileName $file_path
             # Invoke-WebRequest -Uri $url -OutFile $file_path | Select-Object -Expand Content
-            # & curl.exe -f -sS -L -o $file_path $url
+            # use curl because Start-FileDownload and Invoke-WebRequest don't seem to work with MySQL anymore
             Start-Process curl.exe -ArgumentList $curl_params -NoNewWindow -Wait -ErrorAction Stop
             $success = $true
+            # alternate way to invoke curl using the call operator (&)
+            #   & curl.exe -f -sS -L -o $file_path $url
+            #   IF ($LASTEXITCODE -eq 0) {$success = $true}
         } catch {
             Write-Error $_.Exception.Message
             Write-Output "WARNING: download attempt number $attempt_number of $max_attempts failed"
@@ -24,7 +27,7 @@ Function DownloadFileFromUrl ($url, $file_path) {
         Start-Sleep -Seconds 10
         $attempt_number += 1
     }
-    # delete the downloaded file if it exists because it is probably just a partial file
+    # if a downloaded file exists it is probably just a partial file, so delete it
     if (Test-Path $file_path) {
         Remove-Item $file_path
     }
