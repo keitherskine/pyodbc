@@ -62,29 +62,29 @@ environment:
 
     # Python 3.5+ need at least the Visual Studio 2015 image
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python36"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python36"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python36-x64"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python36-x64"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python37"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python37"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python37-x64"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python37-x64"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python38"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python38"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python38-x64"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python38-x64"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python39"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python39"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python39-x64"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python39-x64"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       PYTHON_HOME: "C:\\Python310"
@@ -92,11 +92,11 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       PYTHON_HOME: "C:\\Python310-x64"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python311"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python311"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      PYTHON_HOME: "C:\\Python311-x64"
+    # - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    #   PYTHON_HOME: "C:\\Python311-x64"
 
 cache:
   - apvyr_cache
