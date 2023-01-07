@@ -1,5 +1,6 @@
 include src/*.h
 include src/*.cpp
+include src/pyodbc.pyi
 include tests2/*
 include tests3/*
 include README.*
