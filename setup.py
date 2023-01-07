@@ -94,6 +94,7 @@ def main():
 
         'ext_modules': [Extension('pyodbc', sorted(files), **settings)],
 
+        'packages': [''],
         'package_dir': {'': 'src'},
         'package_data': {'': ['pyodbc.pyi']},  # places pyodbc.pyi in site-packages
 
