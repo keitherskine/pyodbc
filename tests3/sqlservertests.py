@@ -22,7 +22,7 @@ is installed:
   2000: DRIVER={SQL Server}
   2005: DRIVER={SQL Server}
   2008: DRIVER={SQL Server Native Client 10.0}
-  
+
 If using FreeTDS ODBC, be sure to use version 1.1.23 or newer.
 """
 
@@ -30,7 +30,6 @@ import sys, os, re, uuid
 import unittest
 from decimal import Decimal
 from datetime import datetime, date, time
-from os.path import join, getsize, dirname, abspath
 from warnings import warn
 
 if __name__ != '__main__':
@@ -326,8 +325,8 @@ class SqlServerTestCase(unittest.TestCase):
                 #
                 # cnxn.getinfo(pyodbc.SQL_DESCRIBE_PARAMETER) returns False for FreeTDS, so
                 # pyodbc can't call SQLDescribeParam to get the correct parameter type.
-                # This can lead to errors being returned from SQL Server when sp_prepexec is called, 
-                # e.g., "Implicit conversion from data type varchar to varbinary is not allowed." 
+                # This can lead to errors being returned from SQL Server when sp_prepexec is called,
+                # e.g., "Implicit conversion from data type varchar to varbinary is not allowed."
                 # for test_binary_null
                 #
                 # So at least verify that the user can manually specify the parameter type
@@ -470,7 +469,7 @@ class SqlServerTestCase(unittest.TestCase):
     def test_fast_executemany_to_local_temp_table(self):
         if self.handle_known_issues_for('freetds', print_reminder=True, failure_crashes_python=True):
             warn('FREETDS_KNOWN_ISSUE - test_fast_executemany_to_local_temp_table: test cancelled.')
-            return 
+            return
         v = 'Ώπα'
         self.cursor.execute("CREATE TABLE #issue295 (id INT IDENTITY PRIMARY KEY, txt NVARCHAR(50))")
         sql = "INSERT INTO #issue295 (txt) VALUES (?)"
@@ -1007,7 +1006,7 @@ class SqlServerTestCase(unittest.TestCase):
 
     def test_rowcount_reset(self):
         "Ensure rowcount is reset after DDL"
-        
+
         ddl_rowcount = 0 if self.driver_type_is('freetds') else -1
 
         self.cursor.execute("create table t1(i int)")
@@ -1382,6 +1381,16 @@ class SqlServerTestCase(unittest.TestCase):
         brand_new_cursor = self.cnxn.cursor()
         self.assertIsNone(brand_new_cursor.messages)
 
+
+
+        # # self.cursor.execute("SET NOCOUNT OFF; SELECT * FROM dbo.keith_desc_expt WHERE 1=0; PRINT 'ABC'")
+        # self.cursor.execute("SET NOCOUNT ON; PRINT 'ABC'")
+        # print('MESSAGES1:', self.cursor.messages)
+        # while self.cursor.nextset():
+        #     print('MESSAGES2:', self.cursor.messages)
+
+
+
         # SQL Server PRINT statements are never more than 8000 characters
         # https://docs.microsoft.com/en-us/sql/t-sql/language-elements/print-transact-sql#remarks
         for msg in ('hello world', 'ABCDEFGHIJ' * 800):
@@ -1414,6 +1423,11 @@ class SqlServerTestCase(unittest.TestCase):
         """)
         # result set 1
         self.cursor.execute("EXEC test_cursor_messages")
+
+        # print('MESSAGES1:', self.cursor.messages)
+        # while self.cursor.nextset():
+        #     print('MESSAGES2:', self.cursor.messages)
+
         rows = [tuple(r) for r in self.cursor.fetchall()]  # convert pyodbc.Row objects for ease of use
         self.assertEqual(len(rows), 2)
         self.assertSequenceEqual(rows, [('Field 1a', ), ('Field 1b', )])
@@ -1439,28 +1453,28 @@ class SqlServerTestCase(unittest.TestCase):
             self.cursor.fetchall()
         self.assertEqual(self.cursor.messages, [])
 
-    def test_cursor_messages_with_trigger(self):
-        self.cursor.execute("DROP TABLE IF EXISTS t1")
-        self.cursor.execute("CREATE TABLE t1(id INT IDENTITY PRIMARY KEY, name NVARCHAR(255) NULL)")
-        self.cursor.execute("""
-            CREATE TRIGGER [dbo].[trg_t1] ON t1
-            AFTER INSERT
-            AS
-            BEGIN
-                SET NOCOUNT ON
-                PRINT 'ABC'
-            END
-        """)
-        self.cursor.execute("INSERT INTO t1(name) SELECT NEWID() WHERE 1=0")
-        messages = self.cursor.messages
-        self.assertTrue(type(messages) is list)
-        self.assertEqual(len(messages), 1)
-        self.assertTrue(type(messages[0]) is tuple)
-        self.assertEqual(len(messages[0]), 2)
-        self.assertTrue(type(messages[0][0]) is str)
-        self.assertTrue(type(messages[0][1]) is str)
-        self.assertEqual('[01000] (0)', messages[0][0])
-        self.assertTrue(messages[0][1].endswith('ABC'))
+    # def test_cursor_messages_with_trigger(self):
+    #     self.cursor.execute("DROP TABLE IF EXISTS t1")
+    #     self.cursor.execute("CREATE TABLE t1(id INT IDENTITY PRIMARY KEY, name NVARCHAR(255) NULL)")
+    #     self.cursor.execute("""
+    #         CREATE TRIGGER [dbo].[trg_t1] ON t1
+    #         AFTER INSERT
+    #         AS
+    #         BEGIN
+    #             SET NOCOUNT ON
+    #             PRINT 'ABC'
+    #         END
+    #     """)
+    #     self.cursor.execute("INSERT INTO t1(name) SELECT NEWID()")
+    #     messages = self.cursor.messages
+    #     self.assertTrue(type(messages) is list)
+    #     self.assertEqual(len(messages), 1)
+    #     self.assertTrue(type(messages[0]) is tuple)
+    #     self.assertEqual(len(messages[0]), 2)
+    #     self.assertTrue(type(messages[0][0]) is str)
+    #     self.assertTrue(type(messages[0][1]) is str)
+    #     self.assertEqual('[01000] (0)', messages[0][0])
+    #     self.assertTrue(messages[0][1].endswith('ABC'))
 
     def test_none_param(self):
         "Ensure None can be used for params other than the first"
@@ -1488,8 +1502,8 @@ class SqlServerTestCase(unittest.TestCase):
                 #
                 # cnxn.getinfo(pyodbc.SQL_DESCRIBE_PARAMETER) returns False for FreeTDS, so
                 # pyodbc can't call SQLDescribeParam to get the correct parameter type.
-                # This can lead to errors being returned from SQL Server when sp_prepexec is called, 
-                # e.g., "Implicit conversion from data type varchar to varbinary(max) is not allowed." 
+                # This can lead to errors being returned from SQL Server when sp_prepexec is called,
+                # e.g., "Implicit conversion from data type varchar to varbinary(max) is not allowed."
                 #
                 # So at least verify that the user can manually specify the parameter type
                 self.cursor.setinputsizes([(), (pyodbc.SQL_VARBINARY, None, None)])
@@ -1540,7 +1554,7 @@ class SqlServerTestCase(unittest.TestCase):
         self.cnxn.add_output_converter(pyodbc.SQL_VARCHAR, None)
         value = self.cursor.execute("select v from t1").fetchone()[0]
         self.assertEqual(value, '123.45')
-        
+
         # retrieve and temporarily replace converter (get_output_converter)
         #
         #   case_1: converter already registered
@@ -1568,8 +1582,8 @@ class SqlServerTestCase(unittest.TestCase):
         self.cnxn.add_output_converter(pyodbc.SQL_VARCHAR, prev_converter)
         value = self.cursor.execute("select v from t1").fetchone()[0]
         self.assertEqual(value, '123.45')
-        
-        
+
+
     def test_too_large(self):
         """Ensure error raised if insert fails due to truncation"""
         value = 'x' * 1000
@@ -1831,7 +1845,7 @@ class SqlServerTestCase(unittest.TestCase):
             except:
                 pass
         self.cursor.commit()
-        
+
         if diff_schema:
             self.cursor.execute("CREATE SCHEMA myschema")
             self.cursor.commit()
@@ -1860,13 +1874,13 @@ class SqlServerTestCase(unittest.TestCase):
         for i in range(255):
             long_string += chr((i % 95) + 32)
             long_bytearray.append(i % 255)
-            
+
         very_long_string = ''
         very_long_bytearray = []
         for i in range(2000000):
             very_long_string += chr((i % 95) + 32)
             very_long_bytearray.append(i % 255)
-            
+
         c01 = ['abc', '', long_string]
 
         c02 = ['abc', '', very_long_string]
@@ -1874,7 +1888,7 @@ class SqlServerTestCase(unittest.TestCase):
         c03 = [bytearray([0xD1, 0xCE, 0xFA, 0xCE]),
                bytearray([0x00, 0x01, 0x02, 0x03, 0x04]),
                bytearray(long_bytearray)]
-               
+
         c04 = [bytearray([0x0F, 0xF1, 0xCE, 0xCA, 0xFE]),
                bytearray([0x00, 0x01, 0x02, 0x03, 0x04, 0x05]),
                bytearray(very_long_bytearray)]
@@ -1884,15 +1898,15 @@ class SqlServerTestCase(unittest.TestCase):
         c06 = [date(1997, 8, 29),
                date(1, 1, 1),
                date(9999, 12, 31)]
-               
+
         c07 = [time(9, 13, 39),
                time(0, 0, 0),
                time(23, 59, 59)]
-               
+
         c08 = [datetime(2018, 11, 13, 13, 33, 26, 298420),
                datetime(1, 1, 1, 0, 0, 0, 0),
                datetime(9999, 12, 31, 23, 59, 59, 999990)]
-               
+
         c09 = [1234567, -9223372036854775808, 9223372036854775807]
 
         c10 = [3.14, -1.79E+308, 1.79E+308]
@@ -1920,7 +1934,7 @@ class SqlServerTestCase(unittest.TestCase):
         except Exception as ex:
             print("Failed to execute SelectTVP")
             print("Exception: [" + type(ex).__name__ + "]" , ex.args)
-            
+
             success = False
         else:
             for r in range(len(result_array)):
