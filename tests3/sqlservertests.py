@@ -1461,8 +1461,8 @@ class SqlServerTestCase(unittest.TestCase):
             AFTER INSERT
             AS
             BEGIN
-                --SET NOCOUNT ON
-                PRINT 'ABC'
+                SET NOCOUNT ON;
+                PRINT 'ABC';
             END
         """)
         self.cursor.execute("INSERT INTO t1(name) SELECT NEWID()")
