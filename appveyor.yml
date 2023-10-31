@@ -72,14 +72,17 @@ cache:
 install:
   - ps: Get-ChildItem -Path "C:\\Program Files\\MySQL\\"
   - ps: Get-ChildItem -Path "C:\\Program Files\\MySQL\\MySQL Server 8.0\\"
+  - ps: Get-Service "MSSQL*"
+  - ps: Get-Service "Postgres*"
   - ps: Get-Service "MySQL*"
   - ps: .\appveyor\install.ps1
   - call .\appveyor\install.cmd
+  - ps: Start-Service "MySQL80"
 
 # ref: https://www.appveyor.com/docs/services-databases/
 services:
   - postgresql13
-  - mysql
+  # - MySQL80
 
 build_script:
   - call .\appveyor\build_script.cmd
