@@ -70,9 +70,9 @@ cache:
   - apvyr_cache
 
 install:
-  - ps: Get-ChildItem -Path "C:\\Program Files\\"
-  - ps: Get-ChildItem -Path "C:\\Program Files\\PostgreSQL\\"
   - ps: Get-ChildItem -Path "C:\\Program Files\\MySQL\\"
+  - ps: Get-ChildItem -Path "C:\\Program Files\\MySQL\\MySQL Server 8.0\\"
+  - ps: Get-Service "MySQL*"
   - ps: .\appveyor\install.ps1
   - call .\appveyor\install.cmd
 
