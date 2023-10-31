@@ -70,6 +70,9 @@ cache:
   - apvyr_cache
 
 install:
+  - cmd: DIR "C:\\Program Files\\"
+  - cmd: DIR "C:\\Program Files\\PostgreSQL\\"
+  - cmd: DIR "C:\\Program Files\\MySQL\\"
   - ps: .\appveyor\install.ps1
   - call .\appveyor\install.cmd
 
