@@ -76,7 +76,7 @@ install:
 # ref: https://www.appveyor.com/docs/services-databases/
 services:
   - postgresql13
-  - mysql8
+  - mysql
 
 build_script:
   - call .\appveyor\build_script.cmd
