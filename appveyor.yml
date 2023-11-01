@@ -62,9 +62,11 @@ environment:
     - PYTHON_HOME: "C:\\Python312"
     - PYTHON_HOME: "C:\\Python312-x64"
 
-# ref: https://www.appveyor.com/docs/services-databases/
+# ref: https://www.appveyor.com/docs/services-databases/#sql-server-2019
 init:
   - net start MSSQL$SQL2019
+  - ps: Start-Service "postgresql-x64-13"
+  - ps: Start-Service "MySQL80"
 
 cache:
   - apvyr_cache
@@ -77,12 +79,11 @@ install:
   - ps: Get-Service "MySQL*"
   - ps: .\appveyor\install.ps1
   - call .\appveyor\install.cmd
-  - ps: Start-Service "MySQL80"
 
 # ref: https://www.appveyor.com/docs/services-databases/
-services:
-  - postgresql13
-  # - MySQL80
+# services:
+#   - postgresql13
+#   # - MySQL80
 
 build_script:
   - call .\appveyor\build_script.cmd
