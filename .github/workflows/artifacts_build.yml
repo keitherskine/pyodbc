@@ -46,7 +46,7 @@ jobs:
           platforms: all
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16.5
+        uses: pypa/cibuildwheel@v2.15.0
         # https://cibuildwheel.readthedocs.io/en/stable/options/#options-summary
         env:
           # Windows - both 64-bit and 32-bit builds
