@@ -33,7 +33,8 @@ jobs:
       matrix:
         # https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job
         # https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
-        os: [windows-2019, macos-11, ubuntu-22.04]
+        #os: [windows-2019, macos-11, ubuntu-22.04]
+        os: [macos-14]
 
     steps:
       - uses: actions/checkout@v4.1.1
@@ -45,8 +46,21 @@ jobs:
         with:
           platforms: all
 
+      - name: Check initial setup
+        run: |
+          echo '*** echo $PATH'
+          echo "$PATH"
+          echo '*** which brew || true'
+          which brew || true
+          echo '*** which odbcinst || true'
+          which odbcinst || true
+          echo '*** which odbc_config || true'
+          which odbc_config || true
+          echo "*** odbcinst -j"
+          odbcinst -j
+
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.15.0
+        uses: pypa/cibuildwheel@v2.16.5
         # https://cibuildwheel.readthedocs.io/en/stable/options/#options-summary
         env:
           # Windows - both 64-bit and 32-bit builds
