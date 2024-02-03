@@ -47,11 +47,16 @@ jobs:
           platforms: all
 
       - name: Check initial setup
+        if: runner.os == 'macOS'
         run: |
           echo '*** echo $PATH'
           echo "$PATH"
           echo '*** which brew || true'
           which brew || true
+          echo '*** brew list'
+          brew list
+          echo '*** brew install unixodbc'
+          brew install unixodbc
           echo '*** which odbcinst || true'
           which odbcinst || true
           echo '*** which odbc_config || true'
