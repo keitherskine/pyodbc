@@ -33,7 +33,7 @@ jobs:
       matrix:
         # https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job
         # https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
-        os: [windows-2019, macos-11, ubuntu-22.04]
+        os: [windows-2019, macos-12, ubuntu-22.04]
 
     steps:
       - uses: actions/checkout@v4.1.1
@@ -47,6 +47,7 @@ jobs:
 
       - name: Install unixODBC
         # unixODBC is needed for the SQL C header files, e.g. sql.h, hence make sure it is installed
+        if: runner.os == 'macOS'
         run: |
           echo '*** brew install unixodbc'
           brew install unixodbc
@@ -120,7 +121,7 @@ jobs:
         env:
           CIBW_ARCHS_MACOS: arm64
           CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
-          CIBW_BUILD: "*macosx_arm64*"
+          CIBW_BUILD: "cp*macosx_arm64*"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4.3.0
