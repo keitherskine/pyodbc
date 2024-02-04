@@ -21,7 +21,7 @@ jobs:
         run: python -m build --sdist --no-isolation
 
       - name: Upload sdist
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4.3.0
         with:
           name: sdist_${{ github.sha }}
           path: ./dist/*.gz
@@ -33,8 +33,7 @@ jobs:
       matrix:
         # https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job
         # https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
-        #os: [windows-2019, macos-11, ubuntu-22.04]
-        os: [macos-14]
+        os: [windows-2019, macos-11, ubuntu-22.04]
 
     steps:
       - uses: actions/checkout@v4.1.1
@@ -46,22 +45,11 @@ jobs:
         with:
           platforms: all
 
-      - name: Check initial setup
+      - name: Install unixODBC
         # unixODBC is needed for the SQL C header files, e.g. sql.h, hence make sure it is installed
-        if: runner.os == 'macOS'
         run: |
-          echo '*** echo $PATH'
-          echo "$PATH"
-          echo '*** which brew || true'
-          which brew || true
-          echo '*** brew list'
-          brew list
           echo '*** brew install unixodbc'
           brew install unixodbc
-          echo '*** which odbcinst || true'
-          which odbcinst || true
-          echo '*** which odbc_config || true'
-          which odbc_config || true
           echo "*** odbcinst -j"
           odbcinst -j
 
@@ -80,9 +68,9 @@ jobs:
           #
           # https://cibuildwheel.readthedocs.io/en/stable/faq/#how-to-cross-compile
 
-          CIBW_ARCHS_MACOS: x86_64 arm64
+          CIBW_ARCHS_MACOS: x86_64
 
-          # CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
+          CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
           # Disable the inclusion of unixODBC dylibs because they will be *Intel* ones.
           # Unfortunately, this means no one can use the ARM wheels right now.
 
@@ -101,11 +89,41 @@ jobs:
               --wheel-dir {dest_dir}
               {wheel}
 
-          # Build choices - disable musl Linux and PyPy builds
-          CIBW_SKIP: "*-musllinux_* pp*"
+          # Build choices - disable musl Linux, PyPy, and ARM64 builds
+          CIBW_SKIP: "*-musllinux_* pp* *macosx_arm64*"
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4.3.0
         with:
           name: wheels_${{ github.sha }}
+          path: ./wheelhouse/*.whl
+
+  build_wheels_arm64:
+    name: Build wheels on macOS ARM64
+    # macos-14 is an M1 runner
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Install unixODBC
+        # unixODBC is needed for the SQL C header files, e.g. sql.h, hence make sure it is installed
+        run: |
+          echo '*** brew install unixodbc'
+          brew install unixodbc
+          echo "*** odbcinst -j"
+          odbcinst -j
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.16.5
+        # https://cibuildwheel.readthedocs.io/en/stable/options/#options-summary
+        env:
+          CIBW_ARCHS_MACOS: arm64
+          CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
+          CIBW_BUILD: "*macosx_arm64*"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4.3.0
+        with:
+          name: wheels_arm64_${{ github.sha }}
           path: ./wheelhouse/*.whl
