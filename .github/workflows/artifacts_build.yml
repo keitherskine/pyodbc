@@ -47,6 +47,7 @@ jobs:
           platforms: all
 
       - name: Check initial setup
+        # unixODBC is needed for the SQL C header files, e.g. sql.h, hence make sure it is installed
         if: runner.os == 'macOS'
         run: |
           echo '*** echo $PATH'
@@ -55,15 +56,14 @@ jobs:
           which brew || true
           echo '*** brew list'
           brew list
-
-      # echo '*** brew install unixodbc'
-      # brew install unixodbc
-      # echo '*** which odbcinst || true'
-      # which odbcinst || true
-      # echo '*** which odbc_config || true'
-      # which odbc_config || true
-      # echo "*** odbcinst -j"
-      # odbcinst -j
+          echo '*** brew install unixodbc'
+          brew install unixodbc
+          echo '*** which odbcinst || true'
+          which odbcinst || true
+          echo '*** which odbc_config || true'
+          which odbc_config || true
+          echo "*** odbcinst -j"
+          odbcinst -j
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.16.5
@@ -82,7 +82,7 @@ jobs:
 
           CIBW_ARCHS_MACOS: x86_64 arm64
 
-          CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
+          # CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
           # Disable the inclusion of unixODBC dylibs because they will be *Intel* ones.
           # Unfortunately, this means no one can use the ARM wheels right now.
 
