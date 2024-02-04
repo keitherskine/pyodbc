@@ -132,10 +132,11 @@ def get_compiler_settings():
 
         # Homebrew installs odbc_config
         pipe = os.popen('odbc_config --cflags --libs 2>/dev/null')
-        cflags, ldflags = pipe.readlines()
+        odbc_cfg = pipe.readlines()
         exit_status = pipe.close()
 
-        if exit_status is None:
+        if exit_status is None and len(odbc_cfg) == 2:
+            cflags, ldflags = odbc_cfg
             settings['extra_compile_args'].extend(shlex.split(cflags))
             settings['extra_link_args'].extend(shlex.split(ldflags))
         else:
