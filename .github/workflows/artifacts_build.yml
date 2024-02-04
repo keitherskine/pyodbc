@@ -45,15 +45,6 @@ jobs:
         with:
           platforms: all
 
-      - name: Install unixODBC
-        # unixODBC is needed for the SQL C header files, e.g. sql.h, hence make sure it is installed
-        if: runner.os == 'macOS'
-        run: |
-          echo '*** brew install unixodbc'
-          brew install unixodbc
-          echo "*** odbcinst -j"
-          odbcinst -j
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.16.5
         # https://cibuildwheel.readthedocs.io/en/stable/options/#options-summary
@@ -96,12 +87,12 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: wheels_${{ github.sha }}
+          name: wheels_${{ matrix.os }}_${{ github.sha }}
           path: ./wheelhouse/*.whl
 
   build_wheels_arm64:
     name: Build wheels on macOS ARM64
-    # macos-14 is an M1 runner
+    # macos-14 is an ARM64 (M1) runner
     runs-on: macos-14
 
     steps:
