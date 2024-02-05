@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, os, shlex, re
+import sys, os, shlex, shutil, re
 from os.path import exists, join, isdir, relpath, expanduser
 from pathlib import Path
 from inspect import cleandoc
@@ -130,12 +130,21 @@ def get_compiler_settings():
             '-Wno-deprecated-declarations'
         ])
 
-        # Homebrew installs odbc_config
-        pipe = os.popen('odbc_config --cflags --libs 2>/dev/null')
-        cflags, ldflags = pipe.readlines()
-        exit_status = pipe.close()
+        # check at least one of unixODBC (via isql) or iODBC (via iodbctest) is installed
+        if shutil.which('isql') is None and shutil.which('iodbctest') is None:
+            print('WARNING: It would appear neither unixODBC nor iODBC are already installed.')
+            print('         A driver manager is necessary for pyodbc to function.')
+            print('         Install the recommended unixODBC driver manager and reinstall pyodbc with the following:')
+            print('brew install unixodbc')
+            print('pip install --force-reinstall pyodbc')
 
-        if exit_status is None:
+        # installing unixODBC installs the utility odbc_config
+        pipe = os.popen('odbc_config --cflags --libs 2>/dev/null')
+        pipe_lines = pipe.readlines()
+        pipe_exit_status = pipe.close()
+
+        if pipe_exit_status is None and len(pipe_lines) == 2:
+            cflags, ldflags = pipe_lines
             settings['extra_compile_args'].extend(shlex.split(cflags))
             settings['extra_link_args'].extend(shlex.split(ldflags))
         else:
