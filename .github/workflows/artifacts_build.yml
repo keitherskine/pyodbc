@@ -107,7 +107,7 @@ jobs:
           CIBW_ARCHS_LINUX: x86_64
 
   #       # this installs unixODBC 2.3.7 which is quite old but it has the latest ABI so should be fine
-          CIBW_BEFORE_ALL_LINUX: apk add unixodbc-dev
+          CIBW_BEFORE_ALL_LINUX: apk add unixodbc-dev gcc g++
 
           # Intel64 and aarch64 wheels, but not i686 or musllinux (yet)
           CIBW_BUILD: "cp*-musllinux_x86_64*"
@@ -115,9 +115,9 @@ jobs:
           # suppress the addition of unixODBC libs to the wheel with --exclude's
           CIBW_REPAIR_WHEEL_COMMAND_LINUX:
             auditwheel repair
-              --exclude libodbc.so.2
-              --exclude libgcc_s-a04fdf82.so.1
-              --exclude libstdc++-a9383cce.so.6.0.28
+              --exclude 'libodbc.so.2'
+              --exclude 'libgcc_s-a04fdf82.so.1'
+              --exclude 'libstdc++-a9383cce.so.6.0.28'
               --wheel-dir {dest_dir}
               {wheel}
 
