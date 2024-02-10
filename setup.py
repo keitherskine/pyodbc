@@ -130,36 +130,38 @@ def get_compiler_settings():
             '-Wno-deprecated-declarations'
         ])
 
-        # check at least one of unixODBC (via isql) or iODBC (via iodbctest) is installed
-        if shutil.which('isql') is None and shutil.which('iodbctest') is None:
-            print('WARNING: It would appear neither unixODBC nor iODBC are already installed.')
-            print('         A driver manager is necessary for pyodbc to function.')
-            print('         Install the recommended unixODBC driver manager and reinstall pyodbc with the following:')
-            print('brew install unixodbc')
-            print('pip install --force-reinstall pyodbc')
+        # # check at least one of unixODBC (via isql) or iODBC (via iodbctest) is installed
+        # if shutil.which('isql') is None and shutil.which('iodbctest') is None:
+        #     print('WARNING: It would appear neither unixODBC nor iODBC are already installed.')
+        #     print('         A driver manager is necessary for pyodbc to function.')
+        #     print('         Install the recommended unixODBC driver manager and reinstall pyodbc with the following:')
+        #     print('brew install unixodbc')
+        #     print('pip install --force-reinstall pyodbc')
+        #     print(os.environ)
 
-        # installing unixODBC installs the utility odbc_config
+        # if unixODBC has been installed, use its build arguments
         pipe = os.popen('odbc_config --cflags --libs 2>/dev/null')
-        pipe_lines = pipe.readlines()
+        pipe_output = pipe.readlines()
         pipe_exit_status = pipe.close()
-
-        if pipe_exit_status is None and len(pipe_lines) == 2:
-            cflags, ldflags = pipe_lines
+        if pipe_exit_status is None and len(pipe_output) == 2:
+            cflags, ldflags = pipe_output
             settings['extra_compile_args'].extend(shlex.split(cflags))
             settings['extra_link_args'].extend(shlex.split(ldflags))
         else:
+            # without unixODBC
             settings['libraries'].append('odbc')
-            # Add directories for MacPorts and Homebrew.
+            homebrew_prefix = os.environ.get('HOMEBREW_PREFIX', '/opt/homebrew')
             dirs = [
                 '/usr/local/include',
                 '/opt/local/include',
-                '/opt/homebrew/include',
+                f'{homebrew_prefix}/include',
                 expanduser('~/homebrew/include'),
             ]
-            settings['include_dirs'].extend(dir for dir in dirs if isdir(dir))
+            settings['include_dirs'].extend(d for d in dirs if isdir(d))
             # unixODBC make/install places libodbc.dylib in /usr/local/lib/ by default
             # ( also OS/X since El Capitan prevents /usr/lib from being accessed )
-            settings['library_dirs'] = ['/usr/local/lib', '/opt/homebrew/lib']
+            dirs = ['/usr/local/lib', f'{homebrew_prefix}/lib']
+            settings['library_dirs'].extend(d for d in dirs if isdir(d))
     else:
         # Other posix-like: Linux, Solaris, etc.
 
@@ -167,16 +169,14 @@ def get_compiler_settings():
         # about this *a lot*.
         settings['extra_compile_args'].append('-Wno-write-strings')
 
-        fd = os.popen('odbc_config --cflags 2>/dev/null')
-        cflags = fd.read().strip()
-        fd.close()
-        if cflags:
-            settings['extra_compile_args'].extend(cflags.split())
-        fd = os.popen('odbc_config --libs 2>/dev/null')
-        ldflags = fd.read().strip()
-        fd.close()
-        if ldflags:
-            settings['extra_link_args'].extend(ldflags.split())
+        # use unixODBC build arguments
+        pipe = os.popen('odbc_config --cflags --libs 2>/dev/null')
+        pipe_output = pipe.readlines()
+        pipe_exit_status = pipe.close()
+        if pipe_exit_status is None and len(pipe_output) == 2:
+            cflags, ldflags = pipe_output
+            settings['extra_compile_args'].extend(shlex.split(cflags))
+            settings['extra_link_args'].extend(shlex.split(ldflags))
 
         # What is the proper way to detect iODBC, MyODBC, unixODBC, etc.?
         settings['libraries'].append('odbc')
