@@ -24,7 +24,7 @@ ECHO *** Get build info and compiler for the current Python installation:
 
 ECHO.
 ECHO *** Update pip and setuptools...
-"%PYTHON_HOME%\python" -m pip install --upgrade pip setuptools
+"%PYTHON_HOME%\python" -m pip install --upgrade pip setuptools --quiet --no-warn-script-location
 IF ERRORLEVEL 1 (
   ECHO *** ERROR: pip/setuptools update failed
   EXIT 1
