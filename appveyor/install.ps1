@@ -166,21 +166,21 @@ CheckAndInstallMsiFromUrl `
     -driver_name "ODBC Driver 13 for SQL Server" `
     -driver_bitness "64-bit" `
     -driver_url "https://download.microsoft.com/download/D/5/E/D5EEF288-A277-45C8-855B-8E2CB7E25B96/x64/msodbcsql.msi" `
-    -msifile_path "$cache_dir\msodbcsql_13.1.0.0_x64.msi" `
+    -msifile_path "$cache_dir\msodbcsql_13_E25B96_x64.msi" `
     -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
 
 CheckAndInstallMsiFromUrl `
     -driver_name "ODBC Driver 17 for SQL Server" `
     -driver_bitness "64-bit" `
-    -driver_url "https://download.microsoft.com/download/6/f/f/6ffefc73-39ab-4cc0-bb7c-4093d64c2669/en-US/17.10.4.1/x64/msodbcsql.msi" `
-    -msifile_path "$cache_dir\msodbcsql_17.10.4.1_x64.msi" `
+    -driver_url "https://download.microsoft.com/download/6/f/f/6ffefc73-39ab-4cc0-bb7c-4093d64c2669/en-US/17.10.6.1/x64/msodbcsql.msi" `
+    -msifile_path "$cache_dir\msodbcsql_17.10.6.1_x64.msi" `
     -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
 
 CheckAndInstallMsiFromUrl `
     -driver_name "ODBC Driver 18 for SQL Server" `
     -driver_bitness "64-bit" `
     -driver_url "https://download.microsoft.com/download/1/7/4/17423b83-b75d-42e1-b5b9-eaa266561c5e/Windows/amd64/1033/msodbcsql.msi" `
-    -msifile_path "$cache_dir\msodbcsql_18.3.1.1_x64.msi" `
+    -msifile_path "$cache_dir\msodbcsql_18_561c5e_x64.msi" `
     -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
 
 # some drivers must be installed in alignment with Python's bitness
@@ -198,7 +198,7 @@ if ($python_arch -eq "64") {
         -driver_name "MySQL ODBC 8.0 ANSI Driver" `
         -driver_bitness "64-bit" `
         -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.37-winx64.msi" `
-        -msifile_path "$cache_dir\mysql-connector-odbc-8.0.33-winx64.msi";
+        -msifile_path "$cache_dir\mysql-connector-odbc-8.0.37-winx64.msi";
 
 } elseif ($python_arch -eq "32") {
 
@@ -214,7 +214,7 @@ if ($python_arch -eq "64") {
         -driver_name "MySQL ODBC 8.0 ANSI Driver" `
         -driver_bitness "32-bit" `
         -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.37-win32.msi" `
-        -msifile_path "$cache_dir\mysql-connector-odbc-8.0.33-win32.msi";
+        -msifile_path "$cache_dir\mysql-connector-odbc-8.0.37-win32.msi";
 
 } else {
     Write-Output "ERROR: Unexpected Python architecture:"
