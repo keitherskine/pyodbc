@@ -197,7 +197,7 @@ if ($python_arch -eq "64") {
     CheckAndInstallMsiFromUrl `
         -driver_name "MySQL ODBC 8.0 ANSI Driver" `
         -driver_bitness "64-bit" `
-        -driver_url "https://cdn.mysql.com/archives/mysql-connector-odbc-8.4/mysql-connector-odbc-8.4.0-winx64.msi" `
+        -driver_url "https://downloads.mysql.com/archives/get/p/10/file/mysql-connector-odbc-8.4.0-winx64.msi" `
         -msifile_path "$cache_dir\mysql-connector-odbc-8.4.0-winx64.msi";
 
 } elseif ($python_arch -eq "32") {
@@ -213,7 +213,7 @@ if ($python_arch -eq "64") {
     CheckAndInstallMsiFromUrl `
         -driver_name "MySQL ODBC 8.0 ANSI Driver" `
         -driver_bitness "32-bit" `
-        -driver_url "https://cdn.mysql.com//Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.37-win32.msi" `
+        -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.37-win32.msi" `
         -msifile_path "$cache_dir\mysql-connector-odbc-8.0.37-win32.msi";
 
 } else {
