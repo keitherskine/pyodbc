@@ -179,7 +179,7 @@ CheckAndInstallMsiFromUrl `
 CheckAndInstallMsiFromUrl `
     -driver_name "ODBC Driver 18 for SQL Server" `
     -driver_bitness "64-bit" `
-    -driver_url "https://download.microsoft.com/download/4/f/e/4fed6f4b-dc42-4255-b4b4-70f8e2a35a63/en-US/18.3.1.1/x64/msodbcsql.msi" `
+    -driver_url "https://download.microsoft.com/download/1/7/4/17423b83-b75d-42e1-b5b9-eaa266561c5e/Windows/amd64/1033/msodbcsql.msi" `
     -msifile_path "$cache_dir\msodbcsql_18.3.1.1_x64.msi" `
     -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
 
@@ -197,7 +197,7 @@ if ($python_arch -eq "64") {
     CheckAndInstallMsiFromUrl `
         -driver_name "MySQL ODBC 8.0 ANSI Driver" `
         -driver_bitness "64-bit" `
-        -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.33-winx64.msi" `
+        -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.37-winx64.msi" `
         -msifile_path "$cache_dir\mysql-connector-odbc-8.0.33-winx64.msi";
 
 } elseif ($python_arch -eq "32") {
@@ -213,7 +213,7 @@ if ($python_arch -eq "64") {
     CheckAndInstallMsiFromUrl `
         -driver_name "MySQL ODBC 8.0 ANSI Driver" `
         -driver_bitness "32-bit" `
-        -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.33-win32.msi" `
+        -driver_url "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.37-win32.msi" `
         -msifile_path "$cache_dir\mysql-connector-odbc-8.0.33-win32.msi";
 
 } else {
