@@ -62,12 +62,14 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.20.0
         env:
-          # based on AlmaLinux 8; glibc 64-bit builds only; no bundled libraries
+          # based on CentOS 7; glibc 64-bit builds only; no bundled libraries
           # https://github.com/pypa/manylinux#docker-images
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          #CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
           CIBW_ARCHS_LINUX: x86_64 aarch64
           # this installs unixODBC 2.3.1 which is quite old but it has the latest ABI so should be fine
-          CIBW_BEFORE_ALL_LINUX: dnf install unixODBC-devel
+          CIBW_BEFORE_ALL_LINUX: yum -y install unixODBC-devel
+          #CIBW_BEFORE_ALL_LINUX: dnf install unixODBC-devel
           # Intel64 and aarch64 wheels, but not i686 or musllinux (yet)
           CIBW_BUILD: "cp*-manylinux_x86_64* cp*-manylinux_aarch64*"
           # the raw wheel filename is not PyPi compliant so the wheel must be repaired but
