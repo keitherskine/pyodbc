@@ -57,7 +57,7 @@ jobs:
 
       - name: Set up QEMU
         # QEMU is needed for Linux aarch64 wheels
-        uses: docker/setup-qemu-action@v3.0.0
+        uses: docker/setup-qemu-action@v3.6.0
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.4
