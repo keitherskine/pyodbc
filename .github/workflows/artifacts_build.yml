@@ -87,8 +87,7 @@ jobs:
 
   build_macos_x86_wheels:
     name: Build wheels on macOS x86_64
-    # macos-13 is an Intel x86 runner
-    runs-on: macos-13
+    runs-on: macos-14
 
     steps:
       - uses: actions/checkout@v4.3.0
@@ -110,7 +109,6 @@ jobs:
 
   build_macos_arm64_wheels:
     name: Build wheels on macOS ARM64
-    # macos-14 is an ARM64 (M1) runner
     runs-on: macos-14
 
     steps:
