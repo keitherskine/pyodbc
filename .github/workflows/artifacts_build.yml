@@ -23,7 +23,7 @@ jobs:
         run: python -m build --sdist --no-isolation
 
       - name: Upload sdist
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: sdist__${{ github.sha }}
           path: ./dist/*.gz
@@ -43,7 +43,7 @@ jobs:
           CIBW_BUILD: "cp*-win_amd64* cp*-win32*"
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: wheels_windows__${{ github.sha }}
           path: ./wheelhouse/*.whl
@@ -80,7 +80,7 @@ jobs:
               {wheel}
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: wheels_ubuntu__${{ github.sha }}
           path: ./wheelhouse/*.whl
@@ -103,7 +103,7 @@ jobs:
           CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: wheels_macos_x86__${{ github.sha }}
           path: ./wheelhouse/*.whl
@@ -131,7 +131,7 @@ jobs:
           CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: wheels_macos_arm64__${{ github.sha }}
           path: ./wheelhouse/*.whl
