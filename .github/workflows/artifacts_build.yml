@@ -31,8 +31,8 @@ jobs:
           name: sdist__${{ github.sha }}
           path: ./dist/*.gz
 
-  build_windows_wheels:
-    name: Build wheels on Windows
+  build_windows_x86_wheels:
+    name: Build wheels on Windows x86_64
     runs-on: windows-2022
 
     steps:
@@ -42,97 +42,116 @@ jobs:
         uses: pypa/cibuildwheel@v3.1.4
         env:
           CIBW_ARCHS_WINDOWS: "AMD64 x86"
-          # AMD64 and Intel32 wheels, but not ARM64 (yet)
+          # AMD64 and Intel32 wheels
           CIBW_BUILD: "cp*-win_amd64* cp*-win32*"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: wheels_windows__${{ github.sha }}
+          name: wheels_windows_x86_64__${{ github.sha }}
           path: ./wheelhouse/*.whl
 
-  build_ubuntu_wheels:
-    name: Build wheels on Ubuntu
-    runs-on: ubuntu-22.04
-
-    steps:
-      - uses: actions/checkout@v4.3.0
-
-      - name: Set up QEMU
-        # QEMU is needed for Linux aarch64 wheels
-        uses: docker/setup-qemu-action@v3.6.0
-
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v3.1.4
-        env:
-          # based on CentOS 7; glibc 64-bit builds only; no bundled libraries
-          # https://github.com/pypa/manylinux#docker-images
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-          CIBW_ARCHS_LINUX: x86_64 aarch64
-          # this installs unixODBC 2.3.1 which is quite old but it has the latest ABI so should be fine
-          CIBW_BEFORE_ALL_LINUX: yum -y install unixODBC-devel
-          # Intel64 and aarch64 wheels, but not i686 or musllinux (yet)
-          CIBW_BUILD: "cp*-manylinux_x86_64* cp*-manylinux_aarch64*"
-          # the raw wheel filename is not PyPi compliant so the wheel must be repaired but
-          # suppress the addition of unixODBC libs to the wheel with --exclude's
-          CIBW_REPAIR_WHEEL_COMMAND_LINUX:
-            auditwheel repair
-              --exclude libodbc.so.2
-              --exclude libltdl.so.7
-              --wheel-dir {dest_dir}
-              {wheel}
-
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: wheels_ubuntu__${{ github.sha }}
-          path: ./wheelhouse/*.whl
-
-  build_macos_x86_wheels:
-    name: Build wheels on macOS x86_64
-    runs-on: macos-13
+  build_windows_arm64_wheels:
+    name: Build wheels on Windows ARM64
+    runs-on: windows-11-arm
 
     steps:
       - uses: actions/checkout@v4.3.0
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.4
-        # https://cibuildwheel.readthedocs.io/en/stable/options/#options-summary
         env:
-          CIBW_ARCHS_MACOS: x86_64
-          CIBW_BUILD: "cp*macosx_x86_64*"
-          # suppress the inclusion of the unixODBC dynamic libraries by disabling the repair command
-          CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
+          CIBW_ARCHS_WINDOWS: "ARM64"
+          CIBW_BUILD: "cp311-win_arm64 cp312-win_arm64 cp313-win_arm64 cp314-win_arm64"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: wheels_macos_x86__${{ github.sha }}
+          name: wheels_windows_arm64__${{ github.sha }}
           path: ./wheelhouse/*.whl
 
-  build_macos_arm64_wheels:
-    name: Build wheels on macOS ARM64
-    runs-on: macos-14
+  # build_ubuntu_wheels:
+  #   name: Build wheels on Ubuntu
+  #   runs-on: ubuntu-22.04
 
-    steps:
-      - uses: actions/checkout@v4.3.0
+  #   steps:
+  #     - uses: actions/checkout@v4.3.0
 
-      - name: Install unixODBC
-        # unixODBC is necessary for the SQL C header files, e.g. sql.h, but doesn't appear
-        # to be pre-installed on macos-14, hence make sure it really is installed
-        run: brew install unixodbc
+  #     - name: Set up QEMU
+  #       # QEMU is needed for Linux aarch64 wheels
+  #       uses: docker/setup-qemu-action@v3.6.0
 
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v3.1.4
-        # https://cibuildwheel.readthedocs.io/en/stable/options/#options-summary
-        env:
-          CIBW_ARCHS_MACOS: arm64
-          CIBW_BUILD: "cp*macosx_arm64*"
-          # suppress the inclusion of the unixODBC dynamic libraries by disabling the repair command
-          CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
+  #     - name: Build wheels
+  #       uses: pypa/cibuildwheel@v3.1.4
+  #       env:
+  #         # based on CentOS 7; glibc 64-bit builds only; no bundled libraries
+  #         # https://github.com/pypa/manylinux#docker-images
+  #         CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+  #         CIBW_ARCHS_LINUX: x86_64 aarch64
+  #         # this installs unixODBC 2.3.1 which is quite old but it has the latest ABI so should be fine
+  #         CIBW_BEFORE_ALL_LINUX: yum -y install unixODBC-devel
+  #         # Intel64 and aarch64 wheels, but not i686 or musllinux (yet)
+  #         CIBW_BUILD: "cp*-manylinux_x86_64* cp*-manylinux_aarch64*"
+  #         # the raw wheel filename is not PyPi compliant so the wheel must be repaired but
+  #         # suppress the addition of unixODBC libs to the wheel with --exclude's
+  #         CIBW_REPAIR_WHEEL_COMMAND_LINUX:
+  #           auditwheel repair
+  #             --exclude libodbc.so.2
+  #             --exclude libltdl.so.7
+  #             --wheel-dir {dest_dir}
+  #             {wheel}
 
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: wheels_macos_arm64__${{ github.sha }}
-          path: ./wheelhouse/*.whl
+  #     - name: Upload wheels
+  #       uses: actions/upload-artifact@v4.6.2
+  #       with:
+  #         name: wheels_ubuntu__${{ github.sha }}
+  #         path: ./wheelhouse/*.whl
+
+  # build_macos_x86_wheels:
+  #   name: Build wheels on macOS x86_64
+  #   runs-on: macos-13
+
+  #   steps:
+  #     - uses: actions/checkout@v4.3.0
+
+  #     - name: Build wheels
+  #       uses: pypa/cibuildwheel@v3.1.4
+  #       # https://cibuildwheel.readthedocs.io/en/stable/options/#options-summary
+  #       env:
+  #         CIBW_ARCHS_MACOS: x86_64
+  #         CIBW_BUILD: "cp*macosx_x86_64*"
+  #         # suppress the inclusion of the unixODBC dynamic libraries by disabling the repair command
+  #         CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
+
+  #     - name: Upload wheels
+  #       uses: actions/upload-artifact@v4.6.2
+  #       with:
+  #         name: wheels_macos_x86__${{ github.sha }}
+  #         path: ./wheelhouse/*.whl
+
+  # build_macos_arm64_wheels:
+  #   name: Build wheels on macOS ARM64
+  #   runs-on: macos-14
+
+  #   steps:
+  #     - uses: actions/checkout@v4.3.0
+
+  #     - name: Install unixODBC
+  #       # unixODBC is necessary for the SQL C header files, e.g. sql.h, but doesn't appear
+  #       # to be pre-installed on macos-14, hence make sure it really is installed
+  #       run: brew install unixodbc
+
+  #     - name: Build wheels
+  #       uses: pypa/cibuildwheel@v3.1.4
+  #       # https://cibuildwheel.readthedocs.io/en/stable/options/#options-summary
+  #       env:
+  #         CIBW_ARCHS_MACOS: arm64
+  #         CIBW_BUILD: "cp*macosx_arm64*"
+  #         # suppress the inclusion of the unixODBC dynamic libraries by disabling the repair command
+  #         CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
+
+  #     - name: Upload wheels
+  #       uses: actions/upload-artifact@v4.6.2
+  #       with:
+  #         name: wheels_macos_arm64__${{ github.sha }}
+  #         path: ./wheelhouse/*.whl
