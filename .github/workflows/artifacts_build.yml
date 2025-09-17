@@ -31,25 +31,25 @@ jobs:
           name: sdist__${{ github.sha }}
           path: ./dist/*.gz
 
-  build_windows_x86_wheels:
-    name: Build wheels on Windows x86_64
-    runs-on: windows-2022
+  # build_windows_x86_wheels:
+  #   name: Build wheels on Windows x86_64
+  #   runs-on: windows-2022
 
-    steps:
-      - uses: actions/checkout@v4.3.0
+  #   steps:
+  #     - uses: actions/checkout@v4.3.0
 
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v3.1.4
-        env:
-          CIBW_ARCHS_WINDOWS: "AMD64 x86"
-          # AMD64 and Intel32 wheels
-          CIBW_BUILD: "cp*-win_amd64* cp*-win32*"
+  #     - name: Build wheels
+  #       uses: pypa/cibuildwheel@v3.1.4
+  #       env:
+  #         CIBW_ARCHS_WINDOWS: "AMD64 x86"
+  #         # AMD64 and Intel32 wheels
+  #         CIBW_BUILD: "cp*-win_amd64* cp*-win32*"
 
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: wheels_windows_x86_64__${{ github.sha }}
-          path: ./wheelhouse/*.whl
+  #     - name: Upload wheels
+  #       uses: actions/upload-artifact@v4.6.2
+  #       with:
+  #         name: wheels_windows_x86_64__${{ github.sha }}
+  #         path: ./wheelhouse/*.whl
 
   build_windows_arm64_wheels:
     name: Build wheels on Windows ARM64
@@ -62,7 +62,8 @@ jobs:
         uses: pypa/cibuildwheel@v3.1.4
         env:
           CIBW_ARCHS_WINDOWS: "ARM64"
-          CIBW_BUILD: "cp311-win_arm64 cp312-win_arm64 cp313-win_arm64 cp314-win_arm64"
+          # CIBW_BUILD: "cp311-win_arm64 cp312-win_arm64 cp313-win_arm64 cp314-win_arm64"
+          CIBW_BUILD: "cp3??-win_arm64"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4.6.2
