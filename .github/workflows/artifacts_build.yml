@@ -115,9 +115,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4.3.0
 
-      # - name: Set up QEMU
-      #   # QEMU is needed for Linux aarch64 wheels
-      #   uses: docker/setup-qemu-action@v3.6.0
+      - name: Set up QEMU
+        # QEMU is needed for Linux aarch64 wheels
+        uses: docker/setup-qemu-action@v3.6.0
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.4
@@ -125,18 +125,17 @@ jobs:
           # based on CentOS 7; glibc 64-bit builds only; no bundled libraries
           # https://github.com/pypa/manylinux#docker-images
           CIBW_MUSLLINUX_X86_64_IMAGE: musllinux_1_2
-          # CIBW_ARCHS_LINUX: x86_64
-          # this installs unixODBC 2.3.1 which is quite old but it has the latest ABI so should be fine
+          CIBW_ARCHS_LINUX: x86_64 aarch64
           CIBW_BEFORE_ALL_LINUX: apk add unixodbc-dev
           # Intel64 wheels, but not i686 or aarch64 (yet)
-          CIBW_BUILD: "cp313-musllinux_x86_64"
+          CIBW_BUILD: "cp313-musllinux_x86_64 cp313-musllinux_aarch64"
           # the raw wheel filename is not PyPi compliant so the wheel must be repaired but
           # suppress the addition of unixODBC libs to the wheel with --exclude's
           CIBW_REPAIR_WHEEL_COMMAND_LINUX:
             auditwheel repair
               --exclude libgcc_s-0cd532bd.so.1
               --exclude libodbc.so.2
-              --exclude libstdc++-5d72f927.so.6.0
+              --exclude libstdc++-5d72f927.so.6.0.33
               --wheel-dir {dest_dir}
               {wheel}
 
