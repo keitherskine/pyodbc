@@ -85,20 +85,18 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.4
         env:
-          # based on CentOS 7; glibc 64-bit builds only; no bundled libraries
           # https://github.com/pypa/manylinux#docker-images
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
           CIBW_ARCHS_LINUX: x86_64 aarch64
-          # this installs unixODBC 2.3.1 which is quite old but it has the latest ABI so should be fine
           CIBW_BEFORE_ALL_LINUX: yum -y install unixODBC-devel
-          # Intel64 and aarch64 wheels, but not i686 or musllinux (yet)
+          # Intel64 and ARM64 wheels
           CIBW_BUILD: "cp313-manylinux_x86_64 cp313-manylinux_aarch64"
           # the raw wheel filename is not PyPi compliant so the wheel must be repaired but
           # suppress the addition of unixODBC libs to the wheel with --exclude's
-          #   --exclude libltdl.so.7
           CIBW_REPAIR_WHEEL_COMMAND_LINUX:
             auditwheel repair
-              --exclude libodbc.so.2
+              --exclude "libodbc.so.*"
+              --exclude libltdl.so.7
               --wheel-dir {dest_dir}
               {wheel}
 
@@ -122,20 +120,17 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.4
         env:
-          # based on CentOS 7; glibc 64-bit builds only; no bundled libraries
           # https://github.com/pypa/manylinux#docker-images
           CIBW_MUSLLINUX_X86_64_IMAGE: musllinux_1_2
           CIBW_ARCHS_LINUX: x86_64 aarch64
           CIBW_BEFORE_ALL_LINUX: apk add unixodbc-dev
-          # Intel64 wheels, but not i686 or aarch64 (yet)
+          # Intel64 and ARM64 wheels
           CIBW_BUILD: "cp313-musllinux_x86_64 cp313-musllinux_aarch64"
           # the raw wheel filename is not PyPi compliant so the wheel must be repaired but
           # suppress the addition of unixODBC libs to the wheel with --exclude's
           CIBW_REPAIR_WHEEL_COMMAND_LINUX:
             auditwheel repair
-              --exclude libgcc_s-0cd532bd.so.1
-              --exclude libodbc.so.2
-              --exclude libstdc++-5d72f927.so.6.0.33
+              --exclude "*"
               --wheel-dir {dest_dir}
               {wheel}
 
