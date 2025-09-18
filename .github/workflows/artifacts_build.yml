@@ -51,25 +51,25 @@ jobs:
   #         name: wheels_windows_x86_64__${{ github.sha }}
   #         path: ./wheelhouse/*.whl
 
-  build_windows_arm64_wheels:
-    name: Build wheels on Windows ARM64
-    runs-on: windows-11-arm
+  # build_windows_arm64_wheels:
+  #   name: Build wheels on Windows ARM64
+  #   runs-on: windows-11-arm
 
-    steps:
-      - uses: actions/checkout@v4.3.0
+  #   steps:
+  #     - uses: actions/checkout@v4.3.0
 
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v3.1.4
-        env:
-          CIBW_ARCHS_WINDOWS: "ARM64"
-          # CIBW_BUILD: "cp311-win_arm64 cp312-win_arm64 cp313-win_arm64 cp314-win_arm64"
-          CIBW_BUILD: "cp3??-win_arm64"
+  #     - name: Build wheels
+  #       uses: pypa/cibuildwheel@v3.1.4
+  #       env:
+  #         CIBW_ARCHS_WINDOWS: "ARM64"
+  #         # CIBW_BUILD: "cp311-win_arm64 cp312-win_arm64 cp313-win_arm64 cp314-win_arm64"
+  #         CIBW_BUILD: "cp3??-win_arm64"
 
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: wheels_windows_arm64__${{ github.sha }}
-          path: ./wheelhouse/*.whl
+  #     - name: Upload wheels
+  #       uses: actions/upload-artifact@v4.6.2
+  #       with:
+  #         name: wheels_windows_arm64__${{ github.sha }}
+  #         path: ./wheelhouse/*.whl
 
   build_ubuntu_manylinux_wheels:
     name: Build wheels on Ubuntu manylinux
@@ -92,7 +92,7 @@ jobs:
           # this installs unixODBC 2.3.1 which is quite old but it has the latest ABI so should be fine
           CIBW_BEFORE_ALL_LINUX: yum -y install unixODBC-devel
           # Intel64 and aarch64 wheels, but not i686 or musllinux (yet)
-          CIBW_BUILD: "cp*-manylinux_x86_64* cp*-manylinux_aarch64*"
+          CIBW_BUILD: "cp313-manylinux_x86_64 cp313-manylinux_aarch64"
           # the raw wheel filename is not PyPi compliant so the wheel must be repaired but
           # suppress the addition of unixODBC libs to the wheel with --exclude's
           CIBW_REPAIR_WHEEL_COMMAND_LINUX:
@@ -124,12 +124,12 @@ jobs:
         env:
           # based on CentOS 7; glibc 64-bit builds only; no bundled libraries
           # https://github.com/pypa/manylinux#docker-images
-          CIBW_MANYLINUX_X86_64_IMAGE: musllinux_1_2
-          CIBW_ARCHS_LINUX: x86_64
+          CIBW_MUSLLINUX_X86_64_IMAGE: musllinux_1_2
+          # CIBW_ARCHS_LINUX: x86_64
           # this installs unixODBC 2.3.1 which is quite old but it has the latest ABI so should be fine
-          CIBW_BEFORE_ALL_LINUX: yum -y install unixODBC-devel
+          CIBW_BEFORE_ALL_LINUX: apk add unixodbc-dev
           # Intel64 wheels, but not i686 or aarch64 (yet)
-          CIBW_BUILD: "cp*-musllinux_x86_64*"
+          CIBW_BUILD: "cp313-musllinux_x86_64"
           # the raw wheel filename is not PyPi compliant so the wheel must be repaired but
           # suppress the addition of unixODBC libs to the wheel with --exclude's
           CIBW_REPAIR_WHEEL_COMMAND_LINUX:
