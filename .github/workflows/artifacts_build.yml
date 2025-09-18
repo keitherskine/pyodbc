@@ -43,7 +43,7 @@ jobs:
         env:
           CIBW_ARCHS_WINDOWS: "AMD64 x86"
           # AMD64 and Intel32 wheels
-          CIBW_BUILD: "cp*-win_amd64* cp*-win32*"
+          CIBW_BUILD: "cp*-win_amd64 cp*-win32"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4.6.2
@@ -62,8 +62,7 @@ jobs:
         uses: pypa/cibuildwheel@v3.1.4
         env:
           CIBW_ARCHS_WINDOWS: "ARM64"
-          # CIBW_BUILD: "cp311-win_arm64 cp312-win_arm64 cp313-win_arm64 cp314-win_arm64"
-          CIBW_BUILD: "cp3??-win_arm64"
+          CIBW_BUILD: "cp*-win_arm64"
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4.6.2
@@ -151,7 +150,7 @@ jobs:
         # https://cibuildwheel.readthedocs.io/en/stable/options/#options-summary
         env:
           CIBW_ARCHS_MACOS: x86_64
-          CIBW_BUILD: "cp*macosx_x86_64*"
+          CIBW_BUILD: "cp*macosx_x86_64"
           # suppress the inclusion of the unixODBC dynamic libraries by disabling the repair command
           CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
 
@@ -178,7 +177,7 @@ jobs:
         # https://cibuildwheel.readthedocs.io/en/stable/options/#options-summary
         env:
           CIBW_ARCHS_MACOS: arm64
-          CIBW_BUILD: "cp*macosx_arm64*"
+          CIBW_BUILD: "cp*macosx_arm64"
           # suppress the inclusion of the unixODBC dynamic libraries by disabling the repair command
           CIBW_REPAIR_WHEEL_COMMAND_MACOS: ""
 
