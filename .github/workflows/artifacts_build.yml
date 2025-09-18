@@ -78,9 +78,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4.3.0
 
-      # - name: Set up QEMU
-      #   # QEMU is needed for Linux aarch64 wheels
-      #   uses: docker/setup-qemu-action@v3.6.0
+      - name: Set up QEMU
+        # QEMU is needed for Linux aarch64 wheels
+        uses: docker/setup-qemu-action@v3.6.0
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.4
@@ -95,10 +95,10 @@ jobs:
           CIBW_BUILD: "cp313-manylinux_x86_64 cp313-manylinux_aarch64"
           # the raw wheel filename is not PyPi compliant so the wheel must be repaired but
           # suppress the addition of unixODBC libs to the wheel with --exclude's
+          #   --exclude libltdl.so.7
           CIBW_REPAIR_WHEEL_COMMAND_LINUX:
             auditwheel repair
               --exclude libodbc.so.2
-              --exclude libltdl.so.7
               --wheel-dir {dest_dir}
               {wheel}
 
@@ -134,8 +134,9 @@ jobs:
           # suppress the addition of unixODBC libs to the wheel with --exclude's
           CIBW_REPAIR_WHEEL_COMMAND_LINUX:
             auditwheel repair
+              --exclude libgcc_s-0cd532bd.so.1
               --exclude libodbc.so.2
-              --exclude libltdl.so.7
+              --exclude libstdc++-5d72f927.so.6.0
               --wheel-dir {dest_dir}
               {wheel}
 
