@@ -23,7 +23,7 @@ jobs:
           python -m pip freeze --all
 
       - name: Build sdist
-        run: python -m build --sdist --no-isolation
+        run: python -m build --sdist
 
       - name: Upload sdist
         uses: actions/upload-artifact@v4.6.2
