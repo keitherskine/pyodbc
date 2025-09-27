@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 import sys, os, shlex, re
-from os.path import exists, join, isdir, relpath, expanduser
+from os.path import join, isdir, relpath, expanduser
 from pathlib import Path
-from inspect import cleandoc
 
 from setuptools import setup
 from setuptools.extension import Extension
@@ -28,48 +27,30 @@ def _getversion():
     return m.group(1)
 
 
-VERSION = _getversion()
-
-
 def main():
     settings = get_compiler_settings()
 
     files = [relpath(join('src', f)) for f in os.listdir('src') if f.endswith('.cpp')]
 
-    if exists('MANIFEST'):
-        os.remove('MANIFEST')
-
     setup(
         name="pyodbc",
-        version=VERSION,
-        description="DB API Module for ODBC",
-        long_description=cleandoc("""
-            pyodbc is an open source Python module that makes accessing ODBC databases simple.
-            It implements the [DB API 2.0](https://www.python.org/dev/peps/pep-0249)
-            specification but is packed with even more Pythonic convenience."""),
-        maintainer="Michael Kleehammer",
-        maintainer_email="michael@kleehammer.com",
-        url='https://github.com/mkleehammer/pyodbc',
+
+        # the C++ code that generates the pyodbc module
         ext_modules=[Extension('pyodbc', sorted(files), **settings)],
-        include_package_data=False,
-        packages=[''],
-        package_dir={'': 'src'},
-        package_data={'': ['pyodbc.pyi']},  # places pyodbc.pyi alongside pyodbc.{platform}.{pyd|so} in site-packages
-        license='MIT-0',
-        python_requires='>=3.8',
-        classifiers=['Development Status :: 5 - Production/Stable',
-                     'Intended Audience :: Developers',
-                     'Intended Audience :: System Administrators',
-                     'License :: OSI Approved :: MIT-0',
-                     'Operating System :: Microsoft :: Windows',
-                     'Operating System :: POSIX',
-                     'Programming Language :: Python',
-                     'Programming Language :: Python :: 3',
-                     'Topic :: Database',
-                     ],
         options={
             'bdist_wininst': {'user_access_control': 'auto'}
-        }
+        },
+
+        # in order to include pyodbc.pyi in the wheel, and to include pyodbc.pyi alongside
+        # the .pyd/.so file in the site-packages directory when installed, the following
+        # combination of setup parameters are necessary.
+
+        # an empty "packages" list generates a warning, but it is necessary otherwise
+        # pyodbc.pyi does not appear in the wheel
+        packages=[''],
+        package_dir={'': 'src'},  # don't use setup.find_packages()
+        package_data={'': ['pyodbc.pyi']},
+        include_package_data=False,  # otherwise the wheel includes all the files in MANIFEST.in
     )
 
 
@@ -80,7 +61,7 @@ def get_compiler_settings():
         'extra_link_args': [],
         'libraries': [],
         'include_dirs': [],
-        'define_macros': [('PYODBC_VERSION', VERSION)]
+        'define_macros': [('PYODBC_VERSION', _getversion())]
     }
 
     if os.name == 'nt':

@@ -1,5 +1,6 @@
 include src/*.h
 include src/*.cpp
+include src/*.pyi
 include tests/*
 include README.*
 include LICENSE.txt
