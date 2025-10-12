@@ -29,6 +29,12 @@ jobs:
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
         cat /etc/odbc.ini
+        echo "*** ls -l /usr/lib/x86_64-linux-gnu/libsqlite3*"
+        ls -l /usr/lib/x86_64-linux-gnu/libsqlite3*
+        echo "*** apt-get install the driver"
+        sudo apt-get install --yes libsqliteodbc 
+        echo "*** cat /etc/odbcinst.ini"
+        cat /etc/odbcinst.ini
 
     - name: Install ODBC driver for Sqlite3
       run: |
@@ -75,8 +81,8 @@ jobs:
         PYODBC_SQLITE3: "DRIVER={SQLite3 ODBC Driver};DATABASE=:memory:"
       run: |
         cd "$GITHUB_WORKSPACE"
-        python -c "import pyodbc; c = pyodbc.connect(\"DRIVER={SQLite3 ODBC Driver};DATABASE=keith.db\")"
-        # python -c "import pyodbc; c = pyodbc.connect(\"$PYODBC_SQLITE3\")"
+        python -c "import pyodbc; c = pyodbc.connect(\"DRIVER={SQLite3 ODBC Driver};DATABASE=keith.db\", autocommit=True)"
+        python -c "import pyodbc; c = pyodbc.connect(\"$PYODBC_SQLITE3\", autocommit=True)"
         # python -m pytest "./tests/sqlite3_test.py"
 
 
