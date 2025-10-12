@@ -75,7 +75,7 @@ jobs:
         PYODBC_SQLITE3: "DRIVER={SQLite3 ODBC Driver};DATABASE=:memory:"
       run: |
         cd "$GITHUB_WORKSPACE"
-        python -c "import pyodbc; c = pyodbc.connect($PYODBC_SQLITE3)"
+        python -c "import pyodbc; c = pyodbc.connect(\"$PYODBC_SQLITE3\")"
         # python -m pytest "./tests/sqlite3_test.py"
 
 
