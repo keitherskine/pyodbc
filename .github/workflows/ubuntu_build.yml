@@ -29,5 +29,59 @@ jobs:
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
         cat /etc/odbc.ini
-        echo "*** find /usr/lib -name libsqlite*"
-        find /usr/lib -name "libsqlite*"
+
+    - name: Install ODBC driver for Sqlite3
+      run: |
+        echo "*** create odbcinst.ini entry"
+        echo '[SQLite3 ODBC Driver]' > sqlite3_odbcinst.ini
+        echo 'Driver     = /usr/lib/x86_64-linux-gnu/libsqlite3.so' >> sqlite3_odbcinst.ini
+        echo 'Setup      = /usr/lib/x86_64-linux-gnu/libsqlite3.so' >> sqlite3_odbcinst.ini
+        echo 'UsageCount = 1' >> sqlite3_odbcinst.ini
+        sudo odbcinst -i -d -f sqlite3_odbcinst.ini
+
+    - name: Check ODBC setup
+      run: |
+        echo "*** odbcinst -j"
+        odbcinst -j
+        echo "*** odbcinst -q -d"
+        odbcinst -q -d
+        echo "*** cat /etc/odbcinst.ini"
+        cat /etc/odbcinst.ini
+        echo "*** cat /etc/odbc.ini"
+        cat /etc/odbc.ini
+
+    - uses: actions/checkout@v4.3.0
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5.0.0
+      with:
+        python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
+
+    - name: Build and install pyodbc
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        echo "*** current python version"
+        python -VV
+        echo "*** pip install pyodbc"
+        python -m pip install .
+        echo "*** pyodbc version"
+        python -c "import pyodbc; print(pyodbc.version)"
+        echo "*** pyodbc drivers"
+        python -c "import pyodbc; print('\n'.join(sorted(pyodbc.drivers())))"
+
+    - name: Run Sqlite3 tests
+      env:
+        PYODBC_SQLITE3: "DRIVER={SQLite3 ODBC Driver};DATABASE=:memory:"
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        python -c "import pyodbc; c = pyodbc.connect($PYODBC_SQLITE3)"
+        # python -m pytest "./tests/sqlite3_test.py"
+
+
+
+# *** find /usr/lib -name libsqlite*
+# /usr/lib/x86_64-linux-gnu/libsqlite3.so.0.8.6
+# /usr/lib/x86_64-linux-gnu/libsqlite3.so
+# /usr/lib/x86_64-linux-gnu/libsqlite3.a
+# /usr/lib/x86_64-linux-gnu/libsqlite3.so.0
