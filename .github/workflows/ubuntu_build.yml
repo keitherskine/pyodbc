@@ -29,25 +29,29 @@ jobs:
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
         cat /etc/odbc.ini
-        echo "*** ls -l /usr/lib/x86_64-linux-gnu/libsqlite3*"
-        ls -l /usr/lib/x86_64-linux-gnu/libsqlite3*
+        echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
+        ls -l /usr/lib/x86_64-linux-gnu/odbc || true
+        # echo "*** ls -l /usr/lib/x86_64-linux-gnu/libsqlite3*"
+        # ls -l /usr/lib/x86_64-linux-gnu/libsqlite3*
+        # echo "*** cat /etc/odbcinst.ini"
+        # cat /etc/odbcinst.ini
+        # echo "*** ls -l /usr/lib/x86_64-linux-gnu/libsqlite3*"
+        # ls -l /usr/lib/x86_64-linux-gnu/libsqlite3*
+        # echo "*** find /usr/lib -name libsqlite*"
+        # find /usr/lib -name "libsqlite*"
+
+    - name: Install ODBC driver for Sqlite3
+      run: |
         echo "*** apt-get install the driver"
         sudo apt-get install --yes libsqliteodbc 
-        echo "*** cat /etc/odbcinst.ini"
-        cat /etc/odbcinst.ini
-        echo "*** ls -l /usr/lib/x86_64-linux-gnu/libsqlite3*"
-        ls -l /usr/lib/x86_64-linux-gnu/libsqlite3*
-        echo "*** find /usr/lib -name libsqlite*"
-        find /usr/lib -name "libsqlite*"
-
-    # - name: Install ODBC driver for Sqlite3
-    #   run: |
-    #     echo "*** create odbcinst.ini entry"
-    #     echo '[SQLite3 ODBC Driver]' > sqlite3_odbcinst.ini
-    #     echo 'Driver     = /usr/lib/x86_64-linux-gnu/libsqlite3.so' >> sqlite3_odbcinst.ini
-    #     echo 'Setup      = /usr/lib/x86_64-linux-gnu/libsqlite3.so' >> sqlite3_odbcinst.ini
-    #     echo 'UsageCount = 1' >> sqlite3_odbcinst.ini
-    #     sudo odbcinst -i -d -f sqlite3_odbcinst.ini
+        echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
+        ls -l /usr/lib/x86_64-linux-gnu/odbc || true
+        # echo "*** create odbcinst.ini entry"
+        # echo '[SQLite3 ODBC Driver]' > sqlite3_odbcinst.ini
+        # echo 'Driver     = /usr/lib/x86_64-linux-gnu/odbc/libsqlite3odbc.so' >> sqlite3_odbcinst.ini
+        # echo 'Setup      = /usr/lib/x86_64-linux-gnu/odbc/libsqlite3odbc.so' >> sqlite3_odbcinst.ini
+        # echo 'UsageCount = 1' >> sqlite3_odbcinst.ini
+        # sudo odbcinst -i -d -f sqlite3_odbcinst.ini
 
     - name: Check ODBC setup
       run: |
@@ -59,6 +63,8 @@ jobs:
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
         cat /etc/odbc.ini
+        echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
+        ls -l /usr/lib/x86_64-linux-gnu/odbc || true
 
     - uses: actions/checkout@v4.3.0
 
@@ -82,12 +88,12 @@ jobs:
 
     - name: Run Sqlite3 tests
       env:
-        PYODBC_SQLITE3: "DRIVER={SQLite3 ODBC Driver};DATABASE=:memory:"
+        PYODBC_SQLITE3: "DRIVER={SQLite3};DATABASE=:memory:"
       run: |
         cd "$GITHUB_WORKSPACE"
-        python -c "import pyodbc; c = pyodbc.connect(\"DRIVER={SQLite3};DATABASE=:memory:\")"
+        python -c "import pyodbc; c = pyodbc.connect(\"$PYODBC_SQLITE3\")"
+        # python -c "import pyodbc; c = pyodbc.connect(\"DRIVER={SQLite3};DATABASE=:memory:\")"
         # python -c "import pyodbc; c = pyodbc.connect(\"DRIVER={SQLite3 ODBC Driver};DATABASE=keith.db\", autocommit=True)"
-        # python -c "import pyodbc; c = pyodbc.connect(\"$PYODBC_SQLITE3\", autocommit=True)"
         # python -m pytest "./tests/sqlite3_test.py"
 
 
