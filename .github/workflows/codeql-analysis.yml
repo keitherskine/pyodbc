@@ -43,7 +43,21 @@ jobs:
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
-    - name: Checks
+    - name: Checks1
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        echo "*** environment variables"
+        env
+        echo "*** current python version"
+        python -VV
+        echo "*** pip freeze"
+        python -m pip freeze --all
+
+    - name: Update setuptools
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+
+    - name: Checks2
       run: |
         cd "$GITHUB_WORKSPACE"
         echo "*** environment variables"
