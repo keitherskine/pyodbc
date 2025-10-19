@@ -33,7 +33,7 @@ jobs:
     - name: Install ODBC driver for Sqlite3
       run: |
         echo "*** apt-get install the driver"
-        sudo apt-get install --yes libsqliteodbc 
+        sudo apt-get install --yes libsqliteodbc
         echo '*** ls -l /usr/lib/x86_64-linux-gnu/odbc'
         ls -l /usr/lib/x86_64-linux-gnu/odbc || true
 
@@ -61,9 +61,11 @@ jobs:
     - name: Build and install pyodbc
       run: |
         cd "$GITHUB_WORKSPACE"
+        echo "*** environment variables"
+        env
         echo "*** current python version"
         python -VV
-        echo "*** pip install pyodbc"
+        echo "*** pip install --verbose pyodbc"
         python -m pip install .
         echo "*** pyodbc version"
         python -c "import pyodbc; print(pyodbc.version)"

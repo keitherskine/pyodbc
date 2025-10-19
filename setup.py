@@ -162,16 +162,19 @@ def get_compiler_settings():
         cflags = fd.read().strip()
         fd.close()
         if cflags:
+            print(f'{cflags=}')
             settings['extra_compile_args'].extend(cflags.split())
         fd = os.popen('odbc_config --libs 2>/dev/null')
         ldflags = fd.read().strip()
         fd.close()
         if ldflags:
+            print(f'{ldflags=}')
             settings['extra_link_args'].extend(ldflags.split())
 
         # What is the proper way to detect iODBC, MyODBC, unixODBC, etc.?
         settings['libraries'].append('odbc')
 
+    print(settings)
     return settings
 
 
