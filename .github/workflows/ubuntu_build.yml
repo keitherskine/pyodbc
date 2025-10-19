@@ -6,7 +6,6 @@ jobs:
   run_tests:
     name: Run tests on Python ${{ matrix.python-version }}
     # https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
-    #
     runs-on: ubuntu-22.04
 
     strategy:
