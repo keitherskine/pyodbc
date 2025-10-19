@@ -30,15 +30,17 @@ jobs:
         # Learn more about CodeQL language support at https://git.io/codeql-language-support
 
     steps:
-    # # a recent setuptools, etc. is necessary for autobuild later
-    # - name: Update python packaging
-    #   run: |
-    #     echo "*** current python version"
-    #     python -VV
-    #     echo "*** python install"
-    #     python -m pip install --upgrade pip>=19.1 setuptools>=77.0.3 packaging>=24.2 wheel>=0.44.0
-    #     echo "*** pip freeze"
-    #     python -m pip freeze --all
+    # a recent setuptools, etc. is necessary for autobuild later
+    - name: Update python packaging
+      run: |
+        echo "*** current python version"
+        python -VV
+        echo "*** pip freeze"
+        python -m pip freeze --all
+        echo "*** python install"
+        python -m pip install --upgrade pip>=19.1 setuptools>=77.0.3 packaging>=24.2 wheel>=0.44.0
+        echo "*** pip freeze"
+        python -m pip freeze --all
 
     - name: Checkout repository  
       uses: actions/checkout@v4
