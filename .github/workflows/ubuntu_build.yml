@@ -43,6 +43,8 @@ jobs:
         odbcinst -j
         echo "*** odbcinst -q -d"
         odbcinst -q -d
+        echo "*** odbc_config flags"
+        odbc_config --cflags --libs 2>/dev/null || true
         echo "*** cat /etc/odbcinst.ini"
         cat /etc/odbcinst.ini
         echo "*** cat /etc/odbc.ini"
@@ -65,8 +67,8 @@ jobs:
         env
         echo "*** current python version"
         python -VV
-        echo "*** pip install --verbose pyodbc"
-        python -m pip install .
+        echo "*** pip install pyodbc"
+        python -m pip install --verbose .
         echo "*** pyodbc version"
         python -c "import pyodbc; print(pyodbc.version)"
         echo "*** pyodbc drivers"
