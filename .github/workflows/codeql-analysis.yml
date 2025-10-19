@@ -30,7 +30,17 @@ jobs:
         # Learn more about CodeQL language support at https://git.io/codeql-language-support
 
     steps:
-    - name: Checkout repository
+    # necessary for autobuild later
+    - name: Update python packaging
+      run: |
+        echo "*** current python version"
+        python -VV
+        echo "*** python install"
+        python -m pip install --upgrade pip setuptools packaging wheel
+        echo "*** pip freeze"
+        python -m pip freeze --all
+
+    - name: Checkout repository  
       uses: actions/checkout@v4
 
     # Initializes the CodeQL tools for scanning.
@@ -42,30 +52,6 @@ jobs:
         # By default, queries listed here will override any specified in a config file.
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
-
-    - name: Checks1
-      run: |
-        cd "$GITHUB_WORKSPACE"
-        echo "*** environment variables"
-        env
-        echo "*** current python version"
-        python -VV
-        echo "*** pip freeze"
-        python -m pip freeze --all
-
-    - name: Update setuptools
-      run: |
-        python -m pip install --upgrade pip setuptools wheel packaging
-
-    - name: Checks2
-      run: |
-        cd "$GITHUB_WORKSPACE"
-        echo "*** environment variables"
-        env
-        echo "*** current python version"
-        python -VV
-        echo "*** pip freeze"
-        python -m pip freeze --all
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
