@@ -51,7 +51,7 @@ jobs:
         echo "*** pip freeze"
         python -m pip freeze --all
         echo "*** python install"
-        python -m pip install --upgrade pip>=19.1 setuptools>=77.0.3 packaging>=24.2 wheel>=0.44.0
+        python -m pip install pip>=19.1 setuptools>=77.0.3 packaging>=24.2 wheel>=0.44.0
         echo "*** pip freeze"
         python -m pip freeze --all
 
