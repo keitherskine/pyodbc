@@ -55,7 +55,7 @@ jobs:
 
     - name: Update setuptools
       run: |
-        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install --upgrade pip setuptools wheel packaging
 
     - name: Checks2
       run: |
