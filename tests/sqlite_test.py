@@ -32,6 +32,7 @@ DEFAULT_DRIVER = 'SQLite3 ODBC Driver' if platform.system() == 'Windows' else 'S
 
 _TESTSTR = '0123456789-abcdefghijklmnopqrstuvwxyz-'
 
+
 def _generate_test_string(length):
     """
     Returns a string of `length` characters, constructed by repeating _TESTSTR as necessary.
@@ -49,16 +50,19 @@ def _generate_test_string(length):
     v = _TESTSTR * c
     return v[:length]
 
-SMALL_FENCEPOST_SIZES = [ 0, 1, 255, 256, 510, 511, 512, 1023, 1024, 2047, 2048, 4000 ]
-LARGE_FENCEPOST_SIZES = [ 4095, 4096, 4097, 10 * 1024, 20 * 1024 ]
 
-STR_FENCEPOSTS = [ _generate_test_string(size) for size in SMALL_FENCEPOST_SIZES ]
-BYTE_FENCEPOSTS    = [ bytes(s, 'ascii') for s in STR_FENCEPOSTS ]
-IMAGE_FENCEPOSTS   = BYTE_FENCEPOSTS + [ bytes(_generate_test_string(size), 'ascii') for size in LARGE_FENCEPOST_SIZES ]
+SMALL_FENCEPOST_SIZES = [0, 1, 255, 256, 510, 511, 512, 1023, 1024, 2047, 2048, 4000]
+LARGE_FENCEPOST_SIZES = [4095, 4096, 4097, 10 * 1024, 20 * 1024]
+
+STR_FENCEPOSTS = [_generate_test_string(size) for size in SMALL_FENCEPOST_SIZES]
+BYTE_FENCEPOSTS = [bytes(s, 'ascii') for s in STR_FENCEPOSTS]
+IMAGE_FENCEPOSTS = BYTE_FENCEPOSTS + [bytes(_generate_test_string(size), 'ascii') for size in LARGE_FENCEPOST_SIZES]
+
 
 @pytest.fixture
 def connection_string(tmp_path: pathlib.Path):
     return os.environ.get('PYODBC_SQLITE', f'driver={DEFAULT_DRIVER};database={tmp_path}/test.db')
+
 
 @pytest.fixture
 def cnxn(connection_string: str):
@@ -66,6 +70,7 @@ def cnxn(connection_string: str):
     yield c
     if not c.closed:
         c.close()
+
 
 @pytest.fixture
 def cursor(cnxn: pyodbc.Connection) -> Iterator[pyodbc.Cursor]:
@@ -77,6 +82,7 @@ def cursor(cnxn: pyodbc.Connection) -> Iterator[pyodbc.Cursor]:
     cnxn.commit()
 
     return cur
+
 
 def test_multiple_bindings(cursor: pyodbc.Cursor):
     "More than one bind and select on a cursor"
@@ -95,29 +101,36 @@ def test_different_bindings(cursor: pyodbc.Cursor):
     cursor.execute("insert into t1 values (?)", 1)
     cursor.execute("insert into t2 values (?)", datetime.now())  # noqa: DTZ005
 
+
 def test_drivers():
     p = pyodbc.drivers()
     assert isinstance(p, list)
+
 
 def test_datasources():
     p = pyodbc.dataSources()
     assert isinstance(p, dict)
 
+
 def test_getinfo_string(cnxn: pyodbc.Connection):
     value = cnxn.getinfo(pyodbc.SQL_CATALOG_NAME_SEPARATOR)
     assert isinstance(value, str)
+
 
 def test_getinfo_bool(cnxn: pyodbc.Connection):
     value = cnxn.getinfo(pyodbc.SQL_ACCESSIBLE_TABLES)
     assert isinstance(value, bool)
 
+
 def test_getinfo_int(cnxn: pyodbc.Connection):
     value = cnxn.getinfo(pyodbc.SQL_DEFAULT_TXN_ISOLATION)
     assert isinstance(value, int)
 
+
 def test_getinfo_smallint(cnxn: pyodbc.Connection):
     value = cnxn.getinfo(pyodbc.SQL_CONCAT_NULL_BEHAVIOR)
     assert isinstance(value, int)
+
 
 def _test_strtype(cursor: pyodbc.Cursor, sqltype, value, colsize=None):
     """
@@ -174,6 +187,7 @@ def _test_strliketype(cursor: pyodbc.Cursor, sqltype, value, colsize=None):
 
     assert v == value
 
+
 #
 # text
 #
@@ -181,16 +195,20 @@ def _test_strliketype(cursor: pyodbc.Cursor, sqltype, value, colsize=None):
 def test_text_null(cursor: pyodbc.Cursor):
     _test_strtype(cursor, 'text', None, 100)
 
+
 # Generate a test for each fencepost size: test_text_0, etc.
 def _maketest(value):
     def t(cursor: pyodbc.Cursor):
         _test_strtype(cursor, 'text', value, len(value))
     return t
+
 for value in STR_FENCEPOSTS:
     locals()['test_text_{}'.format(len(value))] = _maketest(value)
 
+
 def test_text_upperlatin(cursor: pyodbc.Cursor):
     _test_strtype(cursor, 'varchar', 'á')
+
 
 #
 # blob
@@ -199,17 +217,21 @@ def test_text_upperlatin(cursor: pyodbc.Cursor):
 def test_null_blob(cursor: pyodbc.Cursor):
     _test_strtype(cursor, 'blob', None, 100)
 
+
 def test_large_null_blob(cursor: pyodbc.Cursor):
     # Bug 1575064
     _test_strtype(cursor, 'blob', None, 4000)
+
 
 # Generate a test for each fencepost size: test_unicode_0, etc.
 def _maketest(value):
     def t(cursor: pyodbc.Cursor):
         _test_strtype(cursor, 'blob', value, len(value))
     return t
+
 for value in BYTE_FENCEPOSTS:
     locals()['test_blob_{}'.format(len(value))] = _maketest(value)
+
 
 def test_subquery_params(cursor: pyodbc.Cursor):
     """Ensure parameter markers work in a subquery"""
@@ -227,6 +249,7 @@ def test_subquery_params(cursor: pyodbc.Cursor):
     assert row is not None
     assert row[0] == 1
 
+
 def test_close_cnxn(cursor: pyodbc.Cursor, cnxn):
     """Make sure using a Cursor after closing its connection doesn't crash."""
 
@@ -242,6 +265,7 @@ def test_close_cnxn(cursor: pyodbc.Cursor, cnxn):
     with pytest.raises(pyodbc.ProgrammingError):
         cursor.execute(sql)
 
+
 def test_negative_row_index(cursor: pyodbc.Cursor):
     cursor.execute("create table t1(s varchar(20))")
     cursor.execute("insert into t1 values(?)", "1")
@@ -249,8 +273,10 @@ def test_negative_row_index(cursor: pyodbc.Cursor):
     assert row[0] == "1"
     assert row[-1] == "1"
 
+
 def test_version():
     assert len(pyodbc.version.split('.')) == 3  # 1.3.1 etc.
+
 
 #
 # ints and floats
@@ -263,6 +289,7 @@ def test_int(cursor: pyodbc.Cursor):
     result = cursor.execute("select n from t1").fetchone()[0]
     assert result == value
 
+
 def test_negative_int(cursor: pyodbc.Cursor):
     value = -1
     cursor.execute("create table t1(n int)")
@@ -270,12 +297,14 @@ def test_negative_int(cursor: pyodbc.Cursor):
     result = cursor.execute("select n from t1").fetchone()[0]
     assert result == value
 
+
 def test_bigint(cursor: pyodbc.Cursor):
     value = 3000000000
     cursor.execute("create table t1(d bigint)")
     cursor.execute("insert into t1 values (?)", value)
     result = cursor.execute("select d from t1").fetchone()[0]
     assert result == value
+
 
 def test_negative_bigint(cursor: pyodbc.Cursor):
     # Issue 186: BIGINT problem on 32-bit architecture
@@ -285,6 +314,7 @@ def test_negative_bigint(cursor: pyodbc.Cursor):
     result = cursor.execute("select d from t1").fetchone()[0]
     assert result == value
 
+
 def test_float(cursor: pyodbc.Cursor):
     value = 1234.567
     cursor.execute("create table t1(n float)")
@@ -292,12 +322,14 @@ def test_float(cursor: pyodbc.Cursor):
     result = cursor.execute("select n from t1").fetchone()[0]
     assert result == value
 
+
 def test_negative_float(cursor: pyodbc.Cursor):
     value = -200
     cursor.execute("create table t1(n float)")
     cursor.execute("insert into t1 values (?)", value)
-    result  = cursor.execute("select n from t1").fetchone()[0]
+    result = cursor.execute("select n from t1").fetchone()[0]
     assert value == result
+
 
 #
 # rowcount
@@ -316,6 +348,7 @@ def test_rowcount_delete(cursor: pyodbc.Cursor):
     cursor.execute("delete from t1")
     assert cursor.rowcount == count
 
+
 def test_rowcount_nodata(cursor: pyodbc.Cursor):
     """
     This represents a different code path than a delete that deleted something.
@@ -329,6 +362,7 @@ def test_rowcount_nodata(cursor: pyodbc.Cursor):
     cursor.execute("delete from t1")
     assert cursor.rowcount == 0
 
+
 # In the 2.0.x branch, Cursor.execute sometimes returned the cursor and sometimes the rowcount.  This proved very
 # confusing when things went wrong and added very little value even when things went right since users could always
 # use: cursor.execute("...").rowcount
@@ -338,6 +372,7 @@ def test_retcursor_delete(cursor: pyodbc.Cursor):
     cursor.execute("insert into t1 values (1)")
     v = cursor.execute("delete from t1")
     assert v == cursor
+
 
 def test_retcursor_nodata(cursor: pyodbc.Cursor):
     """
@@ -351,11 +386,13 @@ def test_retcursor_nodata(cursor: pyodbc.Cursor):
     v = cursor.execute("delete from t1")
     assert v == cursor
 
+
 def test_retcursor_select(cursor: pyodbc.Cursor):
     cursor.execute("create table t1(i int)")
     cursor.execute("insert into t1 values (1)")
     v = cursor.execute("select * from t1")
     assert v == cursor
+
 
 #
 # misc
@@ -372,13 +409,14 @@ def test_lower_case(cnxn: pyodbc.Connection):
     cursor.execute("create table t1(Abc int, dEf int)")
     cursor.execute("select * from t1")
 
-    names = [ t[0] for t in cursor.description ]
+    names = [t[0] for t in cursor.description]
     names.sort()
 
-    assert names == [ "abc", "def" ]
+    assert names == ["abc", "def"]
 
     # Put it back so other tests don't fail.
     pyodbc.lowercase = False
+
 
 def test_row_description(cnxn: pyodbc.Connection):
     """
@@ -397,7 +435,7 @@ def test_row_description(cnxn: pyodbc.Connection):
 def test_executemany(cursor: pyodbc.Cursor):
     cursor.execute("create table t1(a int, b varchar(10))")
 
-    params = [ (i, str(i)) for i in range(1, 6) ]
+    params = [(i, str(i)) for i in range(1, 6)]
 
     cursor.executemany("insert into t1(a, b) values (?,?)", params)
 
@@ -417,7 +455,7 @@ def test_executemany_one(cursor: pyodbc.Cursor):
     "Pass executemany a single sequence"
     cursor.execute("create table t1(a int, b varchar(10))")
 
-    params = [ (1, "test") ]
+    params = [(1, "test")]
 
     cursor.executemany("insert into t1(a, b) values (?,?)", params)
 
@@ -439,9 +477,11 @@ def test_executemany_failure(cursor: pyodbc.Cursor):
     """
     cursor.execute("create table t1(a int, b varchar(10))")
 
-    params = [ (1, 'good'),
-               ('error', 'not an int'),
-               (3, 'good') ]
+    params = [
+        (1, 'good'),
+        ('error', 'not an int'),
+        (3, 'good'),
+    ]
 
     with pytest.raises(pyodbc.Error):
         cursor.executemany("insert into t1(a, b) value (?, ?)", params)
@@ -457,7 +497,7 @@ def test_row_slicing(cursor: pyodbc.Cursor):
     assert result is row
 
     result = row[:-1]
-    assert result == (1,2,3)
+    assert result == (1, 2, 3)
 
     result = row[0:4]
     assert result is row
@@ -494,6 +534,7 @@ def test_view_select(cursor: pyodbc.Cursor):
     assert rows is not None
     assert len(rows) == 3
 
+
 def test_autocommit(cnxn: pyodbc.Connection, connection_string: str):
     assert cnxn.autocommit is False  # PEP249, the default should be False
 
@@ -502,6 +543,7 @@ def test_autocommit(cnxn: pyodbc.Connection, connection_string: str):
 
     othercnxn.autocommit = False
     assert othercnxn.autocommit is False
+
 
 def test_skip(cursor: pyodbc.Cursor):
     # Insert 1, 2, and 3.  Fetch 1, skip 2, fetch 3.
@@ -514,6 +556,7 @@ def test_skip(cursor: pyodbc.Cursor):
     cursor.skip(2)
     assert cursor.fetchone()[0] == 4
 
+
 def test_sets_execute(cursor: pyodbc.Cursor):
     # Only lists and tuples are allowed.
     cursor.execute("create table t1 (word varchar (100))")
@@ -521,12 +564,14 @@ def test_sets_execute(cursor: pyodbc.Cursor):
     with pytest.raises(pyodbc.ProgrammingError):
         cursor.execute("insert into t1 (word) VALUES (?)", [words])
 
+
 def test_sets_executemany(cursor: pyodbc.Cursor):
     # Only lists and tuples are allowed.
     cursor.execute("create table t1 (word varchar (100))")
     words = {'a'}
     with pytest.raises(TypeError):
         cursor.executemany("insert into t1 (word) values (?)", [words])
+
 
 def test_row_execute(cursor: pyodbc.Cursor):
     "Ensure we can use a Row object as a parameter to execute"
@@ -538,18 +583,20 @@ def test_row_execute(cursor: pyodbc.Cursor):
     cursor.execute("create table t2(n int, s varchar(10))")
     cursor.execute("insert into t2 values (?, ?)", row)
 
+
 def test_row_executemany(cursor: pyodbc.Cursor):
     "Ensure we can use a Row object as a parameter to executemany"
     cursor.execute("create table t1(n int, s varchar(10))")
 
     for i in range(3):
-        cursor.execute("insert into t1 values (?, ?)", i, chr(ord('a')+i))
+        cursor.execute("insert into t1 values (?, ?)", i, chr(ord('a') + i))
 
     rows = cursor.execute("select n, s from t1").fetchall()
     assert len(rows) != 0
 
     cursor.execute("create table t2(n int, s varchar(10))")
     cursor.executemany("insert into t2 values (?, ?)", rows)
+
 
 def test_description(cursor: pyodbc.Cursor):
     "Ensure cursor.description is correct"
@@ -575,6 +622,7 @@ def test_description(cursor: pyodbc.Cursor):
     assert t[5] == 0       # scale
     assert t[6] is True    # nullable
 
+
 def test_row_equal(cursor: pyodbc.Cursor):
     cursor.execute("create table t1(n int, s varchar(20))")
     cursor.execute("insert into t1 values (1, 'test')")
@@ -582,6 +630,7 @@ def test_row_equal(cursor: pyodbc.Cursor):
     row2 = cursor.execute("select n, s from t1").fetchone()
     b = (row1 == row2)
     assert b is True
+
 
 def test_row_gtlt(cursor: pyodbc.Cursor):
     cursor.execute("create table t1(n int, s varchar(20))")
@@ -595,7 +644,8 @@ def test_row_gtlt(cursor: pyodbc.Cursor):
     assert rows[0] != rows[1]
 
     rows = list(rows)
-    rows.sort() # uses <
+    rows.sort()  # uses <
+
 
 def _test_context_manager(connection_string):
     # TODO: This is failing, but it may be due to the design of sqlite.  I've disabled it
@@ -621,15 +671,18 @@ def _test_context_manager(connection_string):
     with pytest.raises(pyodbc.Error):
         cnxn.execute('rollback')
 
+
 def test_untyped_none(cursor: pyodbc.Cursor):
     # From issue 129
     value = cursor.execute("select ?", None).fetchone()[0]
     assert value is None
 
+
 def test_large_update_nodata(cursor: pyodbc.Cursor):
     cursor.execute('create table t1(a blob)')
-    hundredkb = 'x'*100*1024
+    hundredkb = 'x' * 100 * 1024
     cursor.execute('update t1 set a=? where 1=0', (hundredkb,))
+
 
 def test_no_fetch(cursor: pyodbc.Cursor):
     # Issue 89 with FreeTDS: Multiple selects (or catalog functions that issue selects) without fetches seem to
@@ -637,6 +690,7 @@ def test_no_fetch(cursor: pyodbc.Cursor):
     cursor.execute('select 1')
     cursor.execute('select 1')
     cursor.execute('select 1')
+
 
 def test_connect_dict_only():
     conn_str = os.environ.get('PYODBC_SQLITE')
