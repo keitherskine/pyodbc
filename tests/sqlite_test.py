@@ -1,32 +1,34 @@
 #!/usr/bin/python
+"""
+Unit tests for SQLite
 
-usage = """\
-%(prog)s [options] connection_string
+Download the SQLite ODBC driver from http://www.ch-werner.de/sqliteodbc
 
-Unit tests for SQLite using the ODBC driver from http://www.ch-werner.de/sqliteodbc
+To use, set the connection parameter in the PYODBC_SQLITE shell variable, e.g.:
 
-To use, pass a connection string as the parameter. The tests will create and
-drop tables t1 and t2 as necessary.  On Windows, use the 32-bit driver with
-32-bit Python and the 64-bit driver with 64-bit Python (regardless of your
-operating system bitness).
+Windows:
+SET PYODBC_SQLITE=driver={SQLite3 ODBC Driver};Database=:memory:;
 
-These run using the version from the 'build' directory, not the version
-installed into the Python directories.  You must run python setup.py build
-before running the tests.
+Unix/Mac:
+EXPORT PYODBC_SQLITE=driver={SQLite3};Database=:memory:;
 
-You can also put the connection string into a tmp/setup.cfg file like so:
-
-  [sqlitetests]
-  connection-string=Driver=SQLite3 ODBC Driver;Database=sqlite.db
+Then run the unit tests with:
+python -m pytest tests\\sqlite_test.py
 """
 
-import sys, os, re
-import pytest
+import os
+import pathlib
+import platform
+import re
+from datetime import datetime
+from collections.abc import Iterator
+
 import pyodbc
-from decimal import Decimal
-from datetime import datetime, date, time
-from os.path import join, getsize, dirname, abspath
-from typing import Iterator
+import pytest
+
+
+# the typical names of SQLite drivers on different systems
+DEFAULT_DRIVER = 'SQLite3 ODBC Driver' if platform.system() == 'Windows' else 'SQLite3'
 
 _TESTSTR = '0123456789-abcdefghijklmnopqrstuvwxyz-'
 
@@ -55,14 +57,13 @@ BYTE_FENCEPOSTS    = [ bytes(s, 'ascii') for s in STR_FENCEPOSTS ]
 IMAGE_FENCEPOSTS   = BYTE_FENCEPOSTS + [ bytes(_generate_test_string(size), 'ascii') for size in LARGE_FENCEPOST_SIZES ]
 
 @pytest.fixture
-def connection_string(tmp_path):
-    return os.environ.get('PYODBC_SQLITE', f'driver=SQLite3;database={tmp_path}/test.db')
+def connection_string(tmp_path: pathlib.Path):
+    return os.environ.get('PYODBC_SQLITE', f'driver={DEFAULT_DRIVER};database={tmp_path}/test.db')
 
 @pytest.fixture
 def cnxn(connection_string: str):
     c = pyodbc.connect(connection_string, autocommit=False, attrs_before=None)
     yield c
-
     if not c.closed:
         c.close()
 
@@ -75,7 +76,7 @@ def cursor(cnxn: pyodbc.Connection) -> Iterator[pyodbc.Cursor]:
     cur.execute("drop table if exists t2")
     cnxn.commit()
 
-    yield cur
+    return cur
 
 def test_multiple_bindings(cursor: pyodbc.Cursor):
     "More than one bind and select on a cursor"
@@ -83,7 +84,7 @@ def test_multiple_bindings(cursor: pyodbc.Cursor):
     cursor.execute("insert into t1 values (?)", 1)
     cursor.execute("insert into t1 values (?)", 2)
     cursor.execute("insert into t1 values (?)", 3)
-    for i in range(3):
+    for _ in range(3):
         cursor.execute("select n from t1 where n < ?", 10)
         cursor.execute("select n from t1 where n < 3")
 
@@ -127,7 +128,7 @@ def _test_strtype(cursor: pyodbc.Cursor, sqltype, value, colsize=None):
     if colsize:
         sql = "create table t1(s {}({}))".format(sqltype, colsize)
     else:
-        sql = "create table t1(s %s)" % sqltype
+        sql = "create table t1(s {})".format(sqltype)
 
     cursor.execute(sql)
     cursor.execute("insert into t1 values(?)", value)
@@ -161,7 +162,7 @@ def _test_strliketype(cursor: pyodbc.Cursor, sqltype, value, colsize=None):
     if colsize:
         sql = "create table t1(s {}({}))".format(sqltype, colsize)
     else:
-        sql = "create table t1(s %s)" % sqltype
+        sql = "create table t1(s {})".format(sqltype)
 
     cursor.execute(sql)
     cursor.execute("insert into t1 values(?)", value)
@@ -186,7 +187,7 @@ def _maketest(value):
         _test_strtype(cursor, 'text', value, len(value))
     return t
 for value in STR_FENCEPOSTS:
-    locals()['test_text_%s' % len(value)] = _maketest(value)
+    locals()['test_text_{}'.format(len(value))] = _maketest(value)
 
 def test_text_upperlatin(cursor: pyodbc.Cursor):
     _test_strtype(cursor, 'varchar', 'á')
@@ -208,7 +209,7 @@ def _maketest(value):
         _test_strtype(cursor, 'blob', value, len(value))
     return t
 for value in BYTE_FENCEPOSTS:
-    locals()['test_blob_%s' % len(value)] = _maketest(value)
+    locals()['test_blob_{}'.format(len(value))] = _maketest(value)
 
 def test_subquery_params(cursor: pyodbc.Cursor):
     """Ensure parameter markers work in a subquery"""
@@ -484,7 +485,7 @@ def test_view_select(cursor: pyodbc.Cursor):
     # Create a table (t1) with 3 rows and a view (t2) into it.
     cursor.execute("create table t1(c1 int identity(1, 1), c2 varchar(50))")
     for i in range(3):
-        cursor.execute("insert into t1(c2) values (?)", "string%s" % i)
+        cursor.execute("insert into t1(c2) values (?)", f"string{i}")
     cursor.execute("create view t2 as select * from t1")
 
     # Select from the view
@@ -494,7 +495,7 @@ def test_view_select(cursor: pyodbc.Cursor):
     assert len(rows) == 3
 
 def test_autocommit(cnxn: pyodbc.Connection, connection_string: str):
-    assert cnxn.autocommit is False
+    assert cnxn.autocommit is False  # PEP249, the default should be False
 
     othercnxn = pyodbc.connect(connection_string, autocommit=True)
     assert othercnxn.autocommit is True
@@ -505,7 +506,7 @@ def test_autocommit(cnxn: pyodbc.Connection, connection_string: str):
 def test_skip(cursor: pyodbc.Cursor):
     # Insert 1, 2, and 3.  Fetch 1, skip 2, fetch 3.
 
-    cursor.execute("create table t1(id int)");
+    cursor.execute("create table t1(id int)")
     for i in range(1, 5):
         cursor.execute("insert into t1 values(?)", i)
     cursor.execute("select id from t1 order by id")
@@ -515,16 +516,16 @@ def test_skip(cursor: pyodbc.Cursor):
 
 def test_sets_execute(cursor: pyodbc.Cursor):
     # Only lists and tuples are allowed.
+    cursor.execute("create table t1 (word varchar (100))")
+    words = {'a'}
     with pytest.raises(pyodbc.ProgrammingError):
-        cursor.execute("create table t1 (word varchar (100))")
-        words = set (['a'])
         cursor.execute("insert into t1 (word) VALUES (?)", [words])
 
 def test_sets_executemany(cursor: pyodbc.Cursor):
     # Only lists and tuples are allowed.
+    cursor.execute("create table t1 (word varchar (100))")
+    words = {'a'}
     with pytest.raises(TypeError):
-        cursor.execute("create table t1 (word varchar (100))")
-        words = set (['a'])
         cursor.executemany("insert into t1 (word) values (?)", [words])
 
 def test_row_execute(cursor: pyodbc.Cursor):
@@ -637,6 +638,13 @@ def test_no_fetch(cursor: pyodbc.Cursor):
     cursor.execute('select 1')
     cursor.execute('select 1')
 
-def test_connect_dict_only(tmp_path):
-    c = pyodbc.connect(driver='SQLite3', database=f'{tmp_path}/test.db')
+def test_connect_dict_only():
+    conn_str = os.environ.get('PYODBC_SQLITE')
+    if conn_str:
+        match = re.search(r'(^|;)driver=([A-Z0-9_ {}]+)(;|$)', conn_str, flags=re.IGNORECASE)
+        driver = match.group(2).replace(r'{{', r'{').replace(r'}}', r'}').strip('{}')
+    else:
+        driver = DEFAULT_DRIVER
+
+    c = pyodbc.connect(driver=driver, database=':memory:')
     c.close()
