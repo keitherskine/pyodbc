@@ -7,27 +7,28 @@ Download the SQLite ODBC driver from http://www.ch-werner.de/sqliteodbc
 To use, set the connection parameter in the PYODBC_SQLITE shell variable, e.g.:
 
 Windows:
-SET PYODBC_SQLITE=driver={SQLite3 ODBC Driver};Database=:memory:;
+set PYODBC_SQLITE=driver={SQLite3 ODBC Driver};Database=:memory:;
 
 Unix/Mac:
-EXPORT PYODBC_SQLITE=driver={SQLite3};Database=:memory:;
+export PYODBC_SQLITE=driver={SQLite3};Database=/tmp/test.db;
 
 Then run the unit tests with:
-python -m pytest tests\\sqlite_test.py
+python -m pytest tests/sqlite_test.py
 """
 
 import os
 import pathlib
+import pickle
 import platform
 import re
-from datetime import datetime
 from collections.abc import Iterator
+from datetime import datetime
 
 import pyodbc
 import pytest
 
 
-# the typical names of SQLite drivers on different systems
+# the typical name of the SQLite driver on different platforms
 DEFAULT_DRIVER = 'SQLite3 ODBC Driver' if platform.system() == 'Windows' else 'SQLite3'
 
 _TESTSTR = '0123456789-abcdefghijklmnopqrstuvwxyz-'
@@ -46,7 +47,7 @@ def _generate_test_string(length):
     if length <= len(_TESTSTR):
         return _TESTSTR[:length]
 
-    c = (length + len(_TESTSTR)-1) // len(_TESTSTR)
+    c = (length + len(_TESTSTR) - 1) // len(_TESTSTR)
     v = _TESTSTR * c
     return v[:length]
 
@@ -693,12 +694,35 @@ def test_no_fetch(cursor: pyodbc.Cursor):
 
 
 def test_connect_dict_only():
+    # get the name of the ODBC driver used in these tests
     conn_str = os.environ.get('PYODBC_SQLITE')
     if conn_str:
-        match = re.search(r'(^|;)driver=([A-Z0-9_ {}]+)(;|$)', conn_str, flags=re.IGNORECASE)
-        driver = match.group(2).replace(r'{{', r'{').replace(r'}}', r'}').strip('{}')
+        match = re.search(r'(^|;)driver={?([A-Z0-9 ()_.-]+)}?(;|$)', conn_str, flags=re.IGNORECASE)
+        driver = match.group(2)
     else:
         driver = DEFAULT_DRIVER
 
     c = pyodbc.connect(driver=driver, database=':memory:')
     c.close()
+
+
+def test_pickling(cnxn: pyodbc.Connection):
+    crsr = cnxn.cursor()
+    crsr.execute("create table t1(n int, s varchar(20))")
+    crsr.execute("insert into t1 values (1, 'test1')")
+    crsr.execute("insert into t1 values (2, 'test2')")
+    cnxn.commit()
+    original_rows = crsr.execute("select n, s from t1").fetchall()
+
+    # connections cannot be pickled
+    with pytest.raises(TypeError, match=r"cannot pickle"):
+        pickle.dumps(cnxn)
+
+    # cursors cannot be pickled
+    with pytest.raises(TypeError, match=r"cannot pickle"):
+        pickle.dumps(crsr)
+
+    # rows can be pickled
+    pickled_rows = pickle.dumps(original_rows)
+    unpickled_rows = pickle.loads(pickled_rows)
+    assert unpickled_rows == original_rows
