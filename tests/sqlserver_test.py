@@ -1469,153 +1469,153 @@ def test_emoticons_as_literal(cursor: pyodbc.Cursor):
     assert result == v
 
 
-# def _test_tvp(cursor: pyodbc.Cursor, diff_schema):
-#     # Test table value parameters (TVP).  I like the explanation here:
-#     #
-#     # https://www.mssqltips.com/sqlservertip/1483/using-table-valued-parameters-tvp-in-sql-server/
-#     #
-#     # "At a high level the TVP allows you to populate a table declared as a T-SQL variable,
-#     #  then pass that table as a parameter to a stored procedure or function."
-#     #
-#     # "The TVP must be declared READONLY.  You cannot perform any DML (i.e. INSERT, UPDATE,
-#     #  DELETE) against the TVP; you can only reference it in a SELECT statement."
-#     #
-#     # In this test we'll create a table, pass it to a stored procedure, and have the stored
-#     # procedure simply return the rows from the TVP.
-#     #
-#     # Apparently the way pyodbc knows something is a TVP is because it is in a sequence.  I'm
-#     # not sure I like that as it is very generic and specific to SQL Server.  It would be wiser
-#     # to define a wrapper pyodbc.TVP or pyodbc.Table object, similar to the DB APIs `Binary`
-#     # object.
+def _test_tvp(cursor: pyodbc.Cursor, diff_schema):
+    # Test table value parameters (TVP).  I like the explanation here:
+    #
+    # https://www.mssqltips.com/sqlservertip/1483/using-table-valued-parameters-tvp-in-sql-server/
+    #
+    # "At a high level the TVP allows you to populate a table declared as a T-SQL variable,
+    #  then pass that table as a parameter to a stored procedure or function."
+    #
+    # "The TVP must be declared READONLY.  You cannot perform any DML (i.e. INSERT, UPDATE,
+    #  DELETE) against the TVP; you can only reference it in a SELECT statement."
+    #
+    # In this test we'll create a table, pass it to a stored procedure, and have the stored
+    # procedure simply return the rows from the TVP.
+    #
+    # Apparently the way pyodbc knows something is a TVP is because it is in a sequence.  I'm
+    # not sure I like that as it is very generic and specific to SQL Server.  It would be wiser
+    # to define a wrapper pyodbc.TVP or pyodbc.Table object, similar to the DB APIs `Binary`
+    # object.
 
-#     pyodbc.native_uuid = True
-#     # This is the default, but we'll reset it in case a previous test fails to.
+    pyodbc.native_uuid = True
+    # This is the default, but we'll reset it in case a previous test fails to.
 
-#     procname = 'SelectTVP'
-#     typename = 'TestTVP'
+    procname = 'SelectTVP'
+    typename = 'TestTVP'
 
-#     if diff_schema:
-#         schemaname = 'myschema'
-#         procname = schemaname + '.' + procname
-#         typenameonly = typename
-#         typename = schemaname + '.' + typename
+    if diff_schema:
+        schemaname = 'myschema'
+        procname = schemaname + '.' + procname
+        typenameonly = typename
+        typename = schemaname + '.' + typename
 
-#     # (Don't use "if exists" since older SQL Servers don't support it.)
-#     try:
-#         cursor.execute("drop procedure " + procname)
-#     except Exception:
-#         pass
-#     try:
-#         cursor.execute("drop type " + typename)
-#     except Exception:
-#         pass
-#     if diff_schema:
-#         try:
-#             cursor.execute("drop schema " + schemaname)
-#         except Exception:
-#             pass
-#     cursor.commit()
+    # (Don't use "if exists" since older SQL Servers don't support it.)
+    try:
+        cursor.execute("drop procedure " + procname)
+    except Exception:
+        pass
+    try:
+        cursor.execute("drop type " + typename)
+    except Exception:
+        pass
+    if diff_schema:
+        try:
+            cursor.execute("drop schema " + schemaname)
+        except Exception:
+            pass
+    cursor.commit()
 
-#     if diff_schema:
-#         cursor.execute("CREATE SCHEMA myschema")
-#         cursor.commit()
+    if diff_schema:
+        cursor.execute("CREATE SCHEMA myschema")
+        cursor.commit()
 
-#     cursor.execute(
-#         f"""
-#         CREATE TYPE {typename} AS TABLE(
-#                 c01 VARCHAR(255),
-#                 c02 VARCHAR(MAX),
-#                 c03 VARBINARY(255),
-#                 c04 VARBINARY(MAX),
-#                 c05 BIT,
-#                 c06 DATE,
-#                 c07 TIME,
-#                 c08 DATETIME2(5),
-#                 c09 BIGINT,
-#                 c10 FLOAT,
-#                 c11 NUMERIC(38, 24),
-#                 c12 UNIQUEIDENTIFIER)
-#         """)
-#     cursor.commit()
-#     cursor.execute(
-#         f"""
-#         CREATE PROCEDURE {procname} @TVP {typename} READONLY
-#           AS SELECT * FROM @TVP;
-#         """)
-#     cursor.commit()
+    cursor.execute(
+        f"""
+        CREATE TYPE {typename} AS TABLE(
+                c01 VARCHAR(255),
+                c02 VARCHAR(MAX),
+                c03 VARBINARY(255),
+                c04 VARBINARY(MAX),
+                c05 BIT,
+                c06 DATE,
+                c07 TIME,
+                c08 DATETIME2(5),
+                c09 BIGINT,
+                c10 FLOAT,
+                c11 NUMERIC(38, 24),
+                c12 UNIQUEIDENTIFIER)
+        """)
+    cursor.commit()
+    cursor.execute(
+        f"""
+        CREATE PROCEDURE {procname} @TVP {typename} READONLY
+          AS SELECT * FROM @TVP;
+        """)
+    cursor.commit()
 
-#     # The values aren't exactly VERY_LONG_LEN but close enough and *significantly* faster than
-#     # the loop we had before.
-#     VERY_LONG_LEN = 2000000
-#     long_string         = ''.join(chr(i) for i in range(32, 127))  # printable characters
-#     long_bytearray      = bytes(list(range(255)))
-#     very_long_string    = long_string * (VERY_LONG_LEN // len(long_string))
-#     very_long_bytearray = long_bytearray * (VERY_LONG_LEN // len(long_bytearray))
+    # The values aren't exactly VERY_LONG_LEN but close enough and *significantly* faster than
+    # the loop we had before.
+    VERY_LONG_LEN = 2000000
+    long_string         = ''.join(chr(i) for i in range(32, 127))  # printable characters
+    long_bytearray      = bytes(list(range(255)))
+    very_long_string    = long_string * (VERY_LONG_LEN // len(long_string))
+    very_long_bytearray = long_bytearray * (VERY_LONG_LEN // len(long_bytearray))
 
-#     params = [
-#         # Three rows with all of the types in the table defined above.
-#         (
-#             'abc', 'abc',
-#             bytes([0xD1, 0xCE, 0xFA, 0xCE]),
-#             bytes([0x0F, 0xF1, 0xCE, 0xCA, 0xFE]), True,
-#             date(1997, 8, 29), time(9, 13, 39),
-#             datetime(2018, 11, 13, 13, 33, 26, 298420),
-#             1234567, 3.14, Decimal('31234567890123.141243449787580175325274'),
-#             uuid.UUID('4fe34a93-e574-04cc-200a-353f0d1770b1'),
-#         ),
-#         (
-#             '', '',
-#             bytes([0x00, 0x01, 0x02, 0x03, 0x04]),
-#             bytes([0x00, 0x01, 0x02, 0x03, 0x04, 0x05]), False,
-#             date(1, 1, 1), time(0, 0, 0),
-#             datetime(1, 1, 1, 0, 0, 0, 0),
-#             -9223372036854775808, -1.79E+308, Decimal('0.000000000000000000000001'),
-#             uuid.UUID('33f7504c-2bac-1b83-01d1-7434a7ba6a17'),
-#         ),
-#         (
-#             long_string, very_long_string,
-#             bytes(long_bytearray), bytes(very_long_bytearray), True,
-#             date(9999, 12, 31), time(23, 59, 59),
-#             datetime(9999, 12, 31, 23, 59, 59, 999990),
-#             9223372036854775807, 1.79E+308, Decimal('99999999999999.999999999999999999999999'),
-#             uuid.UUID('ffffffff-ffff-ffff-ffff-ffffffffffff'),
-#         )
-#     ]
+    params = [
+        # Three rows with all of the types in the table defined above.
+        (
+            'abc', 'abc',
+            bytes([0xD1, 0xCE, 0xFA, 0xCE]),
+            bytes([0x0F, 0xF1, 0xCE, 0xCA, 0xFE]), True,
+            date(1997, 8, 29), time(9, 13, 39),
+            datetime(2018, 11, 13, 13, 33, 26, 298420),
+            1234567, 3.14, Decimal('31234567890123.141243449787580175325274'),
+            uuid.UUID('4fe34a93-e574-04cc-200a-353f0d1770b1'),
+        ),
+        (
+            '', '',
+            bytes([0x00, 0x01, 0x02, 0x03, 0x04]),
+            bytes([0x00, 0x01, 0x02, 0x03, 0x04, 0x05]), False,
+            date(1, 1, 1), time(0, 0, 0),
+            datetime(1, 1, 1, 0, 0, 0, 0),
+            -9223372036854775808, -1.79E+308, Decimal('0.000000000000000000000001'),
+            uuid.UUID('33f7504c-2bac-1b83-01d1-7434a7ba6a17'),
+        ),
+        (
+            long_string, very_long_string,
+            bytes(long_bytearray), bytes(very_long_bytearray), True,
+            date(9999, 12, 31), time(23, 59, 59),
+            datetime(9999, 12, 31, 23, 59, 59, 999990),
+            9223372036854775807, 1.79E+308, Decimal('99999999999999.999999999999999999999999'),
+            uuid.UUID('ffffffff-ffff-ffff-ffff-ffffffffffff'),
+        )
+    ]
 
-#     if diff_schema:
-#         p1 = [[typenameonly, schemaname] + params]
-#     else:
-#         p1 = [params]
-#     result_array = [tuple(row) for row in cursor.execute(f"exec {procname} ?", p1).fetchall()]
+    if diff_schema:
+        p1 = [[typenameonly, schemaname] + params]
+    else:
+        p1 = [params]
+    result_array = [tuple(row) for row in cursor.execute(f"exec {procname} ?", p1).fetchall()]
 
-#     # The values make it very difficult to troubleshoot if something is wrong, so instead of
-#     # asserting they are the same, we'll walk them if there is a problem to identify which is
-#     # wrong.
-#     for row, param in zip(result_array, params):
-#         if row != param:
-#             for r, p in zip(row, param):
-#                 assert r == p
+    # The values make it very difficult to troubleshoot if something is wrong, so instead of
+    # asserting they are the same, we'll walk them if there is a problem to identify which is
+    # wrong.
+    for row, param in zip(result_array, params):
+        if row != param:
+            for r, p in zip(row, param):
+                assert r == p
 
-#     # Now test with zero rows.
+    # Now test with zero rows.
 
-#     params = []
-#     p1 = [params]
-#     if diff_schema:
-#         p1 = [[typenameonly, schemaname] + params]
-#     else:
-#         p1 = [params]
-#     result_array = cursor.execute(f"exec {procname} ?", p1).fetchall()
-#     assert result_array == params
-
-
-# @pytest.mark.skipif(IS_FREEDTS, reason='FreeTDS does not support TVP')
-# def test_tvp(cursor: pyodbc.Cursor):
-#     _test_tvp(cursor, False)
+    params = []
+    p1 = [params]
+    if diff_schema:
+        p1 = [[typenameonly, schemaname] + params]
+    else:
+        p1 = [params]
+    result_array = cursor.execute(f"exec {procname} ?", p1).fetchall()
+    assert result_array == params
 
 
-# @pytest.mark.skipif(IS_FREEDTS, reason='FreeTDS does not support TVP')
-# def test_tvp_diffschema(cursor: pyodbc.Cursor):
-#     _test_tvp(cursor, True)
+@pytest.mark.skipif(IS_FREEDTS, reason='FreeTDS does not support TVP')
+def test_tvp(cursor: pyodbc.Cursor):
+    _test_tvp(cursor, False)
+
+
+@pytest.mark.skipif(IS_FREEDTS, reason='FreeTDS does not support TVP')
+def test_tvp_diffschema(cursor: pyodbc.Cursor):
+    _test_tvp(cursor, True)
 
 
 @pytest.mark.skipif(SQLSERVER_YEAR < 2000, reason='sql_variant not supported until 2000')
