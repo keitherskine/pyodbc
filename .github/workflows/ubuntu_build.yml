@@ -206,9 +206,14 @@ jobs:
         cd "$GITHUB_WORKSPACE"
         python -m pytest "./tests/mysql_test.py"
 
-    - name: Run SQL Server 2019 tests
+    - name: Run SQLite tests
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        python -m pytest "./tests/sqlite_test.py"
+
+    - name: Run SQL Server 2025 tests
       env:
-        PYODBC_SQLSERVER: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test;Encrypt=Optional"
+        PYODBC_SQLSERVER: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1404;UID=sa;PWD=StrongPassword2025;DATABASE=test;Encrypt=Optional"
       run: |
         cd "$GITHUB_WORKSPACE"
         python -m pytest "./tests/sqlserver_test.py"
@@ -220,14 +225,9 @@ jobs:
         cd "$GITHUB_WORKSPACE"
         python -m pytest "./tests/sqlserver_test.py"
 
-    - name: Run SQL Server 2025 tests
+    - name: Run SQL Server 2019 tests
       env:
-        PYODBC_SQLSERVER: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1404;UID=sa;PWD=StrongPassword2025;DATABASE=test;Encrypt=Optional"
+        PYODBC_SQLSERVER: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test;Encrypt=Optional"
       run: |
         cd "$GITHUB_WORKSPACE"
         python -m pytest "./tests/sqlserver_test.py"
-
-    - name: Run SQLite tests
-      run: |
-        cd "$GITHUB_WORKSPACE"
-        python -m pytest "./tests/sqlite_test.py"
