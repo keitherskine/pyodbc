@@ -1,6 +1,7 @@
 name: Ubuntu build
 
-on: [push, pull_request]
+# include "workflow_dispatch" so this workflow can be run manually from the Actions portal
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   run_tests:
@@ -72,7 +73,7 @@ jobs:
     - name: Install ODBC driver for SQL Server
       run: |
         echo "*** apt-get install the driver"
-        sudo ACCEPT_EULA=Y apt-get install --yes msodbcsql18=18.5.1.1-1
+        sudo ACCEPT_EULA=Y apt-get install --yes msodbcsql18
         echo '*** ls -l /opt/microsoft/msodbcsql18/lib64'
         ls -l /opt/microsoft/msodbcsql18/lib64 || true
 
@@ -206,14 +207,9 @@ jobs:
         cd "$GITHUB_WORKSPACE"
         python -m pytest "./tests/mysql_test.py"
 
-    - name: Run SQLite tests
-      run: |
-        cd "$GITHUB_WORKSPACE"
-        python -m pytest "./tests/sqlite_test.py"
-
-    - name: Run SQL Server 2025 tests
+    - name: Run SQL Server 2019 tests
       env:
-        PYODBC_SQLSERVER: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1404;UID=sa;PWD=StrongPassword2025;DATABASE=test;Encrypt=Optional"
+        PYODBC_SQLSERVER: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test;Encrypt=Optional"
       run: |
         cd "$GITHUB_WORKSPACE"
         python -m pytest "./tests/sqlserver_test.py"
@@ -225,9 +221,14 @@ jobs:
         cd "$GITHUB_WORKSPACE"
         python -m pytest "./tests/sqlserver_test.py"
 
-    - name: Run SQL Server 2019 tests
+    - name: Run SQL Server 2025 tests
       env:
-        PYODBC_SQLSERVER: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1402;UID=sa;PWD=StrongPassword2019;DATABASE=test;Encrypt=Optional"
+        PYODBC_SQLSERVER: "DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost,1404;UID=sa;PWD=StrongPassword2025;DATABASE=test;Encrypt=Optional"
       run: |
         cd "$GITHUB_WORKSPACE"
         python -m pytest "./tests/sqlserver_test.py"
+
+    - name: Run SQLite tests
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        python -m pytest "./tests/sqlite_test.py"
