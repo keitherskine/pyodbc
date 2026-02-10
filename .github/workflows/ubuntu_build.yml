@@ -72,7 +72,7 @@ jobs:
     - name: Install ODBC driver for SQL Server
       run: |
         echo "*** apt-get install the driver"
-        sudo ACCEPT_EULA=Y apt-get install --yes msodbcsql18
+        sudo ACCEPT_EULA=Y apt-get install --yes msodbcsql18=18.5.1.1-1
         echo '*** ls -l /opt/microsoft/msodbcsql18/lib64'
         ls -l /opt/microsoft/msodbcsql18/lib64 || true
 
