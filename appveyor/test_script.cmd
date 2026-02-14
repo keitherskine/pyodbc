@@ -137,9 +137,8 @@ SET PYTHON_ARGS="%PYTHON_HOME%\python" -m pytest
 IF "%APVYR_VERBOSE%" == "true" (
   SET PYTHON_ARGS=%PYTHON_ARGS% --verbose
 )
-%PYTHON_ARGS% "tests\sqlserver_test.py"
+%PYTHON_ARGS% "tests\sqlserver_test.py" || SET OVERALL_RESULT=1
 ECHO Test Result: %ERRORLEVEL%
-IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 
 :postgresql
@@ -220,5 +219,5 @@ IF ERRORLEVEL 1 SET OVERALL_RESULT=1
 
 :end
 ECHO.
-ECHO Overall Result: %OVERALL_RESULT%
+ECHO Overall Tests Result: %OVERALL_RESULT%
 EXIT /B %OVERALL_RESULT%
