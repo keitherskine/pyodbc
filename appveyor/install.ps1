@@ -224,7 +224,7 @@ CheckAndInstallMsiFromUrl `
     -driver_name "ODBC Driver 18 for SQL Server" `
     -driver_bitness "64-bit" `
     -driver_url "https://download.microsoft.com/download/8d6e3acc-bf5b-41fe-ad51-a9ad406a780f/amd64/1033/msodbcsql.msi" `
-    -msifile_path "$cache_dir\msodbcsql_18_561c5e_x64.msi" `
+    -msifile_path "$cache_dir\msodbcsql_18.6.1.1_x64.msi" `
     -msiexec_paras @("IACCEPTMSODBCSQLLICENSETERMS=YES", "ADDLOCAL=ALL");
 
 # some drivers must be installed in alignment with Python's bitness
