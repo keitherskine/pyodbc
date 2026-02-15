@@ -53,6 +53,10 @@ jobs:
 
     steps:
 
+    # to make sure the drivers can be installed correctly with apt-get
+    - name: apt-get update
+      run: sudo apt-get update
+
     - name: Start MySQL service
       run: |
         sudo systemctl start mysql.service
@@ -73,8 +77,6 @@ jobs:
     - name: Install ODBC driver for SQL Server
       # version 18.6.1.1-1 causes a segmentation fault in _test_tvp() for MS SQL Server, hence use the earlier version
       run: |
-        echo "*** apt-get update"
-        sudo apt-get update
         echo "*** apt-get install the driver"
         sudo ACCEPT_EULA=Y apt-get install --yes msodbcsql18=18.5.1.1-1
         echo '*** ls -l /opt/microsoft/msodbcsql18/lib64'
