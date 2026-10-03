@@ -116,6 +116,7 @@ def get_compiler_settings():
 
         settings['libraries'].append('odbc32')
         settings['libraries'].append('advapi32')
+        settings['libraries'].append('user32')
 
     elif os.environ.get("OS", '').lower().startswith('windows'):
         # Windows Cygwin (posix on windows)
