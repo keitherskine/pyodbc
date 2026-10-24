@@ -50,14 +50,14 @@ environment:
     # TODO: when Appveyor supports 3.15: - PYTHON_HOME: "C:\\Python315"
     - PYTHON_HOME: "C:\\Python314-x64"
     - PYTHON_HOME: "C:\\Python314"
-    - PYTHON_HOME: "C:\\Python313-x64"
-    - PYTHON_HOME: "C:\\Python313"
-    - PYTHON_HOME: "C:\\Python312-x64"
-    - PYTHON_HOME: "C:\\Python312"
-    - PYTHON_HOME: "C:\\Python311-x64"
-    - PYTHON_HOME: "C:\\Python311"
-    - PYTHON_HOME: "C:\\Python310-x64"
-    - PYTHON_HOME: "C:\\Python310"
+    # - PYTHON_HOME: "C:\\Python313-x64"
+    # - PYTHON_HOME: "C:\\Python313"
+    # - PYTHON_HOME: "C:\\Python312-x64"
+    # - PYTHON_HOME: "C:\\Python312"
+    # - PYTHON_HOME: "C:\\Python311-x64"
+    # - PYTHON_HOME: "C:\\Python311"
+    # - PYTHON_HOME: "C:\\Python310-x64"
+    # - PYTHON_HOME: "C:\\Python310"
 
 # ref: https://www.appveyor.com/docs/services-databases/
 init:
